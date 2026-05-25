@@ -90,7 +90,11 @@
     "surplus": "Excedente",
     "total_income": "Ingreso total",
     "total_expense": "Gasto total",
-    "balance": "Balance disponible",
+    "total_expense_paid": "Gasto pagado",
+    "expense_pending_hint": "Comprometido {{committed}} · Pendiente {{pending}}",
+    "expense_no_pending_hint": "Comprometido {{committed}}",
+    "balance_cash_hint": "Ingresos − gastos ya pagados",
+    "balance": "Balance (caja)",
     "savings_pct": "% de ahorro",
     "min_savings": "Ahorro mínimo (10%)",
     "compliance": "Cumplimiento presupuesto",
@@ -114,8 +118,13 @@
       "empty_title": "Nada en el horizonte",
       "empty_description": "No hay pagos, ingresos ni eventos en los próximos {{days}} días.",
       "see_all": "Ver {{count}} días más",
-      "collapse": "Mostrar menos"
-    }
+      "collapse": "Mostrar menos",
+      "drag_hint": "Arrastra el icono ≡ para reordenar",
+      "reset_order": "Restaurar orden"
+    },
+    "more_metrics": "Más indicadores",
+    "actual_savings": "Ahorro real",
+    "month_close": "Cierre mensual"
   },
   "alerts": {
     "deficit_warning": "Tu ingreso actual está por debajo del mínimo requerido. Te faltan {{amount}}.",
@@ -188,6 +197,13 @@
     "freq_biweekly": "Quincenal",
     "freq_monthly": "Mensual",
     "start_date": "Primera fecha",
+    "end_date": "Fecha de fin",
+    "end_date_hint": "Opcional. Después de esa fecha no se generan movimientos nuevos. Los ya creados no se borran.",
+    "no_end_date": "sin fecha de fin",
+    "until": "hasta",
+    "edit_title": "Editar movimiento fijo",
+    "edit_subtitle": "Los cambios aplican a fechas futuras. Los registros ya generados en Ingresos/Gastos no se modifican solos.",
+    "updated": "Movimiento fijo actualizado",
     "category": "Categoría",
     "source": "Empresa / fuente",
     "source_placeholder": "Ej: TSA, Gobierno…",

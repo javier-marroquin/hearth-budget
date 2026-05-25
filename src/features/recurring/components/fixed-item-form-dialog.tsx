@@ -37,12 +37,20 @@ import {
 import { useHouseholdStore } from '@/features/households/stores/household.store';
 import { useAuthStore } from '@/features/auth/stores/auth.store';
 import { toISODate } from '@/lib/date';
-import { useCreateRecurringTemplate } from '../hooks/use-recurring-templates';
+import {
+  useCreateRecurringTemplate,
+  useUpdateRecurringTemplate,
+} from '../hooks/use-recurring-templates';
+import {
+  templateToFormInput,
+  type RecurringTemplateRow,
+} from '../services/recurring-templates.service';
 
 interface FixedItemFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   defaultKind?: 'income' | 'expense';
+  template?: RecurringTemplateRow | null;
 }
 
 const FREQUENCIES = [
@@ -51,18 +59,40 @@ const FREQUENCIES = [
   { value: 'monthly', labelKey: 'recurring.freq_monthly' },
 ] as const;
 
+function emptyDefaults(
+  kind: 'income' | 'expense',
+  userId: string,
+): RecurringTemplateInput {
+  return {
+    kind,
+    label: '',
+    amount: 0,
+    frequency: 'monthly',
+    start_date: toISODate(new Date()),
+    end_date: '',
+    category_id: null,
+    user_id: userId,
+    source: '',
+    expense_type: 'fixed',
+    split_method: 'equal',
+  };
+}
+
 export function FixedItemFormDialog({
   open,
   onOpenChange,
   defaultKind = 'expense',
+  template = null,
 }: FixedItemFormDialogProps) {
   const { t } = useTranslation();
   const activeHousehold = useHouseholdStore((s) => s.activeHousehold);
   const user = useAuthStore((s) => s.user);
-  const create = useCreateRecurringTemplate(
-    activeHousehold?.id ?? '',
-    activeHousehold?.currency ?? 'USD',
-  );
+  const isEdit = Boolean(template);
+  const householdId = activeHousehold?.id ?? '';
+  const currency = activeHousehold?.currency ?? 'USD';
+
+  const create = useCreateRecurringTemplate(householdId, currency);
+  const update = useUpdateRecurringTemplate(householdId);
 
   const form = useForm<RecurringTemplateInput>({
     resolver: zodResolver(
@@ -71,40 +101,40 @@ export function FixedItemFormDialog({
         { message: t('recurring.member_required'), path: ['user_id'] },
       ),
     ),
-    defaultValues: {
-      kind: defaultKind,
-      label: '',
-      amount: 0,
-      frequency: 'monthly',
-      start_date: toISODate(new Date()),
-      category_id: null,
-      user_id: user?.id ?? '',
-      source: '',
-      expense_type: 'fixed',
-      split_method: 'equal',
-    },
+    defaultValues: emptyDefaults(defaultKind, user?.id ?? ''),
   });
 
   const kind = form.watch('kind');
+  const submitting = create.isPending || update.isPending;
 
   useEffect(() => {
-    if (open && user?.id && kind === 'income') {
-      form.setValue('user_id', user.id);
+    if (!open) return;
+    if (template) {
+      form.reset(templateToFormInput(template));
+    } else {
+      form.reset(emptyDefaults(defaultKind, user?.id ?? ''));
     }
-  }, [open, user, kind, form]);
+  }, [open, template, defaultKind, user?.id, form]);
 
   const onSubmit = async (values: RecurringTemplateInput) => {
-    await create.mutateAsync(values);
+    if (isEdit && template) {
+      await update.mutateAsync({ id: template.id, input: values });
+    } else {
+      await create.mutateAsync(values);
+    }
     onOpenChange(false);
-    form.reset();
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{t('recurring.new_title')}</DialogTitle>
-          <DialogDescription>{t('recurring.new_subtitle')}</DialogDescription>
+          <DialogTitle>
+            {isEdit ? t('recurring.edit_title') : t('recurring.new_title')}
+          </DialogTitle>
+          <DialogDescription>
+            {isEdit ? t('recurring.edit_subtitle') : t('recurring.new_subtitle')}
+          </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
@@ -115,7 +145,11 @@ export function FixedItemFormDialog({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{t('recurring.kind')}</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    disabled={isEdit}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue />
@@ -208,19 +242,39 @@ export function FixedItemFormDialog({
               />
             </div>
 
-            <FormField
-              control={form.control}
-              name="start_date"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('recurring.start_date')}</FormLabel>
-                  <FormControl>
-                    <Input type="date" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-2 gap-3">
+              <FormField
+                control={form.control}
+                name="start_date"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('recurring.start_date')}</FormLabel>
+                    <FormControl>
+                      <Input type="date" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="end_date"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('recurring.end_date')}</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="date"
+                        value={field.value ?? ''}
+                        onChange={(e) => field.onChange(e.target.value)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <p className="text-xs text-muted-foreground">{t('recurring.end_date_hint')}</p>
 
             <FormField
               control={form.control}
@@ -264,8 +318,12 @@ export function FixedItemFormDialog({
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                 {t('common.cancel')}
               </Button>
-              <Button type="submit" disabled={create.isPending}>
-                {create.isPending ? t('common.loading') : t('recurring.create')}
+              <Button type="submit" disabled={submitting}>
+                {submitting
+                  ? t('common.loading')
+                  : isEdit
+                    ? t('common.save')
+                    : t('recurring.create')}
               </Button>
             </DialogFooter>
           </form>

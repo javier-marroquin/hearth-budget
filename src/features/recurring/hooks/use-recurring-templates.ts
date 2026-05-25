@@ -3,12 +3,14 @@ import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/features/auth/stores/auth.store';
 import type { RecurringTemplateInput } from '@/schemas/recurring.schema';
+import { formatSupabaseError } from '@/lib/supabase/errors';
 import {
   createRecurringTemplate,
   deleteRecurringTemplate,
   listRecurringTemplates,
   materializeRecurringTemplates,
   setRecurringTemplateActive,
+  updateRecurringTemplate,
 } from '../services/recurring-templates.service';
 
 const qk = (householdId: string) => ['recurring-templates', householdId] as const;
@@ -62,7 +64,22 @@ export function useCreateRecurringTemplate(householdId: string, currency: string
       await qc.invalidateQueries({ queryKey: ['upcoming', householdId] });
       toast.success(t('recurring.created'));
     },
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(formatSupabaseError(err)),
+  });
+}
+
+export function useUpdateRecurringTemplate(householdId: string) {
+  const qc = useQueryClient();
+  const { t } = useTranslation();
+
+  return useMutation({
+    mutationFn: ({ id, input }: { id: string; input: RecurringTemplateInput }) =>
+      updateRecurringTemplate(id, input),
+    onSuccess: async () => {
+      await qc.invalidateQueries({ queryKey: qk(householdId) });
+      toast.success(t('recurring.updated'));
+    },
+    onError: (err: Error) => toast.error(formatSupabaseError(err)),
   });
 }
 
@@ -77,7 +94,7 @@ export function useToggleRecurringTemplate(householdId: string) {
       await qc.invalidateQueries({ queryKey: qk(householdId) });
       toast.success(vars.active ? t('recurring.resumed') : t('recurring.paused'));
     },
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(formatSupabaseError(err)),
   });
 }
 
@@ -91,6 +108,6 @@ export function useDeleteRecurringTemplate(householdId: string) {
       await qc.invalidateQueries({ queryKey: qk(householdId) });
       toast.success(t('recurring.deleted'));
     },
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(formatSupabaseError(err)),
   });
 }

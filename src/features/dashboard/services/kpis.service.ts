@@ -16,8 +16,18 @@ export interface HouseholdKpis {
   deficit: number;
   surplus: number;
   // Primary KPIs (5)
+  /** Gastos con status paid en el mes (salió dinero). */
+  totalExpensePaid: number;
+  /** Gastos pending/overdue en el mes (aún no pagados). */
+  totalExpensePending: number;
+  /** Todos los gastos del mes (pagados + pendientes) — comprometido. */
+  totalExpenseCommitted: number;
+  /** @deprecated Use totalExpenseCommitted; kept for callers. */
   totalExpense: number;
+  /** Ingresos − gastos pagados (flujo de caja del mes). */
   balance: number;
+  /** Ingresos − gastos comprometidos (para comparar con meta de ingreso). */
+  balanceCommitted: number;
   savingsRate: number;
   upcomingPaymentsCount: number;
   overduePaymentsCount: number;
@@ -104,7 +114,7 @@ export async function fetchHouseholdKpis(
       .gte('date', trendStart),
     supabase
       .from('expenses')
-      .select('amount, date')
+      .select('amount, date, status')
       .eq('household_id', input.householdId)
       .gte('date', trendStart),
     supabase
@@ -131,9 +141,26 @@ export async function fetchHouseholdKpis(
   const expenses: Array<
     Pick<ExpenseRow, 'id' | 'amount' | 'category_id' | 'type' | 'status' | 'date'>
   > = (expensesMonth.data as ExpenseRow[]) ?? [];
-  const totalExpense = sumAmount(expenses);
+
+  const isPaid = (e: Pick<ExpenseRow, 'status'>) => e.status === 'paid';
+  const isPending = (e: Pick<ExpenseRow, 'status'>) =>
+    e.status === 'pending' || e.status === 'overdue';
+
+  const expensesPaid = expenses.filter(isPaid);
+  const expensesPending = expenses.filter(isPending);
+
+  const totalExpensePaid = sumAmount(expensesPaid);
+  const totalExpensePending = sumAmount(expensesPending);
+  const totalExpenseCommitted = sumAmount(expenses);
 
   const fixedVsVariable = {
+    fixed: sumAmountWhere(expensesPaid, (e) => e.type === 'fixed'),
+    variable: sumAmountWhere(expensesPaid, (e) => e.type === 'variable'),
+    debt: sumAmountWhere(expensesPaid, (e) => e.type === 'debt'),
+    one_time: sumAmountWhere(expensesPaid, (e) => e.type === 'one_time'),
+  };
+
+  const fixedVsVariableCommitted = {
     fixed: sumAmountWhere(expenses, (e) => e.type === 'fixed'),
     variable: sumAmountWhere(expenses, (e) => e.type === 'variable'),
     debt: sumAmountWhere(expenses, (e) => e.type === 'debt'),
@@ -142,7 +169,7 @@ export async function fetchHouseholdKpis(
 
   // By category --------------------------------------------------------------
   const categories: CategoryRow[] = (categoriesAll.data as CategoryRow[]) ?? [];
-  const expenseByCategory = buildByCategory(expenses, categories);
+  const expenseByCategory = buildByCategory(expensesPaid, categories);
 
   // Contributions ------------------------------------------------------------
   const contributions: ContributionRow[] =
@@ -170,28 +197,42 @@ export async function fetchHouseholdKpis(
   // Core breakdown -----------------------------------------------------------
   const breakdown = calculateBreakdown({
     totalIncome,
-    fixedExpenses: fixedVsVariable.fixed,
-    variableExpenses: fixedVsVariable.variable,
-    debts: fixedVsVariable.debt,
-    scheduledExpenses: fixedVsVariable.one_time,
+    fixedExpenses: fixedVsVariableCommitted.fixed,
+    variableExpenses: fixedVsVariableCommitted.variable,
+    debts: fixedVsVariableCommitted.debt,
+    scheduledExpenses: fixedVsVariableCommitted.one_time,
   });
 
+  const balanceCash = totalIncome - totalExpensePaid;
+  const balanceCommitted = breakdown.balance;
+
   // Trend 12 months ----------------------------------------------------------
+  const expensesTrendRows =
+    (expensesTrend.data as Pick<ExpenseRow, 'amount' | 'date' | 'status'>[]) ?? [];
   const monthlyTrend = buildMonthlyTrend(
     (incomesTrend.data as Pick<IncomeRow, 'amount' | 'date'>[]) ?? [],
-    (expensesTrend.data as Pick<ExpenseRow, 'amount' | 'date'>[]) ?? [],
+    expensesTrendRows.filter((e) => e.status === 'paid'),
   );
 
   // Projection ---------------------------------------------------------------
-  const projection = projectMonth(breakdown, totalIncome, totalExpense, monthlyTrend);
+  const projection = projectMonth(
+    breakdown,
+    totalIncome,
+    totalExpenseCommitted,
+    monthlyTrend,
+  );
 
   return {
     totalIncome,
     minRequiredIncome: breakdown.minRequiredIncome,
     deficit: breakdown.deficit,
     surplus: breakdown.surplus,
-    totalExpense,
-    balance: breakdown.balance,
+    totalExpensePaid,
+    totalExpensePending,
+    totalExpenseCommitted,
+    totalExpense: totalExpenseCommitted,
+    balance: balanceCash,
+    balanceCommitted,
     savingsRate: breakdown.savingsRate,
     upcomingPaymentsCount: upcomingExpenses.data?.length ?? 0,
     overduePaymentsCount: overdueExpenses.data?.length ?? 0,

@@ -90,7 +90,11 @@
     "surplus": "Surplus",
     "total_income": "Total income",
     "total_expense": "Total expense",
-    "balance": "Available balance",
+    "total_expense_paid": "Expense paid",
+    "expense_pending_hint": "Committed {{committed}} · Pending {{pending}}",
+    "expense_no_pending_hint": "Committed {{committed}}",
+    "balance_cash_hint": "Income − expenses already paid",
+    "balance": "Balance (cash)",
     "savings_pct": "Savings %",
     "min_savings": "Min savings (10%)",
     "compliance": "Budget compliance",
@@ -114,8 +118,13 @@
       "empty_title": "Nothing on the horizon",
       "empty_description": "No payments, income or events in the next {{days}} days.",
       "see_all": "See {{count}} more days",
-      "collapse": "Show less"
-    }
+      "collapse": "Show less",
+      "drag_hint": "Drag the ≡ handle to reorder",
+      "reset_order": "Reset order"
+    },
+    "more_metrics": "More metrics",
+    "actual_savings": "Actual savings",
+    "month_close": "Month-end"
   },
   "alerts": {
     "deficit_warning": "Your current income is below the required minimum. You're short {{amount}}.",
@@ -188,6 +197,13 @@
     "freq_biweekly": "Biweekly",
     "freq_monthly": "Monthly",
     "start_date": "First date",
+    "end_date": "End date",
+    "end_date_hint": "Optional. No new entries are generated after this date. Existing ones are kept.",
+    "no_end_date": "no end date",
+    "until": "until",
+    "edit_title": "Edit fixed item",
+    "edit_subtitle": "Changes apply to future dates. Already generated Income/Expense rows are not auto-updated.",
+    "updated": "Fixed item updated",
     "category": "Category",
     "source": "Employer / source",
     "source_placeholder": "e.g. Acme Corp",

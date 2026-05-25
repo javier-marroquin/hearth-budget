@@ -10,7 +10,9 @@ interface KpiCardProps {
   trend?: { value: number; positiveIsGood?: boolean };
   icon?: LucideIcon;
   tone?: 'default' | 'success' | 'warning' | 'destructive';
+  size?: 'sm' | 'md';
   delay?: number;
+  className?: string;
 }
 
 const toneClass: Record<NonNullable<KpiCardProps['tone']>, string> = {
@@ -34,33 +36,68 @@ export function KpiCard({
   trend,
   icon: Icon,
   tone = 'default',
+  size = 'md',
   delay = 0,
+  className,
 }: KpiCardProps) {
+  const compact = size === 'sm';
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay, duration: 0.25 }}
+      transition={{ delay, duration: 0.2 }}
+      className={cn('h-full', className)}
     >
-      <Card className={cn('card-hover', toneClass[tone])}>
-        <CardContent className="flex items-start justify-between p-5">
-          <div className="space-y-1">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+      <Card
+        className={cn(
+          'h-full border shadow-sm transition-shadow hover:shadow-md',
+          toneClass[tone],
+        )}
+      >
+        <CardContent
+          className={cn(
+            'flex h-full min-h-[88px] flex-col justify-between',
+            compact ? 'p-3' : 'p-4',
+          )}
+        >
+          <div className="flex items-start justify-between gap-2">
+            <p
+              className={cn(
+                'font-medium uppercase tracking-wide text-muted-foreground',
+                compact ? 'text-[10px] leading-tight' : 'text-xs',
+              )}
+            >
               {label}
             </p>
-            <p className="text-2xl font-bold tracking-tight">{value}</p>
+            {Icon && (
+              <div
+                className={cn(
+                  'flex shrink-0 items-center justify-center rounded-md',
+                  compact ? 'h-7 w-7' : 'h-8 w-8',
+                  iconBgTone[tone],
+                )}
+              >
+                <Icon className={compact ? 'h-3.5 w-3.5' : 'h-4 w-4'} />
+              </div>
+            )}
+          </div>
+          <div className="mt-2">
+            <p
+              className={cn(
+                'font-bold tabular-nums tracking-tight',
+                compact ? 'text-lg' : 'text-xl',
+              )}
+            >
+              {value}
+            </p>
             {(hint || trend) && (
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <div className="mt-1 line-clamp-2 text-[10px] leading-snug text-muted-foreground">
                 {trend && <TrendIndicator trend={trend} />}
                 {hint && <span>{hint}</span>}
               </div>
             )}
           </div>
-          {Icon && (
-            <div className={cn('flex h-10 w-10 items-center justify-center rounded-lg', iconBgTone[tone])}>
-              <Icon className="h-5 w-5" />
-            </div>
-          )}
         </CardContent>
       </Card>
     </motion.div>
@@ -86,7 +123,7 @@ function TrendIndicator({
         : 'text-red-600 dark:text-red-400';
 
   return (
-    <span className={cn('inline-flex items-center gap-0.5 font-medium', cls)}>
+    <span className={cn('mr-1 inline-flex items-center gap-0.5 font-medium', cls)}>
       <Icon className="h-3 w-3" />
       {Math.abs(trend.value).toFixed(0)}%
     </span>

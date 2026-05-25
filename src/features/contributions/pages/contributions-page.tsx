@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Plus, Pencil, Trash2, HandCoins, CircleCheck } from 'lucide-react';
+import { Plus, Pencil, Trash2, HandCoins, CircleCheck, X } from 'lucide-react';
 import { PageHeader } from '@/components/layout/page-header';
 import { EmptyState } from '@/components/layout/empty-state';
 import { Button } from '@/components/ui/button';
@@ -47,9 +48,25 @@ export function ContributionsPage() {
   const { canWriteIncomes } = usePermissions();
   const householdId = activeHousehold?.id ?? '';
 
-  const { data: contributions, isLoading } = useContributions(
-    activeHousehold ? { householdId } : null,
+  const [searchParams, setSearchParams] = useSearchParams();
+  const urlFilters = useMemo(
+    () => ({
+      from: searchParams.get('from') ?? undefined,
+      to: searchParams.get('to') ?? undefined,
+      userId: searchParams.get('user') ?? undefined,
+      status: (searchParams.get('status') ?? undefined) as
+        | ContributionStatus
+        | undefined,
+    }),
+    [searchParams],
   );
+
+  const { data: contributions, isLoading } = useContributions(
+    activeHousehold ? { householdId, ...urlFilters } : null,
+  );
+
+  const hasUrlFilters =
+    urlFilters.from || urlFilters.to || urlFilters.userId || urlFilters.status;
   const { data: members } = useHouseholdMembers(householdId);
   const markReceived = useMarkContributionReceived(householdId);
   const remove = useDeleteContribution(householdId);
@@ -102,6 +119,32 @@ export function ContributionsPage() {
           </>
         }
       />
+
+      {hasUrlFilters && (
+        <div className="mb-3 flex flex-wrap items-center gap-2 rounded-md border bg-muted/30 p-2 text-xs">
+          <span className="font-medium text-muted-foreground">Filtros activos:</span>
+          {urlFilters.status && (
+            <Badge variant="outline">Estado: {statusLabel[urlFilters.status]}</Badge>
+          )}
+          {urlFilters.userId && (
+            <Badge variant="outline">Miembro: {memberName(urlFilters.userId)}</Badge>
+          )}
+          {(urlFilters.from || urlFilters.to) && (
+            <Badge variant="outline">
+              {urlFilters.from ?? '…'} → {urlFilters.to ?? '…'}
+            </Badge>
+          )}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-6 px-2 text-xs"
+            onClick={() => setSearchParams({})}
+          >
+            <X className="h-3 w-3" />
+            Limpiar
+          </Button>
+        </div>
+      )}
 
       {isLoading && (
         <div className="space-y-2">

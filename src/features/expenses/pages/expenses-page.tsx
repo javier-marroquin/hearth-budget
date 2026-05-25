@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Plus, Pencil, Trash2, Receipt, CircleCheck } from 'lucide-react';
+import { Plus, Pencil, Trash2, Receipt, CircleCheck, X } from 'lucide-react';
 import { PageHeader } from '@/components/layout/page-header';
 import { EmptyState } from '@/components/layout/empty-state';
 import { Button } from '@/components/ui/button';
@@ -26,7 +27,7 @@ import { useCategories } from '@/features/categories/hooks/use-categories';
 import { ExpenseFormDialog } from '../components/expense-form-dialog';
 import { usePermissions } from '@/hooks/use-permissions';
 import { formatCurrency, formatDate } from '@/lib/format';
-import type { ExpenseRow, PaymentStatus } from '@/lib/supabase/aliases';
+import type { ExpenseRow, ExpenseType, PaymentStatus } from '@/lib/supabase/aliases';
 import type { CsvColumn } from '@/lib/io/csv';
 
 const statusVariant: Record<PaymentStatus, 'success' | 'warning' | 'destructive'> = {
@@ -41,9 +42,38 @@ export function ExpensesPage() {
   const { canWriteExpenses } = usePermissions();
   const householdId = activeHousehold?.id ?? '';
 
-  const { data: expenses, isLoading } = useExpenses(
-    activeHousehold ? { householdId } : null,
+  // URL filters allow drill-down from the dashboard.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const urlFilters = useMemo(
+    () => ({
+      from: searchParams.get('from') ?? undefined,
+      to: searchParams.get('to') ?? undefined,
+      status: (searchParams.get('status') ?? undefined) as
+        | PaymentStatus
+        | undefined,
+      categoryId: searchParams.get('category') ?? undefined,
+      type: (searchParams.get('type') ?? undefined) as
+        | ExpenseType
+        | undefined,
+    }),
+    [searchParams],
   );
+
+  const { data: expenses, isLoading } = useExpenses(
+    activeHousehold
+      ? {
+          householdId,
+          ...urlFilters,
+        }
+      : null,
+  );
+
+  const hasUrlFilters =
+    urlFilters.from ||
+    urlFilters.to ||
+    urlFilters.status ||
+    urlFilters.categoryId ||
+    urlFilters.type;
   const { data: categories } = useCategories(householdId, 'expense');
   const remove = useDeleteExpense(householdId);
   const markPaid = useMarkExpensePaid(householdId);
@@ -98,6 +128,43 @@ export function ExpensesPage() {
           </>
         }
       />
+
+      {hasUrlFilters && (
+        <div className="mb-3 flex flex-wrap items-center gap-2 rounded-md border bg-muted/30 p-2 text-xs">
+          <span className="font-medium text-muted-foreground">Filtros activos:</span>
+          {urlFilters.status && (
+            <Badge variant="outline">
+              Estado: {t(`calendar.status.${urlFilters.status}`)}
+            </Badge>
+          )}
+          {urlFilters.type && (
+            <Badge variant="outline">
+              Tipo: {t(`expenses.type.${urlFilters.type}`)}
+            </Badge>
+          )}
+          {urlFilters.categoryId && (
+            <Badge variant="outline">
+              Categoría:{' '}
+              {categories?.find((c) => c.id === urlFilters.categoryId)?.name ??
+                urlFilters.categoryId}
+            </Badge>
+          )}
+          {(urlFilters.from || urlFilters.to) && (
+            <Badge variant="outline">
+              {urlFilters.from ?? '…'} → {urlFilters.to ?? '…'}
+            </Badge>
+          )}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-6 px-2 text-xs"
+            onClick={() => setSearchParams({})}
+          >
+            <X className="h-3 w-3" />
+            Limpiar
+          </Button>
+        </div>
+      )}
 
       {isLoading && (
         <div className="space-y-2">

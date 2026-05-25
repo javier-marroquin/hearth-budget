@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* react-grid-layout base styles + our overrides */
+@import 'react-grid-layout/css/styles.css';
+@import 'react-resizable/css/styles.css';
+@import './grid-layout.css';
+
 @layer base {
   :root {
     /* shadcn/ui slate palette */

@@ -1,6 +1,16 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CalendarClock, Pause, Play, Plus, RefreshCw, Trash2, Wallet, Receipt } from 'lucide-react';
+import {
+  CalendarClock,
+  Pause,
+  Pencil,
+  Play,
+  Plus,
+  RefreshCw,
+  Trash2,
+  Wallet,
+  Receipt,
+} from 'lucide-react';
 import { PageHeader } from '@/components/layout/page-header';
 import { EmptyState } from '@/components/layout/empty-state';
 import { Card, CardContent } from '@/components/ui/card';
@@ -58,6 +68,7 @@ export function SchedulesPage() {
 
   const [fixedOpen, setFixedOpen] = useState(false);
   const [fixedKind, setFixedKind] = useState<'income' | 'expense'>('expense');
+  const [editingTemplate, setEditingTemplate] = useState<RecurringTemplateRow | null>(null);
   const [toDelete, setToDelete] = useState<RecurringTemplateRow | null>(null);
 
   const pendingItems = useMemo(() => {
@@ -104,7 +115,13 @@ export function SchedulesPage() {
   const loadingPending = lExp || lCon;
 
   const openNewFixed = (kind: 'income' | 'expense') => {
+    setEditingTemplate(null);
     setFixedKind(kind);
+    setFixedOpen(true);
+  };
+
+  const openEditFixed = (tpl: RecurringTemplateRow) => {
+    setEditingTemplate(tpl);
     setFixedOpen(true);
   };
 
@@ -131,8 +148,12 @@ export function SchedulesPage() {
 
       <FixedItemFormDialog
         open={fixedOpen}
-        onOpenChange={setFixedOpen}
+        onOpenChange={(open) => {
+          setFixedOpen(open);
+          if (!open) setEditingTemplate(null);
+        }}
         defaultKind={fixedKind}
+        template={editingTemplate}
       />
 
       <ConfirmDialog
@@ -206,6 +227,9 @@ export function SchedulesPage() {
                       {tpl.recurring_rules?.start_date
                         ? ` · ${t('recurring.since')} ${formatDate(tpl.recurring_rules.start_date, 'PP', i18n.language)}`
                         : ''}
+                      {tpl.recurring_rules?.end_date
+                        ? ` · ${t('recurring.until')} ${formatDate(tpl.recurring_rules.end_date, 'PP', i18n.language)}`
+                        : ` · ${t('recurring.no_end_date')}`}
                     </p>
                   </div>
                 </div>
@@ -216,6 +240,14 @@ export function SchedulesPage() {
                   </span>
                   {canManageFixed && (
                     <>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        title={t('common.edit')}
+                        onClick={() => openEditFixed(tpl)}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
                       <Button
                         variant="outline"
                         size="icon"
