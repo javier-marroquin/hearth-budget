@@ -1,17 +1,313 @@
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
+import { Plus, Target, Trash2, TrendingUp } from 'lucide-react';
 import { PageHeader } from '@/components/layout/page-header';
 import { EmptyState } from '@/components/layout/empty-state';
-import { Target } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
+import { MoneyInput } from '@/components/forms/money-input';
+import { useHouseholdStore } from '@/features/households/stores/household.store';
+import {
+  useAddToGoal,
+  useCreateGoal,
+  useDeleteGoal,
+  useGoals,
+} from '../hooks/use-goals';
+import { monthlyGoalTarget } from '@/lib/finance/recurrence';
+import { formatCurrency, formatDate } from '@/lib/format';
+import { usePermissions } from '@/hooks/use-permissions';
+import type { SavingsGoalRow } from '@/lib/supabase/database.types';
+
+const goalSchema = z.object({
+  name: z.string().trim().min(1).max(120),
+  target_amount: z.number().min(1),
+  target_date: z.string().nullable().optional(),
+  notes: z.string().trim().max(500).optional().nullable(),
+});
+type GoalInput = z.infer<typeof goalSchema>;
 
 export function GoalsPage() {
   const { t } = useTranslation();
+  const activeHousehold = useHouseholdStore((s) => s.activeHousehold);
+  const householdId = activeHousehold?.id ?? '';
+  const { canWriteExpenses } = usePermissions();
+
+  const { data: goals, isLoading } = useGoals(householdId);
+  const create = useCreateGoal(householdId);
+  const addTo = useAddToGoal(householdId);
+  const remove = useDeleteGoal(householdId);
+
+  const [open, setOpen] = useState(false);
+  const [toDelete, setToDelete] = useState<SavingsGoalRow | null>(null);
+
+  const form = useForm<GoalInput>({
+    resolver: zodResolver(goalSchema),
+    defaultValues: { name: '', target_amount: 0, target_date: null, notes: '' },
+  });
+
+  const onSubmit = async (values: GoalInput) => {
+    await create.mutateAsync(values);
+    form.reset();
+    setOpen(false);
+  };
+
   return (
     <>
-      <PageHeader title={t('nav.goals')} />
-      <EmptyState
-        icon={Target}
-        title="Metas de ahorro"
-        description="Metas con goal templates y cálculo automático se implementan en F6."
+      <PageHeader
+        title={t('nav.goals')}
+        actions={
+          canWriteExpenses && (
+            <Button onClick={() => setOpen(true)}>
+              <Plus className="h-4 w-4" />
+              Nueva meta
+            </Button>
+          )
+        }
+      />
+
+      {isLoading && (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-44" />
+          ))}
+        </div>
+      )}
+
+      {!isLoading && (!goals || goals.length === 0) && (
+        <EmptyState
+          icon={Target}
+          title="Sin metas activas"
+          description="Crea metas de ahorro (emergencias, vacaciones, electrodomésticos…) y la app calcula cuánto necesitas ahorrar al mes para lograrlas a tiempo."
+        />
+      )}
+
+      {goals && goals.length > 0 && (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {goals.map((g, idx) => {
+            const targetAmount = Number(g.target_amount);
+            const currentAmount = Number(g.current_amount);
+            const ratio =
+              targetAmount > 0
+                ? Math.min((currentAmount / targetAmount) * 100, 100)
+                : 0;
+            const monthly = monthlyGoalTarget(
+              targetAmount,
+              currentAmount,
+              g.target_date,
+            );
+            const currency = activeHousehold?.currency;
+            return (
+              <motion.div
+                key={g.id}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.05 }}
+              >
+                <Card className="card-hover">
+                  <CardContent className="space-y-4 p-5">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h3 className="font-semibold">{g.name}</h3>
+                        {g.target_date && (
+                          <p className="text-xs text-muted-foreground">
+                            Fecha objetivo: {formatDate(g.target_date)}
+                          </p>
+                        )}
+                      </div>
+                      <Badge
+                        variant={g.status === 'completed' ? 'success' : 'outline'}
+                      >
+                        {g.status === 'completed'
+                          ? 'Completada'
+                          : g.status === 'paused'
+                            ? 'Pausada'
+                            : 'Activa'}
+                      </Badge>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between text-sm">
+                        <span className="font-semibold">
+                          {formatCurrency(currentAmount, { currency })}
+                        </span>
+                        <span className="text-muted-foreground">
+                          / {formatCurrency(targetAmount, { currency })}
+                        </span>
+                      </div>
+                      <Progress
+                        value={ratio}
+                        indicatorClassName="bg-gradient-to-r from-emerald-500 to-sky-500"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        {ratio.toFixed(0)}% completado
+                      </p>
+                    </div>
+
+                    {monthly && monthly > 0 && g.status === 'active' && (
+                      <div className="flex items-center gap-2 rounded-md bg-emerald-50 p-2 text-xs dark:bg-emerald-950/30">
+                        <TrendingUp className="h-3.5 w-3.5 text-emerald-600" />
+                        <span className="text-emerald-700 dark:text-emerald-300">
+                          Sugerido: {formatCurrency(monthly, { currency })} / mes
+                        </span>
+                      </div>
+                    )}
+
+                    {canWriteExpenses && (
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex-1"
+                          onClick={() => {
+                            const v = prompt('¿Cuánto agregar a la meta?', '0');
+                            const n = Number(v);
+                            if (n > 0) addTo.mutate({ id: g.id, delta: n });
+                          }}
+                        >
+                          Agregar saldo
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setToDelete(g)}
+                          aria-label="Eliminar"
+                        >
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </motion.div>
+            );
+          })}
+        </div>
+      )}
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Nueva meta</DialogTitle>
+            <DialogDescription>
+              La app calcula automáticamente cuánto ahorrar cada mes si pones una fecha objetivo.
+            </DialogDescription>
+          </DialogHeader>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nombre</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Ej: Fondo de emergencias" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="target_amount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Monto objetivo</FormLabel>
+                    <FormControl>
+                      <MoneyInput value={field.value} onChange={field.onChange} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="target_date"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Fecha objetivo (opcional)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="date"
+                        value={field.value ?? ''}
+                        onChange={(e) => field.onChange(e.target.value || null)}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Si la dejas en blanco, no calculamos sugerencia mensual.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="notes"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Notas</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        rows={3}
+                        value={field.value ?? ''}
+                        onChange={(e) => field.onChange(e.target.value)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+                  Cancelar
+                </Button>
+                <Button type="submit" disabled={create.isPending}>
+                  {create.isPending ? 'Guardando…' : 'Crear meta'}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
+      <ConfirmDialog
+        open={Boolean(toDelete)}
+        onOpenChange={(o) => !o && setToDelete(null)}
+        title="Eliminar meta"
+        description="Se eliminará el progreso registrado."
+        destructive
+        confirmLabel="Eliminar"
+        onConfirm={() => {
+          if (toDelete) remove.mutate(toDelete.id);
+          setToDelete(null);
+        }}
       />
     </>
   );
