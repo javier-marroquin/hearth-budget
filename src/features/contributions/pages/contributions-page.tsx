@@ -1,17 +1,189 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Plus, Pencil, Trash2, HandCoins, CircleCheck } from 'lucide-react';
 import { PageHeader } from '@/components/layout/page-header';
 import { EmptyState } from '@/components/layout/empty-state';
-import { HandCoins } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Skeleton } from '@/components/ui/skeleton';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
+import { useHouseholdStore } from '@/features/households/stores/household.store';
+import {
+  useContributions,
+  useDeleteContribution,
+  useMarkContributionReceived,
+} from '../hooks/use-contributions';
+import { useHouseholdMembers } from '@/features/households/hooks/use-households';
+import { ContributionFormDialog } from '../components/contribution-form-dialog';
+import { usePermissions } from '@/hooks/use-permissions';
+import { formatCurrency, formatDate } from '@/lib/format';
+import type { ContributionRow, ContributionStatus } from '@/lib/supabase/database.types';
+
+const statusVariant: Record<ContributionStatus, 'success' | 'warning' | 'destructive'> = {
+  received: 'success',
+  pending: 'warning',
+  overdue: 'destructive',
+};
+
+const statusLabel: Record<ContributionStatus, string> = {
+  received: 'Recibido',
+  pending: 'Pendiente',
+  overdue: 'Vencido',
+};
 
 export function ContributionsPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const activeHousehold = useHouseholdStore((s) => s.activeHousehold);
+  const { canWriteIncomes } = usePermissions();
+  const householdId = activeHousehold?.id ?? '';
+
+  const { data: contributions, isLoading } = useContributions(
+    activeHousehold ? { householdId } : null,
+  );
+  const { data: members } = useHouseholdMembers(householdId);
+  const markReceived = useMarkContributionReceived(householdId);
+  const remove = useDeleteContribution(householdId);
+
+  const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState<ContributionRow | null>(null);
+  const [toDelete, setToDelete] = useState<ContributionRow | null>(null);
+
+  const memberName = (userId: string) => {
+    const m = members?.find((mm) => mm.user_id === userId);
+    return m?.profile?.full_name ?? m?.profile?.email ?? '—';
+  };
+
   return (
     <>
-      <PageHeader title={t('contributions.title')} />
-      <EmptyState
-        icon={HandCoins}
-        title="Aportes"
-        description="El registro y seguimiento de aportes mensuales se implementa en F3."
+      <PageHeader
+        title={t('contributions.title')}
+        actions={
+          canWriteIncomes && (
+            <Button
+              onClick={() => {
+                setEditing(null);
+                setOpen(true);
+              }}
+            >
+              <Plus className="h-4 w-4" />
+              {t('contributions.new')}
+            </Button>
+          )
+        }
+      />
+
+      {isLoading && (
+        <div className="space-y-2">
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-14 w-full" />
+          ))}
+        </div>
+      )}
+
+      {!isLoading && (!contributions || contributions.length === 0) && (
+        <EmptyState
+          icon={HandCoins}
+          title="Sin aportes registrados"
+          description="Registra los aportes que cada miembro hace al presupuesto del hogar."
+        />
+      )}
+
+      {!isLoading && contributions && contributions.length > 0 && (
+        <div className="rounded-md border bg-card">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Fecha esperada</TableHead>
+                <TableHead>Aportante</TableHead>
+                <TableHead>Estado</TableHead>
+                <TableHead>Recibido</TableHead>
+                <TableHead className="text-right">Monto</TableHead>
+                {canWriteIncomes && <TableHead />}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {contributions.map((c) => (
+                <TableRow key={c.id}>
+                  <TableCell>
+                    {formatDate(c.expected_date, 'PP', i18n.language)}
+                  </TableCell>
+                  <TableCell className="font-medium">{memberName(c.user_id)}</TableCell>
+                  <TableCell>
+                    <Badge variant={statusVariant[c.status]}>
+                      {statusLabel[c.status]}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {c.received_date ? formatDate(c.received_date, 'PP', i18n.language) : '—'}
+                  </TableCell>
+                  <TableCell className="text-right font-semibold">
+                    {formatCurrency(Number(c.amount), { currency: c.currency })}
+                  </TableCell>
+                  {canWriteIncomes && (
+                    <TableCell className="flex justify-end gap-1">
+                      {c.status !== 'received' && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => markReceived.mutate(c.id)}
+                          aria-label="Marcar recibido"
+                        >
+                          <CircleCheck className="h-4 w-4 text-success" />
+                        </Button>
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                          setEditing(c);
+                          setOpen(true);
+                        }}
+                        aria-label="Editar"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setToDelete(c)}
+                        aria-label="Eliminar"
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </TableCell>
+                  )}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      )}
+
+      <ContributionFormDialog
+        open={open}
+        onOpenChange={setOpen}
+        contribution={editing}
+      />
+
+      <ConfirmDialog
+        open={Boolean(toDelete)}
+        onOpenChange={(o) => !o && setToDelete(null)}
+        title="Eliminar aporte"
+        description="Esta acción no se puede deshacer."
+        destructive
+        confirmLabel="Eliminar"
+        onConfirm={() => {
+          if (toDelete) remove.mutate(toDelete.id);
+          setToDelete(null);
+        }}
       />
     </>
   );
