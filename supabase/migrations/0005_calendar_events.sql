@@ -17,7 +17,7 @@ do $$ begin
 exception when duplicate_object then null; end $$;
 
 create table if not exists public.calendar_events (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   household_id uuid not null references public.households(id) on delete cascade,
   title text not null check (length(trim(title)) > 0),
   description text,

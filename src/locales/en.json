@@ -46,7 +46,9 @@
     "back_to_login": "Back to sign in",
     "verifying": "Verifying your session…",
     "callback_error": "We couldn't validate the link. Please try again.",
-    "invalid_email": "Invalid email"
+    "invalid_email": "Invalid email",
+    "rate_limit_error": "Supabase email rate limit reached (~4/hour). Configure Resend SMTP in the Supabase dashboard (see docs/AUTH_SETUP.md) or wait ~1 hour.",
+    "smtp_error": "Supabase could not send the email (SMTP). Check Authentication → Logs in Supabase and docs/AUTH_SETUP.md."
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -65,6 +67,8 @@
   "onboarding": {
     "title": "Create your first household",
     "subtitle": "A household is where your family or group shares the budget.",
+    "your_name": "Your name",
+    "your_name_placeholder": "e.g. Alex",
     "household_name": "Household name",
     "household_name_placeholder": "e.g. Main home",
     "currency": "Currency",
@@ -150,5 +154,57 @@
   "contributions": {
     "title": "Contributions",
     "new": "New contribution"
+  },
+  "recurring": {
+    "page_description": "Fixed income and expenses that repeat automatically until you pause them.",
+    "tab_fixed": "Fixed (automatic)",
+    "tab_pending": "Pending",
+    "add_income": "Fixed income",
+    "add_expense": "Fixed expense",
+    "new_title": "New fixed item",
+    "new_subtitle": "It will be created on each date based on the frequency. You can pause it anytime.",
+    "kind": "Type",
+    "kind_income": "Income",
+    "kind_expense": "Expense",
+    "label": "Name",
+    "label_placeholder_income": "e.g. Salary at Company X",
+    "label_placeholder_expense": "e.g. Internet, Rent…",
+    "receiver": "Paid to",
+    "amount": "Amount",
+    "frequency": "Frequency",
+    "freq_weekly": "Weekly",
+    "freq_biweekly": "Biweekly",
+    "freq_monthly": "Monthly",
+    "start_date": "First date",
+    "category": "Category",
+    "source": "Employer / source",
+    "source_placeholder": "e.g. Acme Corp",
+    "create": "Enable fixed item",
+    "created": "Fixed item enabled",
+    "paused": "Paused: no new dates will be generated",
+    "resumed": "Resumed",
+    "paused_badge": "Paused",
+    "pause": "Pause",
+    "resume": "Resume",
+    "deleted": "Fixed item removed",
+    "delete_title": "Delete fixed item",
+    "delete_description": "Delete «{{name}}»? Entries already created under Income/Expenses stay.",
+    "empty_title": "No fixed items",
+    "empty_description": "Set up salary, internet, or other repeating items. The app records them for you.",
+    "sync_now": "Generate pending dates",
+    "since": "since",
+    "member_required": "Select a member",
+    "pending_empty_title": "No pending payments",
+    "pending_empty_description": "Expenses with due dates and expected contributions show up here.",
+    "overdue": "Overdue",
+    "in_days": "In {{days}} days"
+  },
+  "settings": {
+    "profile_title": "Your profile",
+    "profile_description": "How other household members will see you.",
+    "display_name": "Name",
+    "display_name_placeholder": "Your name",
+    "save_profile": "Save name",
+    "profile_saved": "Name updated"
   }
 }

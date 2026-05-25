@@ -25,7 +25,7 @@ import { useHouseholdMembers } from '@/features/households/hooks/use-households'
 import { ContributionFormDialog } from '../components/contribution-form-dialog';
 import { usePermissions } from '@/hooks/use-permissions';
 import { formatCurrency, formatDate } from '@/lib/format';
-import type { ContributionRow, ContributionStatus } from '@/lib/supabase/database.types';
+import type { ContributionRow, ContributionStatus } from '@/lib/supabase/aliases';
 
 const statusVariant: Record<ContributionStatus, 'success' | 'warning' | 'destructive'> = {
   received: 'success',

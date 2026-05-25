@@ -13,6 +13,7 @@ import { useHouseholdStore } from '../stores/household.store';
 import { useHouseholdMembers } from '../hooks/use-households';
 import { InviteMemberDialog } from '../components/invite-member-dialog';
 import { getInitials } from '@/lib/format';
+import { memberDisplayName } from '@/lib/member-display';
 import { usePermissions } from '@/hooks/use-permissions';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -55,11 +56,15 @@ export function MembersPage() {
       {!isLoading && members && members.length > 0 && (
         <div className="space-y-2">
           {members.map((m, idx) => {
-            const displayName =
-              m.profile?.full_name ??
-              m.profile?.email ??
-              m.invited_email ??
-              'Miembro';
+            const displayName = memberDisplayName(m);
+            const subtitle =
+              m.profile?.full_name?.trim() && m.profile?.email
+                ? m.profile.email
+                : m.joined_at
+                  ? `Unido ${format(new Date(m.joined_at), 'PP')}`
+                  : m.invited_at
+                    ? `Invitado ${format(new Date(m.invited_at), 'PP')}`
+                    : '';
             return (
               <motion.div
                 key={m.id}
@@ -75,13 +80,9 @@ export function MembersPage() {
                       </Avatar>
                       <div>
                         <p className="font-medium">{displayName}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {m.joined_at
-                            ? `Unido ${format(new Date(m.joined_at), 'PP')}`
-                            : m.invited_at
-                              ? `Invitado ${format(new Date(m.invited_at), 'PP')}`
-                              : ''}
-                        </p>
+                        {subtitle ? (
+                          <p className="text-xs text-muted-foreground">{subtitle}</p>
+                        ) : null}
                       </div>
                     </div>
                     <div className="flex items-center gap-2">

@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { sendMagicLink } from '../services/auth.service';
+import { getAuthErrorMessage } from '../utils/auth-errors';
 
 const RESEND_COOLDOWN = 60;
 
@@ -44,7 +45,7 @@ export function CheckEmailPage() {
       toast.success(t('auth.resend'));
       setCooldown(RESEND_COOLDOWN);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : t('common.error'));
+      toast.error(getAuthErrorMessage(err, t));
     } finally {
       setResending(false);
     }

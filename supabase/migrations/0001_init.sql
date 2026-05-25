@@ -4,7 +4,6 @@
 -- =============================================================================
 
 -- Extensions ------------------------------------------------------------------
-create extension if not exists "uuid-ossp";
 create extension if not exists "pgcrypto";
 
 -- Enums -----------------------------------------------------------------------
@@ -34,7 +33,7 @@ create index if not exists profiles_email_idx on public.profiles (email);
 
 -- households ------------------------------------------------------------------
 create table if not exists public.households (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   name text not null check (length(trim(name)) > 0),
   owner_id uuid not null references public.profiles(id) on delete restrict,
   currency text not null default 'COP',
@@ -50,7 +49,7 @@ create index if not exists households_owner_idx on public.households (owner_id);
 
 -- household_members -----------------------------------------------------------
 create table if not exists public.household_members (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   household_id uuid not null references public.households(id) on delete cascade,
   user_id uuid references public.profiles(id) on delete cascade,
   role household_role not null default 'familiar',
@@ -71,7 +70,7 @@ create index if not exists hm_status_idx on public.household_members (household_
 
 -- audit_logs ------------------------------------------------------------------
 create table if not exists public.audit_logs (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   household_id uuid references public.households(id) on delete cascade,
   user_id uuid references public.profiles(id) on delete set null,
   action text not null,

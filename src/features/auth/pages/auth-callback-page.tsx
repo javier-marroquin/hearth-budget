@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { FullScreenLoader } from '@/components/layout/full-screen-loader';
-import { supabase } from '@/lib/supabase/client';
+import { resolveCallbackSession } from '../services/auth.service';
 
 /**
  * Handles the Magic Link redirect from Supabase.
@@ -24,11 +24,15 @@ export function AuthCallbackPage() {
     let cancelled = false;
 
     const finishRedirect = async () => {
-      // Give Supabase a moment to process the URL hash.
-      const { data, error } = await supabase.auth.getSession();
+      let session;
+      try {
+        session = await resolveCallbackSession();
+      } catch {
+        session = null;
+      }
       if (cancelled) return;
 
-      if (error || !data.session) {
+      if (!session) {
         setStatus('error');
         toast.error(t('auth.callback_error'));
         setTimeout(() => navigate('/login', { replace: true }), 1500);
@@ -41,20 +45,8 @@ export function AuthCallbackPage() {
         return;
       }
 
-      // Decide between onboarding (no household yet) vs dashboard.
-      const userId = data.session.user.id;
-      const { data: memberships } = await supabase
-        .from('household_members')
-        .select('household_id, status')
-        .eq('user_id', userId)
-        .eq('status', 'active')
-        .limit(1);
-
-      if (memberships && memberships.length > 0) {
-        navigate('/dashboard', { replace: true });
-      } else {
-        navigate('/onboarding', { replace: true });
-      }
+      // Onboarding redirects to /dashboard if the user already has a household.
+      navigate('/onboarding', { replace: true });
     };
 
     void finishRedirect();

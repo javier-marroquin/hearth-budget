@@ -5,7 +5,7 @@
  * across them according to a method.
  */
 
-import type { SplitMethod } from '@/lib/supabase/database.types';
+import type { SplitMethod } from '@/lib/supabase/aliases';
 
 export interface SplitParticipant {
   userId: string;

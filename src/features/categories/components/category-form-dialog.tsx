@@ -33,7 +33,7 @@ import { MoneyInput } from '@/components/forms/money-input';
 import { categorySchema, type CategoryInput } from '@/schemas/category.schema';
 import { useHouseholdStore } from '@/features/households/stores/household.store';
 import { useCreateCategory, useUpdateCategory } from '../hooks/use-categories';
-import type { CategoryRow, CategoryType } from '@/lib/supabase/database.types';
+import type { CategoryRow, CategoryType } from '@/lib/supabase/aliases';
 
 interface CategoryFormDialogProps {
   open: boolean;

@@ -27,36 +27,34 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { householdSchema, type HouseholdInput } from '@/schemas/household.schema';
+import { onboardingSchema, type OnboardingInput } from '@/schemas/onboarding.schema';
 import { useCreateHousehold, useMyHouseholds } from '../hooks/use-households';
 import { Navigate } from 'react-router-dom';
 import { env } from '@/lib/env';
+import { HOUSEHOLD_TIMEZONES } from '@/lib/timezones';
+import { useAuthStore } from '@/features/auth/stores/auth.store';
 
-const CURRENCIES = ['COP', 'USD', 'EUR', 'MXN', 'ARS', 'CLP', 'PEN', 'BRL', 'GBP'];
-const TIMEZONES = [
-  'America/Bogota',
-  'America/Mexico_City',
-  'America/Buenos_Aires',
-  'America/Lima',
-  'America/Santiago',
-  'America/Sao_Paulo',
-  'America/New_York',
-  'America/Los_Angeles',
-  'Europe/Madrid',
-  'Europe/London',
-];
+const CURRENCIES = ['USD', 'COP', 'EUR', 'MXN', 'ARS', 'CLP', 'PEN', 'BRL', 'GBP'];
+
+function defaultFullName(user: { full_name?: string | null; email?: string | null } | null) {
+  if (user?.full_name?.trim()) return user.full_name.trim();
+  if (user?.email) return user.email.split('@')[0] ?? '';
+  return '';
+}
 
 export function OnboardingPage() {
   const { t } = useTranslation();
+  const user = useAuthStore((s) => s.user);
   const { data: myHouseholds, isLoading } = useMyHouseholds();
   const create = useCreateHousehold();
 
-  const form = useForm<HouseholdInput>({
-    resolver: zodResolver(householdSchema),
+  const form = useForm<OnboardingInput>({
+    resolver: zodResolver(onboardingSchema),
     defaultValues: {
+      fullName: defaultFullName(user),
       name: '',
       currency: env.DEFAULT_CURRENCY,
-      timezone: 'America/Bogota',
+      timezone: env.DEFAULT_TIMEZONE,
     },
   });
 
@@ -65,7 +63,7 @@ export function OnboardingPage() {
     return <Navigate to="/dashboard" replace />;
   }
 
-  const onSubmit = (values: HouseholdInput) => {
+  const onSubmit = (values: OnboardingInput) => {
     create.mutate(values);
   };
 
@@ -89,6 +87,25 @@ export function OnboardingPage() {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
                   control={form.control}
+                  name="fullName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('onboarding.your_name')}</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder={t('onboarding.your_name_placeholder')}
+                          autoComplete="name"
+                          autoFocus
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
                   name="name"
                   render={({ field }) => (
                     <FormItem>
@@ -96,7 +113,6 @@ export function OnboardingPage() {
                       <FormControl>
                         <Input
                           placeholder={t('onboarding.household_name_placeholder')}
-                          autoFocus
                           {...field}
                         />
                       </FormControl>
@@ -144,9 +160,9 @@ export function OnboardingPage() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {TIMEZONES.map((tz) => (
-                              <SelectItem key={tz} value={tz}>
-                                {tz}
+                            {HOUSEHOLD_TIMEZONES.map((tz) => (
+                              <SelectItem key={tz.value} value={tz.value}>
+                                {tz.label}
                               </SelectItem>
                             ))}
                           </SelectContent>

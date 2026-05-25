@@ -1,566 +1,1081 @@
-/**
- * Database types for Supabase.
- *
- * Hand-written to match `supabase gen types typescript` output format.
- * Once your project is live regenerate with:
- *   supabase gen types typescript --linked > src/lib/supabase/database.types.ts
- *
- * Keep this in sync with `supabase/migrations/*.sql`.
- */
-
 export type Json =
   | string
   | number
   | boolean
   | null
   | { [key: string]: Json | undefined }
-  | Json[];
+  | Json[]
 
-export type HouseholdRole = 'admin' | 'familiar' | 'inquilino' | 'invitado';
-export type MemberStatus = 'active' | 'invited' | 'removed';
-export type CategoryType = 'income' | 'expense' | 'savings';
-export type ExpenseType = 'fixed' | 'variable' | 'debt' | 'one_time';
-export type PaymentStatus = 'pending' | 'paid' | 'overdue';
-export type ContributionStatus = 'pending' | 'received' | 'overdue';
-export type GoalStatus = 'active' | 'completed' | 'paused';
-export type SplitMethod = 'equal' | 'percentage' | 'income_based' | 'custom';
-export type CalendarEventType =
-  | 'expense'
-  | 'income'
-  | 'contribution'
-  | 'goal'
-  | 'reminder';
-export type CalendarEventStatus =
-  | 'pending'
-  | 'paid'
-  | 'overdue'
-  | 'recurring'
-  | 'contribution'
-  | 'savings'
-  | 'completed';
-export type RecurrenceFrequency =
-  | 'daily'
-  | 'weekly'
-  | 'biweekly'
-  | 'monthly'
-  | 'quarterly'
-  | 'yearly';
-
-export interface Database {
+export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "14.5"
+  }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
-      profiles: {
-        Row: {
-          id: string;
-          email: string;
-          full_name: string | null;
-          avatar_url: string | null;
-          default_household_id: string | null;
-          locale: string;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id: string;
-          email: string;
-          full_name?: string | null;
-          avatar_url?: string | null;
-          default_household_id?: string | null;
-          locale?: string;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          email?: string;
-          full_name?: string | null;
-          avatar_url?: string | null;
-          default_household_id?: string | null;
-          locale?: string;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Relationships: [];
-      };
-      households: {
-        Row: {
-          id: string;
-          name: string;
-          owner_id: string;
-          currency: string;
-          timezone: string;
-          envelope_mode_enabled: boolean;
-          settings: Json;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          name: string;
-          owner_id: string;
-          currency?: string;
-          timezone?: string;
-          envelope_mode_enabled?: boolean;
-          settings?: Json;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          name?: string;
-          owner_id?: string;
-          currency?: string;
-          timezone?: string;
-          envelope_mode_enabled?: boolean;
-          settings?: Json;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Relationships: [];
-      };
-      household_members: {
-        Row: {
-          id: string;
-          household_id: string;
-          user_id: string | null;
-          role: HouseholdRole;
-          share_percentage: number | null;
-          status: MemberStatus;
-          invited_email: string | null;
-          invited_at: string | null;
-          joined_at: string | null;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          household_id: string;
-          user_id?: string | null;
-          role?: HouseholdRole;
-          share_percentage?: number | null;
-          status?: MemberStatus;
-          invited_email?: string | null;
-          invited_at?: string | null;
-          joined_at?: string | null;
-          created_at?: string;
-        };
-        Update: {
-          id?: string;
-          household_id?: string;
-          user_id?: string | null;
-          role?: HouseholdRole;
-          share_percentage?: number | null;
-          status?: MemberStatus;
-          invited_email?: string | null;
-          invited_at?: string | null;
-          joined_at?: string | null;
-          created_at?: string;
-        };
-        Relationships: [];
-      };
-      categories: {
-        Row: {
-          id: string;
-          household_id: string;
-          name: string;
-          type: CategoryType;
-          color: string;
-          icon: string;
-          is_system: boolean;
-          parent_id: string | null;
-          monthly_budget: number | null;
-          rollover_enabled: boolean;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          household_id: string;
-          name: string;
-          type: CategoryType;
-          color?: string;
-          icon?: string;
-          is_system?: boolean;
-          parent_id?: string | null;
-          monthly_budget?: number | null;
-          rollover_enabled?: boolean;
-          created_at?: string;
-        };
-        Update: {
-          id?: string;
-          household_id?: string;
-          name?: string;
-          type?: CategoryType;
-          color?: string;
-          icon?: string;
-          is_system?: boolean;
-          parent_id?: string | null;
-          monthly_budget?: number | null;
-          rollover_enabled?: boolean;
-          created_at?: string;
-        };
-        Relationships: [];
-      };
-      incomes: {
-        Row: {
-          id: string;
-          household_id: string;
-          user_id: string;
-          amount: number;
-          currency: string;
-          date: string;
-          category_id: string | null;
-          source: string | null;
-          is_recurring: boolean;
-          recurring_rule_id: string | null;
-          notes: string | null;
-          created_by: string;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          household_id: string;
-          user_id: string;
-          amount: number;
-          currency: string;
-          date: string;
-          category_id?: string | null;
-          source?: string | null;
-          is_recurring?: boolean;
-          recurring_rule_id?: string | null;
-          notes?: string | null;
-          created_by: string;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: Partial<Database['public']['Tables']['incomes']['Insert']>;
-        Relationships: [];
-      };
-      expenses: {
-        Row: {
-          id: string;
-          household_id: string;
-          amount: number;
-          currency: string;
-          date: string;
-          due_date: string | null;
-          category_id: string | null;
-          type: ExpenseType;
-          status: PaymentStatus;
-          paid_at: string | null;
-          paid_by: string | null;
-          split_method: SplitMethod;
-          is_recurring: boolean;
-          recurring_rule_id: string | null;
-          description: string | null;
-          notes: string | null;
-          created_by: string;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          household_id: string;
-          amount: number;
-          currency: string;
-          date: string;
-          due_date?: string | null;
-          category_id?: string | null;
-          type: ExpenseType;
-          status?: PaymentStatus;
-          paid_at?: string | null;
-          paid_by?: string | null;
-          split_method?: SplitMethod;
-          is_recurring?: boolean;
-          recurring_rule_id?: string | null;
-          description?: string | null;
-          notes?: string | null;
-          created_by: string;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: Partial<Database['public']['Tables']['expenses']['Insert']>;
-        Relationships: [];
-      };
-      expense_splits: {
-        Row: {
-          id: string;
-          expense_id: string;
-          user_id: string;
-          amount: number;
-          percentage: number | null;
-          paid: boolean;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          expense_id: string;
-          user_id: string;
-          amount: number;
-          percentage?: number | null;
-          paid?: boolean;
-          created_at?: string;
-        };
-        Update: Partial<Database['public']['Tables']['expense_splits']['Insert']>;
-        Relationships: [];
-      };
-      contributions: {
-        Row: {
-          id: string;
-          household_id: string;
-          user_id: string;
-          amount: number;
-          currency: string;
-          expected_date: string;
-          received_date: string | null;
-          status: ContributionStatus;
-          notes: string | null;
-          created_by: string;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          household_id: string;
-          user_id: string;
-          amount: number;
-          currency: string;
-          expected_date: string;
-          received_date?: string | null;
-          status?: ContributionStatus;
-          notes?: string | null;
-          created_by: string;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: Partial<Database['public']['Tables']['contributions']['Insert']>;
-        Relationships: [];
-      };
-      savings_goals: {
-        Row: {
-          id: string;
-          household_id: string;
-          name: string;
-          target_amount: number;
-          current_amount: number;
-          target_date: string | null;
-          category_id: string | null;
-          status: GoalStatus;
-          notes: string | null;
-          created_by: string;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          household_id: string;
-          name: string;
-          target_amount: number;
-          current_amount?: number;
-          target_date?: string | null;
-          category_id?: string | null;
-          status?: GoalStatus;
-          notes?: string | null;
-          created_by: string;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: Partial<Database['public']['Tables']['savings_goals']['Insert']>;
-        Relationships: [];
-      };
-      calendar_events: {
-        Row: {
-          id: string;
-          household_id: string;
-          title: string;
-          description: string | null;
-          event_type: CalendarEventType;
-          related_id: string | null;
-          related_type: string | null;
-          start_at: string;
-          end_at: string | null;
-          all_day: boolean;
-          status: CalendarEventStatus;
-          color: string | null;
-          recurring_rule_id: string | null;
-          user_id: string | null;
-          amount: number | null;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          household_id: string;
-          title: string;
-          description?: string | null;
-          event_type: CalendarEventType;
-          related_id?: string | null;
-          related_type?: string | null;
-          start_at: string;
-          end_at?: string | null;
-          all_day?: boolean;
-          status?: CalendarEventStatus;
-          color?: string | null;
-          recurring_rule_id?: string | null;
-          user_id?: string | null;
-          amount?: number | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: Partial<Database['public']['Tables']['calendar_events']['Insert']>;
-        Relationships: [];
-      };
-      recurring_rules: {
-        Row: {
-          id: string;
-          household_id: string;
-          frequency: RecurrenceFrequency;
-          interval: number;
-          day_of_month: number | null;
-          day_of_week: number | null;
-          start_date: string;
-          end_date: string | null;
-          occurrences: number | null;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          household_id: string;
-          frequency: RecurrenceFrequency;
-          interval?: number;
-          day_of_month?: number | null;
-          day_of_week?: number | null;
-          start_date: string;
-          end_date?: string | null;
-          occurrences?: number | null;
-          created_at?: string;
-        };
-        Update: Partial<Database['public']['Tables']['recurring_rules']['Insert']>;
-        Relationships: [];
-      };
-      payment_statuses: {
-        Row: {
-          id: string;
-          household_id: string;
-          entity_type: string;
-          entity_id: string;
-          previous_status: string | null;
-          new_status: string;
-          changed_by: string | null;
-          notes: string | null;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          household_id: string;
-          entity_type: string;
-          entity_id: string;
-          previous_status?: string | null;
-          new_status: string;
-          changed_by?: string | null;
-          notes?: string | null;
-          created_at?: string;
-        };
-        Update: Partial<Database['public']['Tables']['payment_statuses']['Insert']>;
-        Relationships: [];
-      };
-      notifications: {
-        Row: {
-          id: string;
-          household_id: string;
-          user_id: string;
-          type: string;
-          title: string;
-          message: string;
-          related_id: string | null;
-          related_type: string | null;
-          read: boolean;
-          read_at: string | null;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          household_id: string;
-          user_id: string;
-          type: string;
-          title: string;
-          message: string;
-          related_id?: string | null;
-          related_type?: string | null;
-          read?: boolean;
-          read_at?: string | null;
-          created_at?: string;
-        };
-        Update: Partial<Database['public']['Tables']['notifications']['Insert']>;
-        Relationships: [];
-      };
       audit_logs: {
         Row: {
-          id: string;
-          household_id: string | null;
-          user_id: string | null;
-          action: string;
-          entity_type: string;
-          entity_id: string | null;
-          changes: Json;
-          ip_address: string | null;
-          user_agent: string | null;
-          created_at: string;
-        };
+          action: string
+          changes: Json
+          created_at: string
+          entity_id: string | null
+          entity_type: string
+          household_id: string | null
+          id: string
+          ip_address: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
         Insert: {
-          id?: string;
-          household_id?: string | null;
-          user_id?: string | null;
-          action: string;
-          entity_type: string;
-          entity_id?: string | null;
-          changes?: Json;
-          ip_address?: string | null;
-          user_agent?: string | null;
-          created_at?: string;
-        };
-        Update: Partial<Database['public']['Tables']['audit_logs']['Insert']>;
-        Relationships: [];
-      };
-    };
-    Views: Record<string, never>;
-    Functions: Record<string, never>;
+          action: string
+          changes?: Json
+          created_at?: string
+          entity_id?: string | null
+          entity_type: string
+          household_id?: string | null
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          changes?: Json
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string
+          household_id?: string | null
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_logs_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "audit_logs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      calendar_events: {
+        Row: {
+          all_day: boolean
+          amount: number | null
+          color: string | null
+          created_at: string
+          description: string | null
+          end_at: string | null
+          event_type: Database["public"]["Enums"]["calendar_event_type"]
+          household_id: string
+          id: string
+          recurring_rule_id: string | null
+          related_id: string | null
+          related_type: string | null
+          start_at: string
+          status: Database["public"]["Enums"]["calendar_event_status"]
+          title: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          all_day?: boolean
+          amount?: number | null
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          end_at?: string | null
+          event_type: Database["public"]["Enums"]["calendar_event_type"]
+          household_id: string
+          id?: string
+          recurring_rule_id?: string | null
+          related_id?: string | null
+          related_type?: string | null
+          start_at: string
+          status?: Database["public"]["Enums"]["calendar_event_status"]
+          title: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          all_day?: boolean
+          amount?: number | null
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          end_at?: string | null
+          event_type?: Database["public"]["Enums"]["calendar_event_type"]
+          household_id?: string
+          id?: string
+          recurring_rule_id?: string | null
+          related_id?: string | null
+          related_type?: string | null
+          start_at?: string
+          status?: Database["public"]["Enums"]["calendar_event_status"]
+          title?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calendar_events_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "calendar_events_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      categories: {
+        Row: {
+          color: string
+          created_at: string
+          household_id: string
+          icon: string
+          id: string
+          is_system: boolean
+          monthly_budget: number | null
+          name: string
+          parent_id: string | null
+          rollover_enabled: boolean
+          type: Database["public"]["Enums"]["category_type"]
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          household_id: string
+          icon?: string
+          id?: string
+          is_system?: boolean
+          monthly_budget?: number | null
+          name: string
+          parent_id?: string | null
+          rollover_enabled?: boolean
+          type: Database["public"]["Enums"]["category_type"]
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          household_id?: string
+          icon?: string
+          id?: string
+          is_system?: boolean
+          monthly_budget?: number | null
+          name?: string
+          parent_id?: string | null
+          rollover_enabled?: boolean
+          type?: Database["public"]["Enums"]["category_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "categories_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "categories_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contributions: {
+        Row: {
+          amount: number
+          created_at: string
+          created_by: string
+          currency: string
+          expected_date: string
+          household_id: string
+          id: string
+          notes: string | null
+          received_date: string | null
+          status: Database["public"]["Enums"]["contribution_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          created_by: string
+          currency?: string
+          expected_date: string
+          household_id: string
+          id?: string
+          notes?: string | null
+          received_date?: string | null
+          status?: Database["public"]["Enums"]["contribution_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          created_by?: string
+          currency?: string
+          expected_date?: string
+          household_id?: string
+          id?: string
+          notes?: string | null
+          received_date?: string | null
+          status?: Database["public"]["Enums"]["contribution_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contributions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contributions_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contributions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      expense_splits: {
+        Row: {
+          amount: number
+          created_at: string
+          expense_id: string
+          id: string
+          paid: boolean
+          percentage: number | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          expense_id: string
+          id?: string
+          paid?: boolean
+          percentage?: number | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          expense_id?: string
+          id?: string
+          paid?: boolean
+          percentage?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expense_splits_expense_id_fkey"
+            columns: ["expense_id"]
+            isOneToOne: false
+            referencedRelation: "expenses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expense_splits_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      expenses: {
+        Row: {
+          amount: number
+          category_id: string | null
+          created_at: string
+          created_by: string
+          currency: string
+          date: string
+          description: string | null
+          due_date: string | null
+          household_id: string
+          id: string
+          is_recurring: boolean
+          notes: string | null
+          paid_at: string | null
+          paid_by: string | null
+          recurring_rule_id: string | null
+          split_method: Database["public"]["Enums"]["split_method"]
+          status: Database["public"]["Enums"]["payment_status"]
+          type: Database["public"]["Enums"]["expense_type"]
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          category_id?: string | null
+          created_at?: string
+          created_by: string
+          currency?: string
+          date: string
+          description?: string | null
+          due_date?: string | null
+          household_id: string
+          id?: string
+          is_recurring?: boolean
+          notes?: string | null
+          paid_at?: string | null
+          paid_by?: string | null
+          recurring_rule_id?: string | null
+          split_method?: Database["public"]["Enums"]["split_method"]
+          status?: Database["public"]["Enums"]["payment_status"]
+          type: Database["public"]["Enums"]["expense_type"]
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          category_id?: string | null
+          created_at?: string
+          created_by?: string
+          currency?: string
+          date?: string
+          description?: string | null
+          due_date?: string | null
+          household_id?: string
+          id?: string
+          is_recurring?: boolean
+          notes?: string | null
+          paid_at?: string | null
+          paid_by?: string | null
+          recurring_rule_id?: string | null
+          split_method?: Database["public"]["Enums"]["split_method"]
+          status?: Database["public"]["Enums"]["payment_status"]
+          type?: Database["public"]["Enums"]["expense_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expenses_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expenses_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expenses_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expenses_paid_by_fkey"
+            columns: ["paid_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      household_members: {
+        Row: {
+          created_at: string
+          household_id: string
+          id: string
+          invited_at: string | null
+          invited_email: string | null
+          joined_at: string | null
+          role: Database["public"]["Enums"]["household_role"]
+          share_percentage: number | null
+          status: Database["public"]["Enums"]["member_status"]
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          household_id: string
+          id?: string
+          invited_at?: string | null
+          invited_email?: string | null
+          joined_at?: string | null
+          role?: Database["public"]["Enums"]["household_role"]
+          share_percentage?: number | null
+          status?: Database["public"]["Enums"]["member_status"]
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          household_id?: string
+          id?: string
+          invited_at?: string | null
+          invited_email?: string | null
+          joined_at?: string | null
+          role?: Database["public"]["Enums"]["household_role"]
+          share_percentage?: number | null
+          status?: Database["public"]["Enums"]["member_status"]
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "household_members_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "household_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      households: {
+        Row: {
+          created_at: string
+          currency: string
+          envelope_mode_enabled: boolean
+          id: string
+          name: string
+          owner_id: string
+          settings: Json
+          timezone: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          currency?: string
+          envelope_mode_enabled?: boolean
+          id?: string
+          name: string
+          owner_id: string
+          settings?: Json
+          timezone?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          currency?: string
+          envelope_mode_enabled?: boolean
+          id?: string
+          name?: string
+          owner_id?: string
+          settings?: Json
+          timezone?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "households_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      incomes: {
+        Row: {
+          amount: number
+          category_id: string | null
+          created_at: string
+          created_by: string
+          currency: string
+          date: string
+          household_id: string
+          id: string
+          is_recurring: boolean
+          notes: string | null
+          recurring_rule_id: string | null
+          source: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          category_id?: string | null
+          created_at?: string
+          created_by: string
+          currency?: string
+          date: string
+          household_id: string
+          id?: string
+          is_recurring?: boolean
+          notes?: string | null
+          recurring_rule_id?: string | null
+          source?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          category_id?: string | null
+          created_at?: string
+          created_by?: string
+          currency?: string
+          date?: string
+          household_id?: string
+          id?: string
+          is_recurring?: boolean
+          notes?: string | null
+          recurring_rule_id?: string | null
+          source?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "incomes_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "incomes_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "incomes_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "incomes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          household_id: string
+          id: string
+          message: string
+          read: boolean
+          read_at: string | null
+          related_id: string | null
+          related_type: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          household_id: string
+          id?: string
+          message: string
+          read?: boolean
+          read_at?: string | null
+          related_id?: string | null
+          related_type?: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          household_id?: string
+          id?: string
+          message?: string
+          read?: boolean
+          read_at?: string | null
+          related_id?: string | null
+          related_type?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payment_statuses: {
+        Row: {
+          changed_by: string | null
+          created_at: string
+          entity_id: string
+          entity_type: string
+          household_id: string
+          id: string
+          new_status: string
+          notes: string | null
+          previous_status: string | null
+        }
+        Insert: {
+          changed_by?: string | null
+          created_at?: string
+          entity_id: string
+          entity_type: string
+          household_id: string
+          id?: string
+          new_status: string
+          notes?: string | null
+          previous_status?: string | null
+        }
+        Update: {
+          changed_by?: string | null
+          created_at?: string
+          entity_id?: string
+          entity_type?: string
+          household_id?: string
+          id?: string
+          new_status?: string
+          notes?: string | null
+          previous_status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_statuses_changed_by_fkey"
+            columns: ["changed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_statuses_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          default_household_id: string | null
+          email: string
+          full_name: string | null
+          id: string
+          locale: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          default_household_id?: string | null
+          email: string
+          full_name?: string | null
+          id: string
+          locale?: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          default_household_id?: string | null
+          email?: string
+          full_name?: string | null
+          id?: string
+          locale?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      recurring_rules: {
+        Row: {
+          created_at: string
+          day_of_month: number | null
+          day_of_week: number | null
+          end_date: string | null
+          frequency: Database["public"]["Enums"]["recurrence_frequency"]
+          household_id: string
+          id: string
+          interval: number
+          occurrences: number | null
+          start_date: string
+        }
+        Insert: {
+          created_at?: string
+          day_of_month?: number | null
+          day_of_week?: number | null
+          end_date?: string | null
+          frequency: Database["public"]["Enums"]["recurrence_frequency"]
+          household_id: string
+          id?: string
+          interval?: number
+          occurrences?: number | null
+          start_date: string
+        }
+        Update: {
+          created_at?: string
+          day_of_month?: number | null
+          day_of_week?: number | null
+          end_date?: string | null
+          frequency?: Database["public"]["Enums"]["recurrence_frequency"]
+          household_id?: string
+          id?: string
+          interval?: number
+          occurrences?: number | null
+          start_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recurring_rules_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      savings_goals: {
+        Row: {
+          category_id: string | null
+          created_at: string
+          created_by: string
+          current_amount: number
+          household_id: string
+          id: string
+          name: string
+          notes: string | null
+          status: Database["public"]["Enums"]["goal_status"]
+          target_amount: number
+          target_date: string | null
+          updated_at: string
+        }
+        Insert: {
+          category_id?: string | null
+          created_at?: string
+          created_by: string
+          current_amount?: number
+          household_id: string
+          id?: string
+          name: string
+          notes?: string | null
+          status?: Database["public"]["Enums"]["goal_status"]
+          target_amount: number
+          target_date?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category_id?: string | null
+          created_at?: string
+          created_by?: string
+          current_amount?: number
+          household_id?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          status?: Database["public"]["Enums"]["goal_status"]
+          target_amount?: number
+          target_date?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "savings_goals_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "savings_goals_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "savings_goals_household_id_fkey"
+            columns: ["household_id"]
+            isOneToOne: false
+            referencedRelation: "households"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      is_household_admin: {
+        Args: { target_household_id: string }
+        Returns: boolean
+      }
+      is_member_of: { Args: { target_household_id: string }; Returns: boolean }
+      is_writable_member: {
+        Args: { target_household_id: string }
+        Returns: boolean
+      }
+      member_role: {
+        Args: { target_household_id: string }
+        Returns: Database["public"]["Enums"]["household_role"]
+      }
+    }
     Enums: {
-      household_role: HouseholdRole;
-      member_status: MemberStatus;
-      category_type: CategoryType;
-      expense_type: ExpenseType;
-      payment_status: PaymentStatus;
-      contribution_status: ContributionStatus;
-      goal_status: GoalStatus;
-      split_method: SplitMethod;
-      calendar_event_type: CalendarEventType;
-      calendar_event_status: CalendarEventStatus;
-      recurrence_frequency: RecurrenceFrequency;
-    };
-    CompositeTypes: Record<string, never>;
-  };
+      calendar_event_status:
+        | "pending"
+        | "paid"
+        | "overdue"
+        | "recurring"
+        | "contribution"
+        | "savings"
+        | "completed"
+      calendar_event_type:
+        | "expense"
+        | "income"
+        | "contribution"
+        | "goal"
+        | "reminder"
+      category_type: "income" | "expense" | "savings"
+      contribution_status: "pending" | "received" | "overdue"
+      expense_type: "fixed" | "variable" | "debt" | "one_time"
+      goal_status: "active" | "completed" | "paused"
+      household_role: "admin" | "familiar" | "inquilino" | "invitado"
+      member_status: "active" | "invited" | "removed"
+      payment_status: "pending" | "paid" | "overdue"
+      recurrence_frequency:
+        | "daily"
+        | "weekly"
+        | "biweekly"
+        | "monthly"
+        | "quarterly"
+        | "yearly"
+      split_method: "equal" | "percentage" | "income_based" | "custom"
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
 }
 
-// --- Convenience aliases ----------------------------------------------------
-export type Tables<T extends keyof Database['public']['Tables']> =
-  Database['public']['Tables'][T]['Row'];
-export type TablesInsert<T extends keyof Database['public']['Tables']> =
-  Database['public']['Tables'][T]['Insert'];
-export type TablesUpdate<T extends keyof Database['public']['Tables']> =
-  Database['public']['Tables'][T]['Update'];
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
 
-// Row type aliases (one per table)
-export type ProfileRow = Tables<'profiles'>;
-export type HouseholdRow = Tables<'households'>;
-export type HouseholdMemberRow = Tables<'household_members'>;
-export type CategoryRow = Tables<'categories'>;
-export type IncomeRow = Tables<'incomes'>;
-export type ExpenseRow = Tables<'expenses'>;
-export type ExpenseSplitRow = Tables<'expense_splits'>;
-export type ContributionRow = Tables<'contributions'>;
-export type SavingsGoalRow = Tables<'savings_goals'>;
-export type CalendarEventRow = Tables<'calendar_events'>;
-export type RecurringRuleRow = Tables<'recurring_rules'>;
-export type PaymentStatusRow = Tables<'payment_statuses'>;
-export type NotificationRow = Tables<'notifications'>;
-export type AuditLogRow = Tables<'audit_logs'>;
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
+
+export type Tables<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
+
+export type TablesInsert<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
+
+export type TablesUpdate<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never
+
+export type Enums<
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
+
+export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
+  public: {
+    Enums: {
+      calendar_event_status: [
+        "pending",
+        "paid",
+        "overdue",
+        "recurring",
+        "contribution",
+        "savings",
+        "completed",
+      ],
+      calendar_event_type: [
+        "expense",
+        "income",
+        "contribution",
+        "goal",
+        "reminder",
+      ],
+      category_type: ["income", "expense", "savings"],
+      contribution_status: ["pending", "received", "overdue"],
+      expense_type: ["fixed", "variable", "debt", "one_time"],
+      goal_status: ["active", "completed", "paused"],
+      household_role: ["admin", "familiar", "inquilino", "invitado"],
+      member_status: ["active", "invited", "removed"],
+      payment_status: ["pending", "paid", "overdue"],
+      recurrence_frequency: [
+        "daily",
+        "weekly",
+        "biweekly",
+        "monthly",
+        "quarterly",
+        "yearly",
+      ],
+      split_method: ["equal", "percentage", "income_based", "custom"],
+    },
+  },
+} as const

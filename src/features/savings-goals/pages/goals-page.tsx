@@ -43,7 +43,7 @@ import {
 import { monthlyGoalTarget } from '@/lib/finance/recurrence';
 import { formatCurrency, formatDate } from '@/lib/format';
 import { usePermissions } from '@/hooks/use-permissions';
-import type { SavingsGoalRow } from '@/lib/supabase/database.types';
+import type { SavingsGoalRow } from '@/lib/supabase/aliases';
 
 const goalSchema = z.object({
   name: z.string().trim().min(1).max(120),

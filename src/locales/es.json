@@ -46,7 +46,9 @@
     "back_to_login": "Volver al login",
     "verifying": "Verificando tu sesión…",
     "callback_error": "No pudimos validar el enlace. Intenta de nuevo.",
-    "invalid_email": "Correo inválido"
+    "invalid_email": "Correo inválido",
+    "rate_limit_error": "Límite de correos de Supabase alcanzado (~4/hora). Configura SMTP con Resend en el dashboard de Supabase (ver docs/AUTH_SETUP.md) o espera ~1 hora.",
+    "smtp_error": "Supabase no pudo enviar el correo (SMTP). Revisa Authentication → Logs en Supabase y la sección SMTP en docs/AUTH_SETUP.md."
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -65,6 +67,8 @@
   "onboarding": {
     "title": "Crea tu primer hogar",
     "subtitle": "Un hogar es donde tu familia o grupo comparte el presupuesto.",
+    "your_name": "Tu nombre",
+    "your_name_placeholder": "Ej: Javier",
     "household_name": "Nombre del hogar",
     "household_name_placeholder": "Ej: Casa principal",
     "currency": "Moneda",
@@ -150,5 +154,57 @@
   "contributions": {
     "title": "Aportes",
     "new": "Nuevo aporte"
+  },
+  "recurring": {
+    "page_description": "Ingresos y gastos fijos que se repiten solos hasta que los pauses.",
+    "tab_fixed": "Fijos (automáticos)",
+    "tab_pending": "Pendientes",
+    "add_income": "Ingreso fijo",
+    "add_expense": "Gasto fijo",
+    "new_title": "Nuevo movimiento fijo",
+    "new_subtitle": "Se generará solo en cada fecha según la frecuencia. Puedes pausarlo cuando quieras.",
+    "kind": "Tipo",
+    "kind_income": "Ingreso",
+    "kind_expense": "Gasto",
+    "label": "Nombre",
+    "label_placeholder_income": "Ej: Salario Empresa X",
+    "label_placeholder_expense": "Ej: Internet, Alquiler…",
+    "receiver": "Quién recibe",
+    "amount": "Monto",
+    "frequency": "Frecuencia",
+    "freq_weekly": "Semanal",
+    "freq_biweekly": "Quincenal",
+    "freq_monthly": "Mensual",
+    "start_date": "Primera fecha",
+    "category": "Categoría",
+    "source": "Empresa / fuente",
+    "source_placeholder": "Ej: TSA, Gobierno…",
+    "create": "Activar fijo",
+    "created": "Movimiento fijo activado",
+    "paused": "Pausado: ya no se generan fechas nuevas",
+    "resumed": "Reanudado",
+    "paused_badge": "Pausado",
+    "pause": "Pausar",
+    "resume": "Reanudar",
+    "deleted": "Movimiento fijo eliminado",
+    "delete_title": "Eliminar movimiento fijo",
+    "delete_description": "¿Eliminar «{{name}}»? Los registros ya generados en Ingresos/Gastos no se borran.",
+    "empty_title": "Sin movimientos fijos",
+    "empty_description": "Crea tu salario, internet u otros pagos que se repiten. La app los registrará por ti.",
+    "sync_now": "Generar fechas pendientes",
+    "since": "desde",
+    "member_required": "Selecciona el miembro",
+    "pending_empty_title": "Sin pagos pendientes",
+    "pending_empty_description": "Los gastos con fecha límite y aportes esperados aparecen aquí.",
+    "overdue": "Vencido",
+    "in_days": "En {{days}} días"
+  },
+  "settings": {
+    "profile_title": "Tu perfil",
+    "profile_description": "Así te verán los demás miembros del hogar.",
+    "display_name": "Nombre",
+    "display_name_placeholder": "Tu nombre",
+    "save_profile": "Guardar nombre",
+    "profile_saved": "Nombre actualizado"
   }
 }

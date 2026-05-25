@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import type { EventInput, EventClickArg, DateSelectArg } from '@fullcalendar/core';
 import type { EventChangeArg } from '@fullcalendar/core';
@@ -10,7 +10,7 @@ import esLocale from '@fullcalendar/core/locales/es';
 import enLocale from '@fullcalendar/core/locales/en-gb';
 import { useTranslation } from 'react-i18next';
 import { useCalendarStore } from '@/stores/calendar.store';
-import type { CalendarEventRow, CalendarEventStatus } from '@/lib/supabase/database.types';
+import type { CalendarEventRow, CalendarEventStatus } from '@/lib/supabase/aliases';
 
 interface BudgetCalendarProps {
   events: CalendarEventRow[];
@@ -29,6 +29,18 @@ const STATUS_HSL: Record<CalendarEventStatus, string> = {
   completed: 'hsl(215 16% 47%)',
 };
 
+function useIsMobile(): boolean {
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' ? window.innerWidth < 640 : false,
+  );
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 640);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+  return isMobile;
+}
+
 export function BudgetCalendar({
   events,
   onSelectSlot,
@@ -39,6 +51,7 @@ export function BudgetCalendar({
   const ref = useRef<FullCalendar>(null);
   const view = useCalendarStore((s) => s.view);
   const setView = useCalendarStore((s) => s.setView);
+  const isMobile = useIsMobile();
 
   const fcEvents: EventInput[] = useMemo(
     () =>
@@ -77,19 +90,35 @@ export function BudgetCalendar({
   };
 
   return (
-    <div className="rounded-lg border bg-card p-4">
+    <div className="rounded-lg border bg-card p-2 md:p-4">
       <FullCalendar
         ref={ref}
         plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin]}
-        initialView={view}
+        initialView={isMobile ? 'listMonth' : view}
         height="auto"
+        contentHeight={isMobile ? 'auto' : undefined}
         firstDay={1}
         locale={i18n.language === 'en' ? enLocale : esLocale}
-        headerToolbar={{
-          left: 'prev,next today',
-          center: 'title',
-          right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth',
-        }}
+        headerToolbar={
+          isMobile
+            ? {
+                left: 'prev,next',
+                center: 'title',
+                right: 'today',
+              }
+            : {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth',
+              }
+        }
+        footerToolbar={
+          isMobile
+            ? {
+                center: 'dayGridMonth,listMonth',
+              }
+            : undefined
+        }
         buttonText={{
           today: 'Hoy',
           month: 'Mes',
@@ -97,10 +126,10 @@ export function BudgetCalendar({
           day: 'Día',
           list: 'Agenda',
         }}
-        editable
+        editable={!isMobile}
         selectable
         selectMirror
-        dayMaxEvents={3}
+        dayMaxEvents={isMobile ? 2 : 3}
         events={fcEvents}
         eventClick={handleClick}
         select={handleSelect}

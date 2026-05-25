@@ -5,11 +5,12 @@ import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/features/auth/stores/auth.store';
 import { useHouseholdStore } from '../stores/household.store';
+import { updateMyProfile } from '@/features/auth/services/auth.service';
+import type { OnboardingInput } from '@/schemas/onboarding.schema';
 import {
   createHousehold,
   listMyHouseholds,
   listMembers,
-  type CreateHouseholdInput,
 } from '../services/households.service';
 
 const QK = {
@@ -66,14 +67,24 @@ export function useCreateHousehold() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const user = useAuthStore((s) => s.user);
-
+  const setUser = useAuthStore((s) => s.setUser);
   return useMutation({
-    mutationFn: async (input: Omit<CreateHouseholdInput, 'ownerId'>) => {
+    mutationFn: async (input: OnboardingInput) => {
       if (!user) throw new Error('Not authenticated');
-      return createHousehold({ ...input, ownerId: user.id });
+      await updateMyProfile({ fullName: input.fullName });
+      const household = await createHousehold({
+        name: input.name,
+        currency: input.currency,
+        timezone: input.timezone,
+        ownerId: user.id,
+      });
+      return { household, fullName: input.fullName.trim() };
     },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: QK.myHouseholds });
+    onSuccess: async ({ fullName }) => {
+      if (user) {
+        setUser({ ...user, full_name: fullName });
+      }
+      await queryClient.invalidateQueries({ queryKey: ['households'] });
       toast.success('Hogar creado correctamente');
       navigate('/dashboard', { replace: true });
     },

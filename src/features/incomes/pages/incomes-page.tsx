@@ -21,7 +21,7 @@ import { useHouseholdMembers } from '@/features/households/hooks/use-households'
 import { IncomeFormDialog } from '../components/income-form-dialog';
 import { usePermissions } from '@/hooks/use-permissions';
 import { formatCurrency, formatDate } from '@/lib/format';
-import type { IncomeRow } from '@/lib/supabase/database.types';
+import type { IncomeRow } from '@/lib/supabase/aliases';
 
 export function IncomesPage() {
   const { t, i18n } = useTranslation();

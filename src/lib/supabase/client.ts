@@ -30,7 +30,9 @@ export function getSupabase(): SupabaseClient<Database> {
         autoRefreshToken: true,
         detectSessionInUrl: true,
         storageKey: 'household-budget:auth',
-        flowType: 'pkce',
+        // Implicit flow: magic links from email often open in another browser/app;
+        // PKCE requires the same browser that called signInWithOtp (code verifier).
+        flowType: 'implicit',
       },
       global: {
         headers: { 'X-Client-Info': 'household-budget-web' },

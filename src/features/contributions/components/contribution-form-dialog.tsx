@@ -27,7 +27,7 @@ import {
   type ContributionInput,
 } from '@/schemas/contribution.schema';
 import { useHouseholdStore } from '@/features/households/stores/household.store';
-import type { ContributionRow } from '@/lib/supabase/database.types';
+import type { ContributionRow } from '@/lib/supabase/aliases';
 import { toISODate } from '@/lib/date';
 import {
   useCreateContribution,

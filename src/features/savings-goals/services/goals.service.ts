@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase/client';
-import type { SavingsGoalRow } from '@/lib/supabase/database.types';
+import type { SavingsGoalRow } from '@/lib/supabase/aliases';
 
 export async function listGoals(householdId: string): Promise<SavingsGoalRow[]> {
   const { data, error } = await supabase

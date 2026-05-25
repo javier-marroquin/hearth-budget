@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase/client';
-import type { IncomeRow } from '@/lib/supabase/database.types';
+import type { IncomeRow } from '@/lib/supabase/aliases';
 import type { IncomeInput } from '@/schemas/income.schema';
 
 export interface IncomeFilters {

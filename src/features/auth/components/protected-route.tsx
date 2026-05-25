@@ -1,4 +1,5 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../stores/auth.store';
 import { FullScreenLoader } from '@/components/layout/full-screen-loader';
 
@@ -8,11 +9,12 @@ import { FullScreenLoader } from '@/components/layout/full-screen-loader';
  * <AuthSessionBootstrapper />.
  */
 export function ProtectedRoute() {
+  const { t } = useTranslation();
   const location = useLocation();
   const user = useAuthStore((s) => s.user);
   const initializing = useAuthStore((s) => s.initializing);
 
-  if (initializing) return <FullScreenLoader label="Verificando sesión…" />;
+  if (initializing) return <FullScreenLoader label={t('auth.verifying')} />;
 
   if (!user) {
     return (

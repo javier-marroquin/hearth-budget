@@ -15,7 +15,7 @@ exception when duplicate_object then null; end $$;
 
 -- recurring_rules ------------------------------------------------------------
 create table if not exists public.recurring_rules (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   household_id uuid not null references public.households(id) on delete cascade,
   frequency recurrence_frequency not null,
   interval integer not null default 1 check (interval > 0),
@@ -32,7 +32,7 @@ create index if not exists recurring_household_idx on public.recurring_rules (ho
 
 -- savings_goals --------------------------------------------------------------
 create table if not exists public.savings_goals (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   household_id uuid not null references public.households(id) on delete cascade,
   name text not null check (length(trim(name)) > 0),
   target_amount numeric(14, 2) not null check (target_amount > 0),
@@ -55,7 +55,7 @@ create trigger savings_goals_updated_at before update on public.savings_goals
 
 -- notifications --------------------------------------------------------------
 create table if not exists public.notifications (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   household_id uuid not null references public.households(id) on delete cascade,
   user_id uuid not null references public.profiles(id) on delete cascade,
   type text not null,

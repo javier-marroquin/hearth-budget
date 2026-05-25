@@ -48,7 +48,9 @@ You can also run a fully local Supabase (Docker required) with `supabase start` 
 
 ## 4. Verify the schema
 
-After the migrations succeed, in **Table Editor** you should see:
+After the migrations succeed, run all files through `0008_recurring_templates.sql` (fixed recurring income/expense templates).
+
+In **Table Editor** you should see:
 
 - `profiles`
 - `households`
@@ -79,3 +81,4 @@ supabase gen types typescript --linked > src/lib/supabase/database.types.ts
 | `permission denied for table` | RLS is enabled but no matching policy. Re-run `0002_rls_policies.sql` |
 | `JWT expired` after login | Increase JWT expiry in Authentication → Settings, or just sign in again |
 | Magic link email never arrives | Configure Resend SMTP (see AUTH_SETUP.md) |
+| `function uuid_generate_v4() does not exist` on `db push` | Migrations use `gen_random_uuid()` from `pgcrypto`; pull latest and run `supabase db push` again |

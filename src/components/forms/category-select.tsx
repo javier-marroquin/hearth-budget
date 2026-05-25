@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/select';
 import { useCategories } from '@/features/categories/hooks/use-categories';
 import { useHouseholdStore } from '@/features/households/stores/household.store';
-import type { CategoryType } from '@/lib/supabase/database.types';
+import type { CategoryType } from '@/lib/supabase/aliases';
 
 interface CategorySelectProps {
   value: string | null | undefined;

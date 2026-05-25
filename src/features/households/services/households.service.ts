@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabase/client';
 import type { Household, HouseholdMembership } from '../stores/household.store';
-import type { ProfileRow, HouseholdMemberRow } from '@/lib/supabase/database.types';
+import type { ProfileRow, HouseholdMemberRow } from '@/lib/supabase/aliases';
 
 export interface CreateHouseholdInput {
   name: string;
@@ -13,21 +13,21 @@ export interface CreateHouseholdInput {
  * Creates a household + the bootstrap admin membership.
  */
 export async function createHousehold(input: CreateHouseholdInput): Promise<Household> {
-  const { data: household, error: hhError } = await supabase
-    .from('households')
-    .insert({
-      name: input.name,
-      currency: input.currency,
-      timezone: input.timezone,
-      owner_id: input.ownerId,
-    })
-    .select()
-    .single();
+  // Pre-generate id so we can bootstrap membership before SELECT (RLS: read if member).
+  const householdId = crypto.randomUUID();
 
-  if (hhError || !household) throw hhError ?? new Error('Failed to create household');
+  const { error: hhError } = await supabase.from('households').insert({
+    id: householdId,
+    name: input.name,
+    currency: input.currency,
+    timezone: input.timezone,
+    owner_id: input.ownerId,
+  });
+
+  if (hhError) throw hhError;
 
   const { error: memberError } = await supabase.from('household_members').insert({
-    household_id: household.id,
+    household_id: householdId,
     user_id: input.ownerId,
     role: 'admin',
     status: 'active',
@@ -35,6 +35,14 @@ export async function createHousehold(input: CreateHouseholdInput): Promise<Hous
   });
 
   if (memberError) throw memberError;
+
+  const { data: household, error: fetchError } = await supabase
+    .from('households')
+    .select('id, name, currency, timezone, envelope_mode_enabled')
+    .eq('id', householdId)
+    .single();
+
+  if (fetchError || !household) throw fetchError ?? new Error('Failed to create household');
 
   // Best-effort: also set as default_household_id on profile.
   await supabase
@@ -47,7 +55,7 @@ export async function createHousehold(input: CreateHouseholdInput): Promise<Hous
     name: household.name,
     currency: household.currency,
     timezone: household.timezone,
-    envelope_mode_enabled: household.envelope_mode_enabled,
+    envelope_mode_enabled: household.envelope_mode_enabled ?? false,
   };
 }
 

@@ -1,47 +1,16 @@
 import { NavLink } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import {
-  BarChart3,
-  Calendar,
-  Wallet,
-  Receipt,
-  HandCoins,
-  Tags,
-  CalendarClock,
-  Target,
-  PiggyBank,
-  Users,
-  Bell,
-  Settings,
-  ChevronLeft,
-  ChevronRight,
-} from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { useUiStore } from '@/stores/ui.store';
 import { cn } from '@/lib/utils';
+import { NAV_ITEMS } from './sidebar-nav-items';
 
-interface NavItem {
-  to: string;
-  labelKey: string;
-  icon: typeof BarChart3;
-}
-
-const navItems: NavItem[] = [
-  { to: '/dashboard', labelKey: 'nav.dashboard', icon: BarChart3 },
-  { to: '/calendar', labelKey: 'nav.calendar', icon: Calendar },
-  { to: '/incomes', labelKey: 'nav.incomes', icon: Wallet },
-  { to: '/expenses', labelKey: 'nav.expenses', icon: Receipt },
-  { to: '/contributions', labelKey: 'nav.contributions', icon: HandCoins },
-  { to: '/budget', labelKey: 'nav.budget', icon: PiggyBank },
-  { to: '/categories', labelKey: 'nav.categories', icon: Tags },
-  { to: '/schedules', labelKey: 'nav.schedules', icon: CalendarClock },
-  { to: '/goals', labelKey: 'nav.goals', icon: Target },
-  { to: '/members', labelKey: 'nav.members', icon: Users },
-  { to: '/notifications', labelKey: 'nav.notifications', icon: Bell },
-  { to: '/settings', labelKey: 'nav.settings', icon: Settings },
-];
-
+/**
+ * Desktop sidebar (md+ only). On mobile we render the same list via
+ * <MobileNavSheet>.
+ */
 export function Sidebar() {
   const { t } = useTranslation();
   const { sidebarCollapsed, toggleSidebar } = useUiStore();
@@ -83,7 +52,7 @@ export function Sidebar() {
 
       <nav className="flex-1 overflow-y-auto p-2">
         <ul className="space-y-1">
-          {navItems.map((item) => {
+          {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
             return (
               <li key={item.to}>

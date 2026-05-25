@@ -9,7 +9,7 @@ import {
   updateGoal,
   type CreateGoalInput,
 } from '../services/goals.service';
-import type { SavingsGoalRow } from '@/lib/supabase/database.types';
+import type { SavingsGoalRow } from '@/lib/supabase/aliases';
 
 const QK = {
   list: (householdId: string) => ['goals', householdId] as const,

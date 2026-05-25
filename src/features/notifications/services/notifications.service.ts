@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase/client';
-import type { NotificationRow } from '@/lib/supabase/database.types';
+import type { NotificationRow } from '@/lib/supabase/aliases';
 import { useAuthStore } from '@/features/auth/stores/auth.store';
 
 export async function listMyNotifications(householdId: string): Promise<NotificationRow[]> {

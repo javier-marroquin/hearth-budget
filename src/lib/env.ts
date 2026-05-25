@@ -11,6 +11,7 @@ interface PublicEnv {
   APP_URL: string;
   DEFAULT_LOCALE: 'es' | 'en';
   DEFAULT_CURRENCY: string;
+  DEFAULT_TIMEZONE: string;
   IS_PROD: boolean;
 }
 
@@ -29,6 +30,7 @@ export const env: PublicEnv = {
   APP_URL: read('VITE_APP_URL', 'http://localhost:5173'),
   DEFAULT_LOCALE: (read('VITE_DEFAULT_LOCALE', 'es') as 'es' | 'en') ?? 'es',
   DEFAULT_CURRENCY: read('VITE_DEFAULT_CURRENCY', 'COP'),
+  DEFAULT_TIMEZONE: read('VITE_DEFAULT_TIMEZONE', 'America/El_Salvador'),
   IS_PROD: import.meta.env.PROD,
 };
 

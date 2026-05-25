@@ -6,7 +6,7 @@ import {
   listCategories,
   updateCategory,
 } from '../services/categories.service';
-import type { CategoryType } from '@/lib/supabase/database.types';
+import type { CategoryType } from '@/lib/supabase/aliases';
 import type { CategoryInput } from '@/schemas/category.schema';
 
 const QK = {

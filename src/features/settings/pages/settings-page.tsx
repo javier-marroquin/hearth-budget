@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from 'next-themes';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -6,7 +7,11 @@ import { PageHeader } from '@/components/layout/page-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useAuthStore } from '@/features/auth/stores/auth.store';
+import { useAuth } from '@/features/auth/hooks/use-auth';
 import { useHouseholdStore } from '@/features/households/stores/household.store';
 import { supabase } from '@/lib/supabase/client';
 import { usePermissions } from '@/hooks/use-permissions';
@@ -14,10 +19,17 @@ import { usePermissions } from '@/hooks/use-permissions';
 export function SettingsPage() {
   const { t, i18n } = useTranslation();
   const { theme, setTheme } = useTheme();
+  const user = useAuthStore((s) => s.user);
+  const { updateProfile, isUpdatingProfile } = useAuth();
+  const [fullName, setFullName] = useState(user?.full_name ?? '');
   const activeHousehold = useHouseholdStore((s) => s.activeHousehold);
   const setActiveHousehold = useHouseholdStore((s) => s.setActiveHousehold);
   const { canEditHousehold } = usePermissions();
   const qc = useQueryClient();
+
+  useEffect(() => {
+    setFullName(user?.full_name ?? '');
+  }, [user?.full_name]);
 
   const toggleEnvelope = useMutation({
     mutationFn: async (enabled: boolean) => {
@@ -49,6 +61,39 @@ export function SettingsPage() {
       <PageHeader title={t('nav.settings')} />
 
       <div className="grid gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('settings.profile_title')}</CardTitle>
+            <CardDescription>{t('settings.profile_description')}</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="space-y-2">
+              <Label htmlFor="profile-full-name">{t('settings.display_name')}</Label>
+              <Input
+                id="profile-full-name"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                placeholder={t('settings.display_name_placeholder')}
+                autoComplete="name"
+              />
+              {user?.email ? (
+                <p className="text-xs text-muted-foreground">{user.email}</p>
+              ) : null}
+            </div>
+            <Button
+              type="button"
+              disabled={
+                isUpdatingProfile ||
+                fullName.trim().length < 2 ||
+                fullName.trim() === (user?.full_name ?? '').trim()
+              }
+              onClick={() => updateProfile(fullName.trim())}
+            >
+              {t('settings.save_profile')}
+            </Button>
+          </CardContent>
+        </Card>
+
         {/* Appearance */}
         <Card>
           <CardHeader>

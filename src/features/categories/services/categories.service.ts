@@ -2,7 +2,7 @@ import { supabase } from '@/lib/supabase/client';
 import type {
   CategoryRow,
   CategoryType,
-} from '@/lib/supabase/database.types';
+} from '@/lib/supabase/aliases';
 import type { CategoryInput } from '@/schemas/category.schema';
 
 export async function listCategories(

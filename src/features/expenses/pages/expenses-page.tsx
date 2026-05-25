@@ -25,7 +25,7 @@ import { useCategories } from '@/features/categories/hooks/use-categories';
 import { ExpenseFormDialog } from '../components/expense-form-dialog';
 import { usePermissions } from '@/hooks/use-permissions';
 import { formatCurrency, formatDate } from '@/lib/format';
-import type { ExpenseRow, PaymentStatus } from '@/lib/supabase/database.types';
+import type { ExpenseRow, PaymentStatus } from '@/lib/supabase/aliases';
 
 const statusVariant: Record<PaymentStatus, 'success' | 'warning' | 'destructive'> = {
   paid: 'success',

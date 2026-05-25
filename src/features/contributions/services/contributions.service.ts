@@ -2,7 +2,7 @@ import { supabase } from '@/lib/supabase/client';
 import type {
   ContributionRow,
   ContributionStatus,
-} from '@/lib/supabase/database.types';
+} from '@/lib/supabase/aliases';
 import type { ContributionInput } from '@/schemas/contribution.schema';
 
 export interface ContributionFilters {

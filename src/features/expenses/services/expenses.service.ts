@@ -4,7 +4,7 @@ import type {
   ExpenseSplitRow,
   PaymentStatus,
   SplitMethod,
-} from '@/lib/supabase/database.types';
+} from '@/lib/supabase/aliases';
 import type { ExpenseInput } from '@/schemas/expense.schema';
 import { splitExpense, type SplitParticipant } from '@/lib/finance/splits';
 

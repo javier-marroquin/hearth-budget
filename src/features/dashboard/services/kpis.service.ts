@@ -7,7 +7,7 @@ import type {
   IncomeRow,
   ContributionRow,
   ExpenseType,
-} from '@/lib/supabase/database.types';
+} from '@/lib/supabase/aliases';
 
 export interface HouseholdKpis {
   // Hero

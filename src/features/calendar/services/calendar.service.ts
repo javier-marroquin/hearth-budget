@@ -3,7 +3,7 @@ import type {
   CalendarEventRow,
   CalendarEventStatus,
   CalendarEventType,
-} from '@/lib/supabase/database.types';
+} from '@/lib/supabase/aliases';
 
 export interface CalendarEventFilters {
   householdId: string;

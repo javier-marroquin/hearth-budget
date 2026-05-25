@@ -1,27 +1,53 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CalendarClock } from 'lucide-react';
+import { CalendarClock, Pause, Play, Plus, RefreshCw, Trash2, Wallet, Receipt } from 'lucide-react';
 import { PageHeader } from '@/components/layout/page-header';
 import { EmptyState } from '@/components/layout/empty-state';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useHouseholdStore } from '@/features/households/stores/household.store';
 import { useExpenses } from '@/features/expenses/hooks/use-expenses';
 import { useContributions } from '@/features/contributions/hooks/use-contributions';
+import {
+  useDeleteRecurringTemplate,
+  useMaterializeRecurring,
+  useRecurringTemplates,
+  useToggleRecurringTemplate,
+} from '@/features/recurring/hooks/use-recurring-templates';
+import { FixedItemFormDialog } from '@/features/recurring/components/fixed-item-form-dialog';
+import type { RecurringTemplateRow } from '@/features/recurring/services/recurring-templates.service';
 import { formatCurrency, formatDate, formatRelative } from '@/lib/format';
 import { daysUntil, isOverdue, isUpcoming } from '@/lib/date';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
+import { usePermissions } from '@/hooks/use-permissions';
 
-/**
- * The "schedules" view (inspired by Actual Budget) lists all upcoming
- * pre-planned cash flows: expenses with a due date + contributions with an
- * expected date. Provides a quick "what's next" overview.
- */
+function frequencyLabel(
+  t: (key: string) => string,
+  template: RecurringTemplateRow,
+): string {
+  const freq = template.recurring_rules?.frequency;
+  if (freq === 'weekly') return t('recurring.freq_weekly');
+  if (freq === 'biweekly') return t('recurring.freq_biweekly');
+  if (freq === 'monthly') return t('recurring.freq_monthly');
+  return freq ?? '—';
+}
+
 export function SchedulesPage() {
   const { t, i18n } = useTranslation();
   const activeHousehold = useHouseholdStore((s) => s.activeHousehold);
+  const { canWriteIncomes, canWriteExpenses } = usePermissions();
+  const canManageFixed = canWriteIncomes || canWriteExpenses;
   const householdId = activeHousehold?.id ?? '';
   const currency = activeHousehold?.currency;
+
+  const { data: templates, isLoading: loadingTemplates } =
+    useRecurringTemplates(householdId);
+  const materialize = useMaterializeRecurring(householdId);
+  const toggle = useToggleRecurringTemplate(householdId);
+  const remove = useDeleteRecurringTemplate(householdId);
 
   const { data: expenses, isLoading: lExp } = useExpenses(
     activeHousehold ? { householdId, status: 'pending' } : null,
@@ -30,7 +56,11 @@ export function SchedulesPage() {
     activeHousehold ? { householdId, status: 'pending' } : null,
   );
 
-  const items = useMemo(() => {
+  const [fixedOpen, setFixedOpen] = useState(false);
+  const [fixedKind, setFixedKind] = useState<'income' | 'expense'>('expense');
+  const [toDelete, setToDelete] = useState<RecurringTemplateRow | null>(null);
+
+  const pendingItems = useMemo(() => {
     const list: Array<{
       id: string;
       kind: 'expense' | 'contribution';
@@ -71,68 +101,205 @@ export function SchedulesPage() {
     return list.sort((a, b) => a.date.localeCompare(b.date));
   }, [expenses, contributions]);
 
-  const loading = lExp || lCon;
+  const loadingPending = lExp || lCon;
+
+  const openNewFixed = (kind: 'income' | 'expense') => {
+    setFixedKind(kind);
+    setFixedOpen(true);
+  };
 
   return (
     <>
       <PageHeader
         title={t('nav.schedules')}
-        description="Pagos pendientes y aportes esperados del hogar."
+        description={t('recurring.page_description')}
+        actions={
+          canManageFixed && (
+            <div className="flex flex-wrap gap-2">
+              <Button variant="outline" size="sm" onClick={() => openNewFixed('income')}>
+                <Wallet className="h-4 w-4" />
+                {t('recurring.add_income')}
+              </Button>
+              <Button size="sm" onClick={() => openNewFixed('expense')}>
+                <Plus className="h-4 w-4" />
+                {t('recurring.add_expense')}
+              </Button>
+            </div>
+          )
+        }
       />
 
-      {loading && (
-        <div className="space-y-2">
-          {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-16 w-full" />
+      <FixedItemFormDialog
+        open={fixedOpen}
+        onOpenChange={setFixedOpen}
+        defaultKind={fixedKind}
+      />
+
+      <ConfirmDialog
+        open={Boolean(toDelete)}
+        onOpenChange={(open) => !open && setToDelete(null)}
+        title={t('recurring.delete_title')}
+        description={t('recurring.delete_description', { name: toDelete?.label })}
+        onConfirm={async () => {
+          if (toDelete) await remove.mutateAsync(toDelete.id);
+          setToDelete(null);
+        }}
+      />
+
+      <Tabs defaultValue="fixed" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="fixed">{t('recurring.tab_fixed')}</TabsTrigger>
+          <TabsTrigger value="pending">{t('recurring.tab_pending')}</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="fixed" className="space-y-3">
+          <div className="flex justify-end">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={materialize.isPending}
+              onClick={() => materialize.mutate()}
+            >
+              <RefreshCw
+                className={`h-4 w-4 ${materialize.isPending ? 'animate-spin' : ''}`}
+              />
+              {t('recurring.sync_now')}
+            </Button>
+          </div>
+
+          {loadingTemplates && (
+            <div className="space-y-2">
+              {[1, 2].map((i) => (
+                <Skeleton key={i} className="h-20 w-full" />
+              ))}
+            </div>
+          )}
+
+          {!loadingTemplates && (!templates || templates.length === 0) && (
+            <EmptyState
+              icon={CalendarClock}
+              title={t('recurring.empty_title')}
+              description={t('recurring.empty_description')}
+            />
+          )}
+
+          {templates?.map((tpl) => (
+            <Card key={tpl.id}>
+              <CardContent className="flex flex-wrap items-center justify-between gap-3 p-4">
+                <div className="flex items-start gap-3">
+                  <div
+                    className={`flex h-10 w-10 items-center justify-center rounded-md text-white ${
+                      tpl.kind === 'income' ? 'bg-emerald-500' : 'bg-amber-500'
+                    }`}
+                  >
+                    {tpl.kind === 'income' ? (
+                      <Wallet className="h-5 w-5" />
+                    ) : (
+                      <Receipt className="h-5 w-5" />
+                    )}
+                  </div>
+                  <div>
+                    <p className="font-medium">{tpl.label}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {tpl.kind === 'income' ? t('recurring.kind_income') : t('recurring.kind_expense')}{' '}
+                      · {frequencyLabel(t, tpl)}
+                      {tpl.recurring_rules?.start_date
+                        ? ` · ${t('recurring.since')} ${formatDate(tpl.recurring_rules.start_date, 'PP', i18n.language)}`
+                        : ''}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  {!tpl.active && <Badge variant="secondary">{t('recurring.paused_badge')}</Badge>}
+                  <span className="font-semibold">
+                    {formatCurrency(Number(tpl.amount), { currency: tpl.currency ?? currency })}
+                  </span>
+                  {canManageFixed && (
+                    <>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        title={tpl.active ? t('recurring.pause') : t('recurring.resume')}
+                        onClick={() =>
+                          toggle.mutate({ id: tpl.id, active: !tpl.active })
+                        }
+                      >
+                        {tpl.active ? (
+                          <Pause className="h-4 w-4" />
+                        ) : (
+                          <Play className="h-4 w-4" />
+                        )}
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        title={t('common.delete')}
+                        onClick={() => setToDelete(tpl)}
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
           ))}
-        </div>
-      )}
+        </TabsContent>
 
-      {!loading && items.length === 0 && (
-        <EmptyState
-          icon={CalendarClock}
-          title="Sin pagos programados"
-          description="Crea gastos con fecha límite y aportes esperados. Aparecerán aquí ordenados por fecha."
-        />
-      )}
+        <TabsContent value="pending" className="space-y-2">
+          {loadingPending && (
+            <div className="space-y-2">
+              {[1, 2, 3].map((i) => (
+                <Skeleton key={i} className="h-16 w-full" />
+              ))}
+            </div>
+          )}
 
-      <div className="space-y-2">
-        {items.map((it) => (
-          <Card key={`${it.kind}-${it.id}`}>
-            <CardContent className="flex items-center justify-between gap-3 p-4">
-              <div className="flex items-center gap-3">
-                <div
-                  className={`flex h-10 w-10 items-center justify-center rounded-md text-white ${
-                    it.kind === 'contribution' ? 'bg-sky-500' : 'bg-amber-500'
-                  }`}
-                >
-                  <CalendarClock className="h-5 w-5" />
+          {!loadingPending && pendingItems.length === 0 && (
+            <EmptyState
+              icon={CalendarClock}
+              title={t('recurring.pending_empty_title')}
+              description={t('recurring.pending_empty_description')}
+            />
+          )}
+
+          {pendingItems.map((it) => (
+            <Card key={`${it.kind}-${it.id}`}>
+              <CardContent className="flex items-center justify-between gap-3 p-4">
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`flex h-10 w-10 items-center justify-center rounded-md text-white ${
+                      it.kind === 'contribution' ? 'bg-sky-500' : 'bg-amber-500'
+                    }`}
+                  >
+                    <CalendarClock className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="font-medium">{it.title}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {formatDate(it.date, 'PPP', i18n.language)}{' '}
+                      <span className="opacity-60">
+                        ({formatRelative(it.date, i18n.language)})
+                      </span>
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-medium">{it.title}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {formatDate(it.date, 'PPP', i18n.language)}{' '}
-                    <span className="opacity-60">
-                      ({formatRelative(it.date, i18n.language)})
-                    </span>
-                  </p>
+                <div className="flex items-center gap-2">
+                  {it.overdue && <Badge variant="destructive">{t('recurring.overdue')}</Badge>}
+                  {!it.overdue && it.upcoming && (
+                    <Badge variant="warning">
+                      {t('recurring.in_days', { days: daysUntil(it.date) })}
+                    </Badge>
+                  )}
+                  <span className="font-semibold">
+                    {formatCurrency(it.amount, { currency: it.currency ?? currency })}
+                  </span>
                 </div>
-              </div>
-              <div className="flex items-center gap-2">
-                {it.overdue && <Badge variant="destructive">Vencido</Badge>}
-                {!it.overdue && it.upcoming && (
-                  <Badge variant="warning">
-                    En {daysUntil(it.date)} días
-                  </Badge>
-                )}
-                <span className="font-semibold">
-                  {formatCurrency(it.amount, { currency: it.currency ?? currency })}
-                </span>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+              </CardContent>
+            </Card>
+          ))}
+        </TabsContent>
+      </Tabs>
     </>
   );
 }

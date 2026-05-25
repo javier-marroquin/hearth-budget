@@ -46,7 +46,7 @@ import type {
   CalendarEventRow,
   CalendarEventStatus,
   CalendarEventType,
-} from '@/lib/supabase/database.types';
+} from '@/lib/supabase/aliases';
 
 interface EventFormDialogProps {
   open: boolean;

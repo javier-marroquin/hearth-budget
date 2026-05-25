@@ -7,6 +7,7 @@ import {
 } from '@/components/ui/select';
 import { useHouseholdMembers } from '@/features/households/hooks/use-households';
 import { useHouseholdStore } from '@/features/households/stores/household.store';
+import { memberDisplayName } from '@/lib/member-display';
 
 interface MemberSelectProps {
   value: string | undefined;
@@ -32,7 +33,7 @@ export function MemberSelect({
       <SelectContent>
         {active?.map((m) => (
           <SelectItem key={m.id} value={m.user_id!}>
-            {m.profile?.full_name ?? m.profile?.email ?? 'Miembro'}
+            {memberDisplayName(m)}
           </SelectItem>
         ))}
       </SelectContent>

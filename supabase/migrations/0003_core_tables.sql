@@ -27,7 +27,7 @@ exception when duplicate_object then null; end $$;
 
 -- categories -----------------------------------------------------------------
 create table if not exists public.categories (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   household_id uuid not null references public.households(id) on delete cascade,
   name text not null check (length(trim(name)) > 0),
   type category_type not null,
@@ -45,7 +45,7 @@ create index if not exists categories_type_idx on public.categories (household_i
 
 -- incomes --------------------------------------------------------------------
 create table if not exists public.incomes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   household_id uuid not null references public.households(id) on delete cascade,
   user_id uuid not null references public.profiles(id) on delete cascade,
   amount numeric(14, 2) not null check (amount >= 0),
@@ -71,7 +71,7 @@ create trigger incomes_updated_at before update on public.incomes
 
 -- expenses -------------------------------------------------------------------
 create table if not exists public.expenses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   household_id uuid not null references public.households(id) on delete cascade,
   amount numeric(14, 2) not null check (amount >= 0),
   currency text not null default 'COP',
@@ -103,7 +103,7 @@ create trigger expenses_updated_at before update on public.expenses
 
 -- expense_splits --------------------------------------------------------------
 create table if not exists public.expense_splits (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   expense_id uuid not null references public.expenses(id) on delete cascade,
   user_id uuid not null references public.profiles(id) on delete cascade,
   amount numeric(14, 2) not null check (amount >= 0),
@@ -118,7 +118,7 @@ create index if not exists expense_splits_user_idx on public.expense_splits (use
 
 -- contributions --------------------------------------------------------------
 create table if not exists public.contributions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   household_id uuid not null references public.households(id) on delete cascade,
   user_id uuid not null references public.profiles(id) on delete cascade,
   amount numeric(14, 2) not null check (amount >= 0),
@@ -143,7 +143,7 @@ create trigger contributions_updated_at before update on public.contributions
 
 -- payment_statuses (immutable history) ---------------------------------------
 create table if not exists public.payment_statuses (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   household_id uuid not null references public.households(id) on delete cascade,
   entity_type text not null,
   entity_id uuid not null,

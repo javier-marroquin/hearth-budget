@@ -14,7 +14,7 @@ import { useCategories, useDeleteCategory } from '../hooks/use-categories';
 import { CategoryFormDialog } from '../components/category-form-dialog';
 import { usePermissions } from '@/hooks/use-permissions';
 import { formatCurrency } from '@/lib/format';
-import type { CategoryRow, CategoryType } from '@/lib/supabase/database.types';
+import type { CategoryRow, CategoryType } from '@/lib/supabase/aliases';
 
 export function CategoriesPage() {
   const { t } = useTranslation();

@@ -14,7 +14,7 @@ import { useHouseholdStore } from '@/features/households/stores/household.store'
 import type {
   CalendarEventStatus,
   CalendarEventType,
-} from '@/lib/supabase/database.types';
+} from '@/lib/supabase/aliases';
 
 const STATUSES: CalendarEventStatus[] = [
   'pending',
@@ -47,8 +47,8 @@ export function CalendarFilters() {
     filters.userId !== 'all';
 
   return (
-    <div className="mb-4 flex flex-wrap items-center gap-2 rounded-md border bg-card p-3">
-      <Filter className="h-4 w-4 text-muted-foreground" />
+    <div className="mb-4 flex flex-wrap items-center gap-2 overflow-x-auto rounded-md border bg-card p-2 md:p-3">
+      <Filter className="hidden h-4 w-4 shrink-0 text-muted-foreground sm:inline" />
 
       <Select
         value={filters.status}

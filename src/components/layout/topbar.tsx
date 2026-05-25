@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Bell, Menu, Moon, Sun, LogOut, Languages } from 'lucide-react';
+import { Bell, LogOut, Languages, Menu, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 import {
@@ -11,37 +11,46 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import { useAuthStore } from '@/features/auth/stores/auth.store';
 import { getInitials } from '@/lib/format';
 import { useAuth } from '@/features/auth/hooks/use-auth';
 import { useUiStore } from '@/stores/ui.store';
+import { useHouseholdStore } from '@/features/households/stores/household.store';
+import { useNotifications } from '@/features/notifications/hooks/use-notifications';
 import { HouseholdSelector } from '@/features/households/components/household-selector';
+import { useNavigate } from 'react-router-dom';
 
 export function Topbar() {
   const { t, i18n } = useTranslation();
   const { theme, setTheme } = useTheme();
+  const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
   const { signOut } = useAuth();
-  const toggleSidebar = useUiStore((s) => s.toggleSidebar);
+  const setMobileMenuOpen = useUiStore((s) => s.setMobileMenuOpen);
+  const activeHousehold = useHouseholdStore((s) => s.activeHousehold);
+  const { data: notifications } = useNotifications(activeHousehold?.id);
 
+  const unread = notifications?.filter((n) => !n.read).length ?? 0;
   const initials = getInitials(user?.email ?? user?.id ?? '?');
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b bg-background/80 px-4 backdrop-blur md:px-6">
-      <div className="flex items-center gap-3">
+    <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-2 border-b bg-background/80 px-3 backdrop-blur md:gap-4 md:px-6">
+      <div className="flex min-w-0 items-center gap-2 md:gap-3">
+        {/* Mobile menu */}
         <Button
           variant="ghost"
           size="icon"
           className="md:hidden"
-          onClick={toggleSidebar}
-          aria-label="Toggle menu"
+          onClick={() => setMobileMenuOpen(true)}
+          aria-label="Open menu"
         >
           <Menu className="h-5 w-5" />
         </Button>
         <HouseholdSelector />
       </div>
 
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-0.5 md:gap-1">
         {/* Language switcher */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -74,8 +83,22 @@ export function Topbar() {
         </Button>
 
         {/* Notifications */}
-        <Button variant="ghost" size="icon" aria-label="Notifications">
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Notifications"
+          onClick={() => navigate('/notifications')}
+          className="relative"
+        >
           <Bell className="h-4 w-4" />
+          {unread > 0 && (
+            <Badge
+              variant="destructive"
+              className="absolute -right-1 -top-1 h-4 min-w-[16px] justify-center px-1 text-[10px] leading-none"
+            >
+              {unread > 9 ? '9+' : unread}
+            </Badge>
+          )}
         </Button>
 
         {/* User menu */}
@@ -85,13 +108,17 @@ export function Topbar() {
               <Avatar className="h-7 w-7">
                 <AvatarFallback className="text-xs">{initials}</AvatarFallback>
               </Avatar>
-              <span className="hidden text-sm md:inline-block">
+              <span className="hidden max-w-[160px] truncate text-sm md:inline-block">
                 {user?.email ?? 'Usuario'}
               </span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel className="truncate">{user?.email}</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => navigate('/settings')}>
+              {t('nav.settings')}
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => void signOut()}>
               <LogOut className="h-4 w-4" />
