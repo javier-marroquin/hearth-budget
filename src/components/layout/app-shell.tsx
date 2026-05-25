@@ -1,11 +1,26 @@
-import { Outlet } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 import { Sidebar } from './sidebar';
 import { Topbar } from './topbar';
+import { FullScreenLoader } from './full-screen-loader';
 import { useUiStore } from '@/stores/ui.store';
 import { cn } from '@/lib/utils';
+import { useMyHouseholds } from '@/features/households/hooks/use-households';
+import { useHouseholdStore } from '@/features/households/stores/household.store';
 
 export function AppShell() {
   const sidebarCollapsed = useUiStore((s) => s.sidebarCollapsed);
+  const activeHousehold = useHouseholdStore((s) => s.activeHousehold);
+  const { isLoading, data } = useMyHouseholds();
+
+  if (isLoading) return <FullScreenLoader />;
+
+  // Authenticated but no household? Send to onboarding.
+  if (data && data.length === 0) {
+    return <Navigate to="/onboarding" replace />;
+  }
+
+  // Households loaded but selection not yet hydrated (very brief).
+  if (!activeHousehold) return <FullScreenLoader />;
 
   return (
     <div className="flex min-h-screen bg-background">

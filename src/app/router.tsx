@@ -8,6 +8,7 @@ import {
 import { FullScreenLoader } from '@/components/layout/full-screen-loader';
 import { ProtectedRoute } from '@/features/auth/components/protected-route';
 import { AppShell } from '@/components/layout/app-shell';
+import { AuthSessionBootstrapper } from '@/features/auth/components/auth-session-bootstrapper';
 
 // Lazy-load pages for code splitting.
 const LoginPage = lazy(() =>
@@ -102,6 +103,7 @@ const NotFoundPage = lazy(() =>
 export function AppRouter() {
   return (
     <BrowserRouter>
+      <AuthSessionBootstrapper />
       <Suspense fallback={<FullScreenLoader />}>
         <Routes>
           {/* Public routes */}

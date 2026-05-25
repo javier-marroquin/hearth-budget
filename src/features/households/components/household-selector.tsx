@@ -1,15 +1,65 @@
-import { Home } from 'lucide-react';
+import { Home, ChevronDown, Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useHouseholdStore } from '../stores/household.store';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
+import { useMyHouseholds } from '../hooks/use-households';
 
 export function HouseholdSelector() {
-  const activeHousehold = useHouseholdStore((s) => s.activeHousehold);
   const { t } = useTranslation();
+  const activeHousehold = useHouseholdStore((s) => s.activeHousehold);
+  const setActiveHousehold = useHouseholdStore((s) => s.setActiveHousehold);
+  const setMembership = useHouseholdStore((s) => s.setMembership);
+  const { data } = useMyHouseholds();
 
+  if (!activeHousehold) return null;
+
+  // Only one household → static badge.
+  if ((data?.length ?? 0) <= 1) {
+    return (
+      <div className="flex items-center gap-2 rounded-md border bg-card px-3 py-1.5 text-sm">
+        <Home className="h-4 w-4 text-muted-foreground" />
+        <span className="font-medium">{activeHousehold.name}</span>
+      </div>
+    );
+  }
+
+  // Multiple households → dropdown.
   return (
-    <div className="flex items-center gap-2 rounded-md border bg-card px-3 py-1.5 text-sm">
-      <Home className="h-4 w-4 text-muted-foreground" />
-      <span className="font-medium">{activeHousehold?.name ?? t('app.name')}</span>
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="sm" className="gap-2">
+          <Home className="h-4 w-4" />
+          <span className="max-w-[160px] truncate font-medium">
+            {activeHousehold.name}
+          </span>
+          <ChevronDown className="h-4 w-4 opacity-50" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="w-64">
+        <DropdownMenuLabel>{t('app.name')}</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {data?.map(({ household, membership }) => (
+          <DropdownMenuItem
+            key={household.id}
+            onClick={() => {
+              setActiveHousehold(household);
+              setMembership(membership);
+            }}
+            className="flex items-center justify-between"
+          >
+            <span className="truncate">{household.name}</span>
+            {activeHousehold.id === household.id && <Check className="h-4 w-4" />}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

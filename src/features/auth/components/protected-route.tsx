@@ -4,8 +4,8 @@ import { FullScreenLoader } from '@/components/layout/full-screen-loader';
 
 /**
  * Guards routes that require an authenticated user.
- * In F1 the auth store is never populated automatically, so unauthenticated
- * users are sent to /login. F2 wires up actual Supabase session detection.
+ * The session listener is mounted at the router root via
+ * <AuthSessionBootstrapper />.
  */
 export function ProtectedRoute() {
   const location = useLocation();
@@ -15,7 +15,13 @@ export function ProtectedRoute() {
   if (initializing) return <FullScreenLoader label="Verificando sesión…" />;
 
   if (!user) {
-    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+    return (
+      <Navigate
+        to="/login"
+        replace
+        state={{ from: location.pathname + location.search }}
+      />
+    );
   }
 
   return <Outlet />;
