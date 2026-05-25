@@ -18,7 +18,7 @@ export function ChartIncomeVsExpenseWidget({ ctx, onRemove }: WidgetProps) {
       title={t('dashboard.income_vs_expense')}
       editing={ctx.editing}
       onRemove={onRemove}
-      contentClassName="h-[calc(100%-2.5rem)] p-3"
+
     >
       {ctx.kpis ? (
         <div className="h-full min-h-0">
@@ -48,7 +48,7 @@ export function ChartCategoryDoughnutWidget({ ctx, onRemove }: WidgetProps) {
       editing={ctx.editing}
       onRemove={onRemove}
       onActivate={() => navigate('/expenses')}
-      contentClassName="h-[calc(100%-2.5rem)] p-3"
+
     >
       {ctx.kpis ? (
         ctx.kpis.expenseByCategory.length > 0 ? (
@@ -82,7 +82,7 @@ export function ChartContributionsByMemberWidget({ ctx, onRemove }: WidgetProps)
       editing={ctx.editing}
       onRemove={onRemove}
       onActivate={() => navigate('/contributions')}
-      contentClassName="h-[calc(100%-2.5rem)] p-3"
+
     >
       {ctx.kpis ? (
         ctx.kpis.contributionsByMember.length > 0 ? (
@@ -118,7 +118,7 @@ export function ChartFixedVsVariableWidget({ ctx, onRemove }: WidgetProps) {
       title={t('dashboard.fixed_vs_variable')}
       editing={ctx.editing}
       onRemove={onRemove}
-      contentClassName="h-[calc(100%-2.5rem)] p-3"
+
     >
       {ctx.kpis ? (
         <FillHeight>

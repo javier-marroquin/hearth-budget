@@ -38,17 +38,19 @@ export function WidgetShell({
 }: WidgetShellProps) {
   const clickable = Boolean(onActivate) && !editing;
 
+  const hasHeader = Boolean(title || editing);
+
   return (
     <Card
       className={cn(
-        'h-full overflow-hidden transition-shadow',
+        'flex h-full flex-col overflow-hidden transition-shadow',
         editing && 'ring-2 ring-primary/30 ring-offset-2 ring-offset-background',
         clickable && 'cursor-pointer hover:shadow-md',
       )}
       onClick={clickable ? onActivate : undefined}
     >
-      {(title || editing) && (
-        <div className="flex items-center justify-between gap-2 border-b px-3 py-2">
+      {hasHeader && (
+        <div className="flex shrink-0 items-center justify-between gap-2 border-b px-3 py-1.5">
           <div className="flex min-w-0 items-center gap-1.5">
             {editing && (
               <span
@@ -61,7 +63,7 @@ export function WidgetShell({
             )}
             <div className="min-w-0">
               {title && (
-                <p className="truncate text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                <p className="truncate text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                   {title}
                 </p>
               )}
@@ -92,7 +94,7 @@ export function WidgetShell({
         </div>
       )}
       <CardContent
-        className={cn('h-[calc(100%-2.5rem)] overflow-auto p-3', contentClassName)}
+        className={cn('min-h-0 flex-1 overflow-auto p-3', contentClassName)}
       >
         {children}
       </CardContent>
