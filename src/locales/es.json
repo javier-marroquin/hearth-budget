@@ -1,0 +1,154 @@
+{
+  "app": {
+    "name": "PresupuestoHogar",
+    "tagline": "Presupuesto colaborativo para tu hogar"
+  },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "create": "Crear",
+    "loading": "Cargando…",
+    "error": "Ocurrió un error",
+    "retry": "Reintentar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "all": "Todos",
+    "yes": "Sí",
+    "no": "No",
+    "back": "Volver",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "send": "Enviar",
+    "close": "Cerrar",
+    "confirm": "Confirmar",
+    "actions": "Acciones",
+    "empty": "Sin datos para mostrar",
+    "today": "Hoy",
+    "month": "Mes",
+    "week": "Semana",
+    "day": "Día",
+    "agenda": "Agenda"
+  },
+  "auth": {
+    "login": "Iniciar sesión",
+    "logout": "Cerrar sesión",
+    "magic_link_title": "Entra con un enlace mágico",
+    "magic_link_subtitle": "Te enviamos un enlace seguro a tu correo. Sin contraseñas.",
+    "email_label": "Correo electrónico",
+    "email_placeholder": "tu@correo.com",
+    "send_magic_link": "Enviar enlace mágico",
+    "check_email_title": "Revisa tu correo",
+    "check_email_subtitle": "Enviamos un enlace a {{email}}. Haz clic en él para entrar.",
+    "resend": "Reenviar enlace",
+    "resend_in": "Reenviar en {{seconds}}s",
+    "back_to_login": "Volver al login",
+    "verifying": "Verificando tu sesión…",
+    "callback_error": "No pudimos validar el enlace. Intenta de nuevo.",
+    "invalid_email": "Correo inválido"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "calendar": "Calendario",
+    "incomes": "Ingresos",
+    "expenses": "Gastos",
+    "contributions": "Aportes",
+    "categories": "Categorías",
+    "goals": "Metas",
+    "schedules": "Pagos programados",
+    "budget": "Presupuesto",
+    "members": "Miembros",
+    "notifications": "Notificaciones",
+    "settings": "Configuración"
+  },
+  "onboarding": {
+    "title": "Crea tu primer hogar",
+    "subtitle": "Un hogar es donde tu familia o grupo comparte el presupuesto.",
+    "household_name": "Nombre del hogar",
+    "household_name_placeholder": "Ej: Casa principal",
+    "currency": "Moneda",
+    "timezone": "Zona horaria",
+    "create_household": "Crear hogar"
+  },
+  "roles": {
+    "admin": "Administrador",
+    "familiar": "Familiar",
+    "inquilino": "Inquilino",
+    "invitado": "Invitado"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "hero_question": "¿Cuánto necesita ganar tu hogar este mes?",
+    "minimum_income": "Ingreso mínimo requerido",
+    "actual_income": "Ingreso actual",
+    "deficit": "Déficit",
+    "surplus": "Excedente",
+    "total_income": "Ingreso total",
+    "total_expense": "Gasto total",
+    "balance": "Balance disponible",
+    "savings_pct": "% de ahorro",
+    "min_savings": "Ahorro mínimo (10%)",
+    "compliance": "Cumplimiento presupuesto",
+    "upcoming_payments": "Pagos próximos",
+    "overdue_payments": "Pagos vencidos",
+    "contributions_received": "Aportes recibidos",
+    "contributions_pending": "Aportes pendientes",
+    "unallocated": "Sin asignar",
+    "projection": "Proyección de cierre",
+    "income_vs_expense": "Ingresos vs Gastos",
+    "by_category": "Por categoría",
+    "by_member": "Por miembro",
+    "fixed_vs_variable": "Fijos vs Variables"
+  },
+  "alerts": {
+    "deficit_warning": "Tu ingreso actual está por debajo del mínimo requerido. Te faltan {{amount}}.",
+    "savings_warning": "Estás ahorrando menos del 10% recomendado.",
+    "overdue_warning": "Tienes {{count}} pagos vencidos."
+  },
+  "calendar": {
+    "new_event": "Nuevo evento",
+    "edit_event": "Editar evento",
+    "delete_event": "Eliminar evento",
+    "status": {
+      "pending": "Pendiente",
+      "paid": "Pagado",
+      "overdue": "Vencido",
+      "recurring": "Recurrente",
+      "contribution": "Aporte",
+      "savings": "Ahorro",
+      "completed": "Completado"
+    },
+    "filters": {
+      "user": "Usuario",
+      "category": "Categoría",
+      "status": "Estado",
+      "type": "Tipo",
+      "range": "Rango"
+    }
+  },
+  "expenses": {
+    "title": "Gastos",
+    "new": "Nuevo gasto",
+    "type": {
+      "fixed": "Fijo",
+      "variable": "Variable",
+      "debt": "Deuda",
+      "one_time": "Único"
+    },
+    "split": {
+      "equal": "Partes iguales",
+      "percentage": "Por porcentaje",
+      "income_based": "Por ingreso",
+      "custom": "Personalizado"
+    }
+  },
+  "incomes": {
+    "title": "Ingresos",
+    "new": "Nuevo ingreso"
+  },
+  "contributions": {
+    "title": "Aportes",
+    "new": "Nuevo aporte"
+  }
+}

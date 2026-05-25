@@ -1,0 +1,62 @@
+# =============================================================================
+# Netlify configuration for Household Budget
+# Docs: https://docs.netlify.com/configure-builds/file-based-configuration/
+# =============================================================================
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NPM_FLAGS = "--prefer-offline --no-audit --no-fund"
+
+# --- Functions configuration -------------------------------------------------
+[functions]
+  node_bundler = "esbuild"
+  directory = "netlify/functions"
+  included_files = ["netlify/functions/_lib/**"]
+
+# --- SPA fallback: route every unknown path to the React Router app ----------
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# --- Security headers --------------------------------------------------------
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    X-XSS-Protection = "1; mode=block"
+
+# --- Service worker should not be cached aggressively -----------------------
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    Content-Type = "application/manifest+json"
+
+# --- Static assets: long cache ----------------------------------------------
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# --- Scheduled functions (cron) ---------------------------------------------
+# These run on Netlify's scheduler. Configure schedules via @netlify/functions
+# `schedule()` helper inside the function source, e.g. "@daily" or cron string.

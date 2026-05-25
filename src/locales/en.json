@@ -1,0 +1,154 @@
+{
+  "app": {
+    "name": "HouseholdBudget",
+    "tagline": "Collaborative budgeting for your home"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "loading": "Loading…",
+    "error": "Something went wrong",
+    "retry": "Retry",
+    "search": "Search",
+    "filter": "Filter",
+    "all": "All",
+    "yes": "Yes",
+    "no": "No",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "send": "Send",
+    "close": "Close",
+    "confirm": "Confirm",
+    "actions": "Actions",
+    "empty": "No data to display",
+    "today": "Today",
+    "month": "Month",
+    "week": "Week",
+    "day": "Day",
+    "agenda": "Agenda"
+  },
+  "auth": {
+    "login": "Sign in",
+    "logout": "Sign out",
+    "magic_link_title": "Sign in with a magic link",
+    "magic_link_subtitle": "We'll send a secure link to your email. No passwords.",
+    "email_label": "Email",
+    "email_placeholder": "you@email.com",
+    "send_magic_link": "Send magic link",
+    "check_email_title": "Check your inbox",
+    "check_email_subtitle": "We sent a link to {{email}}. Click it to sign in.",
+    "resend": "Resend link",
+    "resend_in": "Resend in {{seconds}}s",
+    "back_to_login": "Back to sign in",
+    "verifying": "Verifying your session…",
+    "callback_error": "We couldn't validate the link. Please try again.",
+    "invalid_email": "Invalid email"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "calendar": "Calendar",
+    "incomes": "Income",
+    "expenses": "Expenses",
+    "contributions": "Contributions",
+    "categories": "Categories",
+    "goals": "Goals",
+    "schedules": "Schedules",
+    "budget": "Budget",
+    "members": "Members",
+    "notifications": "Notifications",
+    "settings": "Settings"
+  },
+  "onboarding": {
+    "title": "Create your first household",
+    "subtitle": "A household is where your family or group shares the budget.",
+    "household_name": "Household name",
+    "household_name_placeholder": "e.g. Main home",
+    "currency": "Currency",
+    "timezone": "Timezone",
+    "create_household": "Create household"
+  },
+  "roles": {
+    "admin": "Admin",
+    "familiar": "Family",
+    "inquilino": "Tenant",
+    "invitado": "Guest"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "hero_question": "How much does your household need to earn this month?",
+    "minimum_income": "Required minimum income",
+    "actual_income": "Actual income",
+    "deficit": "Deficit",
+    "surplus": "Surplus",
+    "total_income": "Total income",
+    "total_expense": "Total expense",
+    "balance": "Available balance",
+    "savings_pct": "Savings %",
+    "min_savings": "Min savings (10%)",
+    "compliance": "Budget compliance",
+    "upcoming_payments": "Upcoming payments",
+    "overdue_payments": "Overdue payments",
+    "contributions_received": "Contributions received",
+    "contributions_pending": "Contributions pending",
+    "unallocated": "Unallocated",
+    "projection": "Month-end projection",
+    "income_vs_expense": "Income vs Expenses",
+    "by_category": "By category",
+    "by_member": "By member",
+    "fixed_vs_variable": "Fixed vs Variable"
+  },
+  "alerts": {
+    "deficit_warning": "Your current income is below the required minimum. You're short {{amount}}.",
+    "savings_warning": "You're saving less than the recommended 10%.",
+    "overdue_warning": "You have {{count}} overdue payments."
+  },
+  "calendar": {
+    "new_event": "New event",
+    "edit_event": "Edit event",
+    "delete_event": "Delete event",
+    "status": {
+      "pending": "Pending",
+      "paid": "Paid",
+      "overdue": "Overdue",
+      "recurring": "Recurring",
+      "contribution": "Contribution",
+      "savings": "Savings",
+      "completed": "Completed"
+    },
+    "filters": {
+      "user": "Member",
+      "category": "Category",
+      "status": "Status",
+      "type": "Type",
+      "range": "Range"
+    }
+  },
+  "expenses": {
+    "title": "Expenses",
+    "new": "New expense",
+    "type": {
+      "fixed": "Fixed",
+      "variable": "Variable",
+      "debt": "Debt",
+      "one_time": "One-time"
+    },
+    "split": {
+      "equal": "Equal parts",
+      "percentage": "By percentage",
+      "income_based": "By income",
+      "custom": "Custom"
+    }
+  },
+  "incomes": {
+    "title": "Income",
+    "new": "New income"
+  },
+  "contributions": {
+    "title": "Contributions",
+    "new": "New contribution"
+  }
+}
