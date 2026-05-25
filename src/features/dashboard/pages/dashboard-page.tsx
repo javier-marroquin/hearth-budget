@@ -23,6 +23,7 @@ import { IncomeVsExpenseLine } from '@/components/charts/income-vs-expense-line'
 import { CategoryDoughnut } from '@/components/charts/category-doughnut';
 import { ContributionsBar } from '@/components/charts/contributions-bar';
 import { FixedVsVariableStacked } from '@/components/charts/fixed-vs-variable-stacked';
+import { UpcomingTimeline } from '../components/upcoming-timeline';
 import { useHouseholdStore } from '@/features/households/stores/household.store';
 import { useHouseholdKpis } from '../hooks/use-household-kpis';
 import { useHouseholdMembers } from '@/features/households/hooks/use-households';
@@ -159,6 +160,17 @@ export function DashboardPage() {
           delay={0.25}
         />
       </div>
+
+      {/* Upcoming timeline */}
+      {householdId && (
+        <div className="mt-6">
+          <UpcomingTimeline
+            householdId={householdId}
+            currency={currency}
+            windowDays={14}
+          />
+        </div>
+      )}
 
       {/* Charts row 1: line trend full width */}
       <div className="mt-6">

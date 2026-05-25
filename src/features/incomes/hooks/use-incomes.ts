@@ -40,6 +40,7 @@ export function useCreateIncome(householdId: string) {
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ['incomes', householdId] });
       await qc.invalidateQueries({ queryKey: ['kpis', householdId] });
+      await qc.invalidateQueries({ queryKey: ['upcoming', householdId] });
       toast.success('Ingreso registrado');
     },
     onError: (err: Error) => toast.error(err.message),
@@ -54,6 +55,7 @@ export function useUpdateIncome(householdId: string) {
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ['incomes', householdId] });
       await qc.invalidateQueries({ queryKey: ['kpis', householdId] });
+      await qc.invalidateQueries({ queryKey: ['upcoming', householdId] });
       toast.success('Ingreso actualizado');
     },
     onError: (err: Error) => toast.error(err.message),
@@ -67,6 +69,7 @@ export function useDeleteIncome(householdId: string) {
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ['incomes', householdId] });
       await qc.invalidateQueries({ queryKey: ['kpis', householdId] });
+      await qc.invalidateQueries({ queryKey: ['upcoming', householdId] });
       toast.success('Ingreso eliminado');
     },
     onError: (err: Error) => toast.error(err.message),

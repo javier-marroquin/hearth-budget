@@ -41,6 +41,7 @@ export function useCreateContribution(householdId: string) {
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ['contributions', householdId] });
       await qc.invalidateQueries({ queryKey: ['kpis', householdId] });
+      await qc.invalidateQueries({ queryKey: ['upcoming', householdId] });
       toast.success('Aporte registrado');
     },
     onError: (err: Error) => toast.error(err.message),
@@ -55,6 +56,7 @@ export function useUpdateContribution(householdId: string) {
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ['contributions', householdId] });
       await qc.invalidateQueries({ queryKey: ['kpis', householdId] });
+      await qc.invalidateQueries({ queryKey: ['upcoming', householdId] });
       toast.success('Aporte actualizado');
     },
     onError: (err: Error) => toast.error(err.message),
@@ -68,6 +70,7 @@ export function useMarkContributionReceived(householdId: string) {
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ['contributions', householdId] });
       await qc.invalidateQueries({ queryKey: ['kpis', householdId] });
+      await qc.invalidateQueries({ queryKey: ['upcoming', householdId] });
       toast.success('Aporte marcado como recibido');
     },
     onError: (err: Error) => toast.error(err.message),
@@ -81,6 +84,7 @@ export function useDeleteContribution(householdId: string) {
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ['contributions', householdId] });
       await qc.invalidateQueries({ queryKey: ['kpis', householdId] });
+      await qc.invalidateQueries({ queryKey: ['upcoming', householdId] });
       toast.success('Aporte eliminado');
     },
     onError: (err: Error) => toast.error(err.message),

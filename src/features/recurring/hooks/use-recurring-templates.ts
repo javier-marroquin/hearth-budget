@@ -36,6 +36,7 @@ export function useMaterializeRecurring(householdId: string | undefined) {
       await qc.invalidateQueries({ queryKey: ['incomes', householdId] });
       await qc.invalidateQueries({ queryKey: ['expenses', householdId] });
       await qc.invalidateQueries({ queryKey: ['kpis', householdId] });
+      await qc.invalidateQueries({ queryKey: ['upcoming', householdId] });
       if (result.created > 0) {
         toast.success(`${result.created} movimiento(s) generado(s)`);
       }
@@ -58,6 +59,7 @@ export function useCreateRecurringTemplate(householdId: string, currency: string
       await qc.invalidateQueries({ queryKey: ['incomes', householdId] });
       await qc.invalidateQueries({ queryKey: ['expenses', householdId] });
       await qc.invalidateQueries({ queryKey: ['kpis', householdId] });
+      await qc.invalidateQueries({ queryKey: ['upcoming', householdId] });
       toast.success(t('recurring.created'));
     },
     onError: (err: Error) => toast.error(err.message),

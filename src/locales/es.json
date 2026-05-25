@@ -103,7 +103,19 @@
     "income_vs_expense": "Ingresos vs Gastos",
     "by_category": "Por categoría",
     "by_member": "Por miembro",
-    "fixed_vs_variable": "Fijos vs Variables"
+    "fixed_vs_variable": "Fijos vs Variables",
+    "upcoming": {
+      "title": "Próximos eventos",
+      "window": "Próximos {{days}} días",
+      "overdue": "vencidos",
+      "income_total": "Ingresos esperados",
+      "expense_total": "Gastos por pagar",
+      "net": "Neto",
+      "empty_title": "Nada en el horizonte",
+      "empty_description": "No hay pagos, ingresos ni eventos en los próximos {{days}} días.",
+      "see_all": "Ver {{count}} días más",
+      "collapse": "Mostrar menos"
+    }
   },
   "alerts": {
     "deficit_warning": "Tu ingreso actual está por debajo del mínimo requerido. Te faltan {{amount}}.",

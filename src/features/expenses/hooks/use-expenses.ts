@@ -57,6 +57,7 @@ export function useCreateExpense(householdId: string) {
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ['expenses', householdId] });
       await qc.invalidateQueries({ queryKey: ['kpis', householdId] });
+      await qc.invalidateQueries({ queryKey: ['upcoming', householdId] });
       toast.success('Gasto registrado');
     },
     onError: (err: Error) => toast.error(err.message),
@@ -71,6 +72,7 @@ export function useUpdateExpense(householdId: string) {
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ['expenses', householdId] });
       await qc.invalidateQueries({ queryKey: ['kpis', householdId] });
+      await qc.invalidateQueries({ queryKey: ['upcoming', householdId] });
       toast.success('Gasto actualizado');
     },
     onError: (err: Error) => toast.error(err.message),
@@ -84,6 +86,7 @@ export function useDeleteExpense(householdId: string) {
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ['expenses', householdId] });
       await qc.invalidateQueries({ queryKey: ['kpis', householdId] });
+      await qc.invalidateQueries({ queryKey: ['upcoming', householdId] });
       toast.success('Gasto eliminado');
     },
     onError: (err: Error) => toast.error(err.message),
@@ -101,6 +104,7 @@ export function useMarkExpensePaid(householdId: string) {
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ['expenses', householdId] });
       await qc.invalidateQueries({ queryKey: ['kpis', householdId] });
+      await qc.invalidateQueries({ queryKey: ['upcoming', householdId] });
       toast.success('Marcado como pagado');
     },
     onError: (err: Error) => toast.error(err.message),

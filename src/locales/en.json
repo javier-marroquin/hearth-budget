@@ -103,7 +103,19 @@
     "income_vs_expense": "Income vs Expenses",
     "by_category": "By category",
     "by_member": "By member",
-    "fixed_vs_variable": "Fixed vs Variable"
+    "fixed_vs_variable": "Fixed vs Variable",
+    "upcoming": {
+      "title": "Upcoming",
+      "window": "Next {{days}} days",
+      "overdue": "overdue",
+      "income_total": "Expected income",
+      "expense_total": "Expected expenses",
+      "net": "Net",
+      "empty_title": "Nothing on the horizon",
+      "empty_description": "No payments, income or events in the next {{days}} days.",
+      "see_all": "See {{count}} more days",
+      "collapse": "Show less"
+    }
   },
   "alerts": {
     "deficit_warning": "Your current income is below the required minimum. You're short {{amount}}.",

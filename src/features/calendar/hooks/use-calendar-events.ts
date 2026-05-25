@@ -29,6 +29,7 @@ export function useCreateCalendarEvent(householdId: string) {
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ['calendar', householdId] });
       await qc.invalidateQueries({ queryKey: ['kpis', householdId] });
+      await qc.invalidateQueries({ queryKey: ['upcoming', householdId] });
       toast.success('Evento creado');
     },
     onError: (err: Error) => toast.error(err.message),
@@ -72,6 +73,7 @@ export function useUpdateCalendarEvent(householdId: string) {
     onSettled: async () => {
       await qc.invalidateQueries({ queryKey: ['calendar', householdId] });
       await qc.invalidateQueries({ queryKey: ['kpis', householdId] });
+      await qc.invalidateQueries({ queryKey: ['upcoming', householdId] });
     },
   });
 }
@@ -83,6 +85,7 @@ export function useDeleteCalendarEvent(householdId: string) {
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ['calendar', householdId] });
       await qc.invalidateQueries({ queryKey: ['kpis', householdId] });
+      await qc.invalidateQueries({ queryKey: ['upcoming', householdId] });
       toast.success('Evento eliminado');
     },
     onError: (err: Error) => toast.error(err.message),
