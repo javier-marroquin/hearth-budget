@@ -44,6 +44,18 @@ export interface RecurrenceRule {
 }
 
 /**
+ * Parse a YYYY-MM-DD string as a *local* midnight Date.
+ * Avoids the classic UTC-vs-local trap of `new Date('2026-01-15')`.
+ */
+function parseLocalDate(value: string): Date {
+  const parts = value.slice(0, 10).split('-');
+  const y = Number(parts[0]);
+  const m = Number(parts[1]);
+  const d = Number(parts[2]);
+  return new Date(y, (m || 1) - 1, d || 1);
+}
+
+/**
  * Returns the next `count` occurrences strictly on or after `from`.
  */
 export function nextOccurrences(
@@ -51,8 +63,8 @@ export function nextOccurrences(
   count: number,
   from: Date = new Date(),
 ): Date[] {
-  const start = startOfDay(new Date(rule.start_date));
-  const end = rule.end_date ? startOfDay(new Date(rule.end_date)) : null;
+  const start = parseLocalDate(rule.start_date);
+  const end = rule.end_date ? parseLocalDate(rule.end_date) : null;
   const fromDay = startOfDay(from);
   const out: Date[] = [];
   let cursor = start;
@@ -76,8 +88,8 @@ export function nextOccurrences(
  * Returns true if `date` is a valid occurrence of `rule`.
  */
 export function isOccurrence(rule: RecurrenceRule, date: Date): boolean {
-  const start = startOfDay(new Date(rule.start_date));
-  const end = rule.end_date ? startOfDay(new Date(rule.end_date)) : null;
+  const start = parseLocalDate(rule.start_date);
+  const end = rule.end_date ? parseLocalDate(rule.end_date) : null;
   const target = startOfDay(date);
   if (isBefore(target, start)) return false;
   if (end && isAfter(target, end)) return false;
