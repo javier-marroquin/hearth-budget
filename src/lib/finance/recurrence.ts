@@ -21,7 +21,17 @@ import {
   setDay,
   startOfDay,
 } from 'date-fns';
-import type { RecurrenceFrequency } from '@/lib/supabase/database.types';
+
+// Defined here locally (NOT imported from @/lib/supabase/database.types) so
+// this module can be imported from Netlify Functions, which use a different
+// tsconfig without the `@/` alias.
+export type RecurrenceFrequency =
+  | 'daily'
+  | 'weekly'
+  | 'biweekly'
+  | 'monthly'
+  | 'quarterly'
+  | 'yearly';
 
 export interface RecurrenceRule {
   frequency: RecurrenceFrequency;

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { UserPlus, Users } from 'lucide-react';
@@ -10,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useHouseholdStore } from '../stores/household.store';
 import { useHouseholdMembers } from '../hooks/use-households';
+import { InviteMemberDialog } from '../components/invite-member-dialog';
 import { getInitials } from '@/lib/format';
 import { usePermissions } from '@/hooks/use-permissions';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -19,6 +21,7 @@ export function MembersPage() {
   const activeHousehold = useHouseholdStore((s) => s.activeHousehold);
   const { canInviteMembers } = usePermissions();
   const { data: members, isLoading } = useHouseholdMembers(activeHousehold?.id);
+  const [inviteOpen, setInviteOpen] = useState(false);
 
   return (
     <>
@@ -27,13 +30,15 @@ export function MembersPage() {
         description={activeHousehold?.name}
         actions={
           canInviteMembers && (
-            <Button disabled>
+            <Button onClick={() => setInviteOpen(true)}>
               <UserPlus className="h-4 w-4" />
-              Invitar (F7)
+              Invitar
             </Button>
           )
         }
       />
+
+      <InviteMemberDialog open={inviteOpen} onOpenChange={setInviteOpen} />
 
       {isLoading && (
         <div className="space-y-2">
