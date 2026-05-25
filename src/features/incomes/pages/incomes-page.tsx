@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plus, Pencil, Trash2, Wallet } from 'lucide-react';
 import { PageHeader } from '@/components/layout/page-header';
 import { EmptyState } from '@/components/layout/empty-state';
 import { Button } from '@/components/ui/button';
+import { ExportCsvButton } from '@/components/io/export-csv-button';
 import {
   Table,
   TableBody,
@@ -22,6 +23,7 @@ import { IncomeFormDialog } from '../components/income-form-dialog';
 import { usePermissions } from '@/hooks/use-permissions';
 import { formatCurrency, formatDate } from '@/lib/format';
 import type { IncomeRow } from '@/lib/supabase/aliases';
+import type { CsvColumn } from '@/lib/io/csv';
 
 export function IncomesPage() {
   const { t, i18n } = useTranslation();
@@ -48,22 +50,43 @@ export function IncomesPage() {
     return categories?.find((c) => c.id === id)?.name ?? '—';
   };
 
+  const exportColumns = useMemo<CsvColumn<IncomeRow>[]>(
+    () => [
+      { key: 'date', header: 'Fecha', get: (r) => r.date },
+      { key: 'member', header: 'Perceptor', get: (r) => memberName(r.user_id) },
+      { key: 'category', header: 'Categoría', get: (r) => categoryName(r.category_id) },
+      { key: 'source', header: 'Fuente', get: (r) => r.source ?? '' },
+      { key: 'amount', header: 'Monto', get: (r) => Number(r.amount) },
+      { key: 'currency', header: 'Moneda', get: (r) => r.currency },
+      { key: 'notes', header: 'Notas', get: (r) => r.notes ?? '' },
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [members, categories],
+  );
+
   return (
     <>
       <PageHeader
         title={t('incomes.title')}
         actions={
-          canWriteIncomes && (
-            <Button
-              onClick={() => {
-                setEditing(null);
-                setOpen(true);
-              }}
-            >
-              <Plus className="h-4 w-4" />
-              {t('incomes.new')}
-            </Button>
-          )
+          <>
+            <ExportCsvButton
+              filename={`ingresos-${new Date().toISOString().slice(0, 10)}.csv`}
+              rows={incomes ?? []}
+              columns={exportColumns}
+            />
+            {canWriteIncomes && (
+              <Button
+                onClick={() => {
+                  setEditing(null);
+                  setOpen(true);
+                }}
+              >
+                <Plus className="h-4 w-4" />
+                {t('incomes.new')}
+              </Button>
+            )}
+          </>
         }
       />
 

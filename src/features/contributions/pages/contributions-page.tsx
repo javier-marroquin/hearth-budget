@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plus, Pencil, Trash2, HandCoins, CircleCheck } from 'lucide-react';
 import { PageHeader } from '@/components/layout/page-header';
 import { EmptyState } from '@/components/layout/empty-state';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { ExportCsvButton } from '@/components/io/export-csv-button';
 import {
   Table,
   TableBody,
@@ -26,6 +27,7 @@ import { ContributionFormDialog } from '../components/contribution-form-dialog';
 import { usePermissions } from '@/hooks/use-permissions';
 import { formatCurrency, formatDate } from '@/lib/format';
 import type { ContributionRow, ContributionStatus } from '@/lib/supabase/aliases';
+import type { CsvColumn } from '@/lib/io/csv';
 
 const statusVariant: Record<ContributionStatus, 'success' | 'warning' | 'destructive'> = {
   received: 'success',
@@ -61,22 +63,43 @@ export function ContributionsPage() {
     return m?.profile?.full_name ?? m?.profile?.email ?? '—';
   };
 
+  const exportColumns = useMemo<CsvColumn<ContributionRow>[]>(
+    () => [
+      { key: 'expected_date', header: 'Fecha esperada', get: (r) => r.expected_date },
+      { key: 'received_date', header: 'Fecha recibido', get: (r) => r.received_date ?? '' },
+      { key: 'member', header: 'Aportante', get: (r) => memberName(r.user_id) },
+      { key: 'status', header: 'Estado', get: (r) => r.status },
+      { key: 'amount', header: 'Monto', get: (r) => Number(r.amount) },
+      { key: 'currency', header: 'Moneda', get: (r) => r.currency },
+      { key: 'notes', header: 'Notas', get: (r) => r.notes ?? '' },
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [members],
+  );
+
   return (
     <>
       <PageHeader
         title={t('contributions.title')}
         actions={
-          canWriteIncomes && (
-            <Button
-              onClick={() => {
-                setEditing(null);
-                setOpen(true);
-              }}
-            >
-              <Plus className="h-4 w-4" />
-              {t('contributions.new')}
-            </Button>
-          )
+          <>
+            <ExportCsvButton
+              filename={`aportes-${new Date().toISOString().slice(0, 10)}.csv`}
+              rows={contributions ?? []}
+              columns={exportColumns}
+            />
+            {canWriteIncomes && (
+              <Button
+                onClick={() => {
+                  setEditing(null);
+                  setOpen(true);
+                }}
+              >
+                <Plus className="h-4 w-4" />
+                {t('contributions.new')}
+              </Button>
+            )}
+          </>
         }
       />
 

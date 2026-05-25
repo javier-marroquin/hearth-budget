@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plus, Pencil, Trash2, Receipt, CircleCheck } from 'lucide-react';
 import { PageHeader } from '@/components/layout/page-header';
 import { EmptyState } from '@/components/layout/empty-state';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { ExportCsvButton } from '@/components/io/export-csv-button';
 import {
   Table,
   TableBody,
@@ -26,6 +27,7 @@ import { ExpenseFormDialog } from '../components/expense-form-dialog';
 import { usePermissions } from '@/hooks/use-permissions';
 import { formatCurrency, formatDate } from '@/lib/format';
 import type { ExpenseRow, PaymentStatus } from '@/lib/supabase/aliases';
+import type { CsvColumn } from '@/lib/io/csv';
 
 const statusVariant: Record<PaymentStatus, 'success' | 'warning' | 'destructive'> = {
   paid: 'success',
@@ -55,22 +57,45 @@ export function ExpensesPage() {
     return categories?.find((c) => c.id === id)?.name ?? '—';
   };
 
+  const exportColumns = useMemo<CsvColumn<ExpenseRow>[]>(
+    () => [
+      { key: 'date', header: 'Fecha', get: (r) => r.date },
+      { key: 'due_date', header: 'Fecha límite', get: (r) => r.due_date ?? '' },
+      { key: 'description', header: 'Descripción', get: (r) => r.description ?? '' },
+      { key: 'category', header: 'Categoría', get: (r) => categoryName(r.category_id) },
+      { key: 'type', header: 'Tipo', get: (r) => r.type },
+      { key: 'status', header: 'Estado', get: (r) => r.status },
+      { key: 'amount', header: 'Monto', get: (r) => Number(r.amount) },
+      { key: 'currency', header: 'Moneda', get: (r) => r.currency },
+      { key: 'notes', header: 'Notas', get: (r) => r.notes ?? '' },
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [categories],
+  );
+
   return (
     <>
       <PageHeader
         title={t('expenses.title')}
         actions={
-          canWriteExpenses && (
-            <Button
-              onClick={() => {
-                setEditing(null);
-                setOpen(true);
-              }}
-            >
-              <Plus className="h-4 w-4" />
-              {t('expenses.new')}
-            </Button>
-          )
+          <>
+            <ExportCsvButton
+              filename={`gastos-${new Date().toISOString().slice(0, 10)}.csv`}
+              rows={expenses ?? []}
+              columns={exportColumns}
+            />
+            {canWriteExpenses && (
+              <Button
+                onClick={() => {
+                  setEditing(null);
+                  setOpen(true);
+                }}
+              >
+                <Plus className="h-4 w-4" />
+                {t('expenses.new')}
+              </Button>
+            )}
+          </>
         }
       />
 

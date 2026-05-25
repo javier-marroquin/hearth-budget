@@ -15,6 +15,7 @@ import { useAuth } from '@/features/auth/hooks/use-auth';
 import { useHouseholdStore } from '@/features/households/stores/household.store';
 import { supabase } from '@/lib/supabase/client';
 import { usePermissions } from '@/hooks/use-permissions';
+import { ImportExportSection } from '../components/import-export-section';
 
 export function SettingsPage() {
   const { t, i18n } = useTranslation();
@@ -158,6 +159,10 @@ export function SettingsPage() {
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      <div className="mt-4">
+        <ImportExportSection />
       </div>
     </>
   );
