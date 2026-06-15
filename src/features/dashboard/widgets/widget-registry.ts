@@ -34,9 +34,9 @@ export const WIDGETS: Record<string, WidgetDef> = {
     label: 'KPI Hero — Ingreso mínimo',
     description: 'Tarjeta destacada que responde la pregunta principal del hogar.',
     defaultW: 12,
-    defaultH: 3,
+    defaultH: 2,
     minW: 6,
-    minH: 3,
+    minH: 2,
     component: KpiHeroWidget,
   },
   'kpi-total-income': {
@@ -234,88 +234,96 @@ export const WIDGETS: Record<string, WidgetDef> = {
 };
 
 /**
- * Default dashboard layout. Curated for visual hierarchy:
- *   1. HERO across the top (the main question)
- *   2. 4 primary KPIs in one row
- *   3. Upcoming events timeline (medium height)
- *   4. Main trend chart + category breakdown side-by-side
- *   5. Secondary KPIs (overdue + contributions)
- *   6. Two analytical charts side-by-side
- *   7. Month-end projection footer
+ * Default dashboard layout (12-column grid).
  *
- * Other widgets (actual savings, compliance, unallocated, etc.) are
- * available through the widget palette but kept OUT of the default so
- * users see a tidy dashboard on first load.
+ *   1. Hero (full width)
+ *   2. Five primary KPIs in one row (equal width)
+ *   3. Charts left + upcoming sidebar right
+ *   4. Four secondary KPIs in one row
+ *   5. Analytical charts + projection
  */
 export const DEFAULT_LAYOUT: LayoutItem[] = [
-  // ── ROW 1 — HERO ────────────────────────────────────────── (12 × 3)
-  { instanceId: 'hero', widgetId: 'kpi-hero', x: 0, y: 0, w: 12, h: 3 },
+  { instanceId: 'hero', widgetId: 'kpi-hero', x: 0, y: 0, w: 12, h: 2 },
 
-  // ── ROW 2 — Primary KPIs ────────────────────────────────── (3 × 2 each)
-  { instanceId: 'inc', widgetId: 'kpi-total-income', x: 0, y: 3, w: 3, h: 2 },
-  { instanceId: 'exp', widgetId: 'kpi-total-expense', x: 3, y: 3, w: 3, h: 2 },
-  { instanceId: 'bal', widgetId: 'kpi-balance', x: 6, y: 3, w: 3, h: 2 },
-  { instanceId: 'savings', widgetId: 'kpi-savings-rate', x: 9, y: 3, w: 3, h: 2 },
+  { instanceId: 'inc', widgetId: 'kpi-total-income', x: 0, y: 2, w: 2, h: 2 },
+  { instanceId: 'exp', widgetId: 'kpi-total-expense', x: 2, y: 2, w: 2, h: 2 },
+  { instanceId: 'bal', widgetId: 'kpi-balance', x: 4, y: 2, w: 2, h: 2 },
+  { instanceId: 'savings', widgetId: 'kpi-savings-rate', x: 6, y: 2, w: 2, h: 2 },
+  { instanceId: 'ovd', widgetId: 'kpi-overdue', x: 8, y: 2, w: 2, h: 2 },
 
-  // ── ROW 3 — Upcoming timeline ───────────────────────────── (12 × 5)
-  { instanceId: 'upcoming', widgetId: 'upcoming-timeline', x: 0, y: 5, w: 12, h: 5 },
-
-  // ── ROW 4 — Main trend + category breakdown ─────────────── (8+4 × 4)
   {
     instanceId: 'ive',
     widgetId: 'chart-income-vs-expense',
     x: 0,
-    y: 10,
+    y: 4,
     w: 8,
     h: 4,
   },
   {
+    instanceId: 'upcoming',
+    widgetId: 'upcoming-timeline',
+    x: 8,
+    y: 4,
+    w: 4,
+    h: 8,
+  },
+  {
     instanceId: 'cdoh',
     widgetId: 'chart-category-doughnut',
-    x: 8,
-    y: 10,
+    x: 0,
+    y: 8,
+    w: 4,
+    h: 4,
+  },
+  {
+    instanceId: 'fvv',
+    widgetId: 'chart-fixed-vs-variable',
+    x: 4,
+    y: 8,
     w: 4,
     h: 4,
   },
 
-  // ── ROW 5 — Secondary KPIs ──────────────────────────────── (3 × 2 each)
-  { instanceId: 'ovd', widgetId: 'kpi-overdue', x: 0, y: 14, w: 3, h: 2 },
   {
     instanceId: 'cr',
     widgetId: 'kpi-contributions-received',
-    x: 3,
-    y: 14,
+    x: 0,
+    y: 12,
     w: 3,
     h: 2,
   },
   {
     instanceId: 'cp',
     widgetId: 'kpi-contributions-pending',
-    x: 6,
-    y: 14,
+    x: 3,
+    y: 12,
     w: 3,
     h: 2,
   },
-  { instanceId: 'minsav', widgetId: 'kpi-min-savings', x: 9, y: 14, w: 3, h: 2 },
-
-  // ── ROW 6 — Analytical charts ───────────────────────────── (6 × 4 each)
+  { instanceId: 'minsav', widgetId: 'kpi-min-savings', x: 6, y: 12, w: 3, h: 2 },
   {
-    instanceId: 'fvv',
-    widgetId: 'chart-fixed-vs-variable',
-    x: 0,
-    y: 16,
-    w: 6,
-    h: 4,
+    instanceId: 'actsav',
+    widgetId: 'kpi-actual-savings',
+    x: 9,
+    y: 12,
+    w: 3,
+    h: 2,
   },
+
   {
     instanceId: 'cbym',
     widgetId: 'chart-contributions-by-member',
-    x: 6,
-    y: 16,
+    x: 0,
+    y: 14,
     w: 6,
     h: 4,
   },
-
-  // ── ROW 7 — Projection footer ───────────────────────────── (12 × 2)
-  { instanceId: 'proj', widgetId: 'kpi-projection', x: 0, y: 20, w: 12, h: 2 },
+  {
+    instanceId: 'proj',
+    widgetId: 'kpi-projection',
+    x: 6,
+    y: 14,
+    w: 6,
+    h: 2,
+  },
 ];

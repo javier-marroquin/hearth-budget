@@ -24,7 +24,7 @@ export function HouseholdSelector() {
   // Only one household → static badge.
   if ((data?.length ?? 0) <= 1) {
     return (
-      <div className="flex min-w-0 items-center gap-2 rounded-md border bg-card px-2.5 py-1.5 text-sm">
+      <div className="flex min-w-0 items-center gap-2 rounded-lg border border-border bg-secondary px-2.5 py-1.5 text-[13px]">
         <Home className="h-4 w-4 shrink-0 text-muted-foreground" />
         <span className="max-w-[140px] truncate font-medium sm:max-w-[260px]">
           {activeHousehold.name}

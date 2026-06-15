@@ -5,7 +5,7 @@
  * across them according to a method.
  */
 
-import type { SplitMethod } from '@/lib/supabase/aliases';
+import type { SplitMethod } from '../db/aliases.js';
 
 export interface SplitParticipant {
   userId: string;

@@ -5,11 +5,19 @@ import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../stores/auth.store';
 import { useHouseholdStore } from '@/features/households/stores/household.store';
 import {
-  sendMagicLink,
-  signOut as supabaseSignOut,
+  signInWithPassword,
+  signUpWithPassword,
+  signOut as authSignOut,
   updateMyProfile,
 } from '../services/auth.service';
 import { getAuthErrorMessage } from '../utils/auth-errors';
+
+function postAuthPath(inviteToken?: string): string {
+  if (inviteToken) {
+    return `/invite?token=${encodeURIComponent(inviteToken)}`;
+  }
+  return '/onboarding';
+}
 
 export function useAuth() {
   const navigate = useNavigate();
@@ -18,10 +26,46 @@ export function useAuth() {
   const resetAuth = useAuthStore((s) => s.reset);
   const resetHousehold = useHouseholdStore((s) => s.reset);
 
-  const magicLink = useMutation({
-    mutationFn: sendMagicLink,
-    onSuccess: (_data, variables) => {
-      navigate(`/auth/check-email?email=${encodeURIComponent(variables.email)}`);
+  const signIn = useMutation({
+    mutationFn: ({
+      email,
+      password,
+    }: {
+      email: string;
+      password: string;
+      inviteToken?: string;
+    }) => signInWithPassword({ email, password }),
+    onSuccess: (data, variables) => {
+      useAuthStore.getState().setUser(data.user);
+      navigate(postAuthPath(variables.inviteToken), { replace: true });
+    },
+    onError: (error: Error) => {
+      toast.error(getAuthErrorMessage(error, t));
+    },
+  });
+
+  const signUp = useMutation({
+    mutationFn: ({
+      email,
+      password,
+      fullName,
+      inviteToken,
+    }: {
+      email: string;
+      password: string;
+      fullName?: string;
+      inviteToken?: string;
+    }) => signUpWithPassword({ email, password, fullName, inviteToken }),
+    onSuccess: (data, variables) => {
+      if (data.session) {
+        useAuthStore.getState().setUser(data.user);
+        navigate(postAuthPath(variables.inviteToken), { replace: true });
+        return;
+      }
+      navigate(
+        `/auth/check-email?email=${encodeURIComponent(variables.email)}`,
+        { replace: true },
+      );
     },
     onError: (error: Error) => {
       toast.error(getAuthErrorMessage(error, t));
@@ -48,7 +92,7 @@ export function useAuth() {
 
   const signOut = async () => {
     try {
-      await supabaseSignOut();
+      await authSignOut();
     } catch (err) {
       console.warn('[auth] signOut error', err);
     } finally {
@@ -59,8 +103,10 @@ export function useAuth() {
   };
 
   return {
-    sendMagicLink: magicLink.mutate,
-    isSendingMagicLink: magicLink.isPending,
+    signIn: signIn.mutate,
+    isSigningIn: signIn.isPending,
+    signUp: signUp.mutate,
+    isSigningUp: signUp.isPending,
     updateProfile: updateProfile.mutate,
     isUpdatingProfile: updateProfile.isPending,
     signOut,

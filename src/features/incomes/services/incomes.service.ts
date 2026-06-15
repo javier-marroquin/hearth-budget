@@ -1,5 +1,5 @@
-import { supabase } from '@/lib/supabase/client';
-import type { IncomeRow } from '@/lib/supabase/aliases';
+import { apiFetch } from '@/lib/api/client';
+import type { IncomeRow } from '@/lib/db/aliases';
 import type { IncomeInput } from '@/schemas/income.schema';
 
 export interface IncomeFilters {
@@ -10,20 +10,24 @@ export interface IncomeFilters {
   categoryId?: string;
 }
 
-export async function listIncomes(filters: IncomeFilters): Promise<IncomeRow[]> {
-  let q = supabase
-    .from('incomes')
-    .select('*')
-    .eq('household_id', filters.householdId)
-    .order('date', { ascending: false });
-  if (filters.from) q = q.gte('date', filters.from);
-  if (filters.to) q = q.lte('date', filters.to);
-  if (filters.userId) q = q.eq('user_id', filters.userId);
-  if (filters.categoryId) q = q.eq('category_id', filters.categoryId);
+function queryString(params: Record<string, string | undefined>): string {
+  const qs = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined) qs.set(key, value);
+  }
+  const s = qs.toString();
+  return s ? `?${s}` : '';
+}
 
-  const { data, error } = await q;
-  if (error) throw error;
-  return data ?? [];
+export async function listIncomes(filters: IncomeFilters): Promise<IncomeRow[]> {
+  return apiFetch(
+    `/api/households/${filters.householdId}/incomes${queryString({
+      from: filters.from,
+      to: filters.to,
+      userId: filters.userId,
+      categoryId: filters.categoryId,
+    })}`,
+  );
 }
 
 export interface CreateIncomeInput extends IncomeInput {
@@ -32,40 +36,23 @@ export interface CreateIncomeInput extends IncomeInput {
 }
 
 export async function createIncome(input: CreateIncomeInput): Promise<IncomeRow> {
-  const { data, error } = await supabase
-    .from('incomes')
-    .insert({
-      household_id: input.household_id,
-      user_id: input.user_id,
-      amount: input.amount,
-      currency: input.currency,
-      date: input.date,
-      category_id: input.category_id ?? null,
-      source: input.source ?? null,
-      notes: input.notes ?? null,
-      created_by: input.created_by,
-    })
-    .select()
-    .single();
-  if (error || !data) throw error ?? new Error('Failed to create income');
-  return data;
+  const { household_id, created_by: _createdBy, ...body } = input;
+  return apiFetch(`/api/households/${household_id}/incomes`, {
+    method: 'POST',
+    body: JSON.stringify(body),
+  });
 }
 
 export async function updateIncome(
   id: string,
   patch: Partial<IncomeInput>,
 ): Promise<IncomeRow> {
-  const { data, error } = await supabase
-    .from('incomes')
-    .update(patch)
-    .eq('id', id)
-    .select()
-    .single();
-  if (error || !data) throw error ?? new Error('Failed to update income');
-  return data;
+  return apiFetch(`/api/incomes/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(patch),
+  });
 }
 
 export async function deleteIncome(id: string): Promise<void> {
-  const { error } = await supabase.from('incomes').delete().eq('id', id);
-  if (error) throw error;
+  await apiFetch(`/api/incomes/${id}`, { method: 'DELETE' });
 }

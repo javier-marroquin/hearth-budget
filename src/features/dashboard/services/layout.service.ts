@@ -16,8 +16,10 @@ const STORAGE_KEY = 'household-budget:dashboard-layout';
  * Bump this when DEFAULT_LAYOUT changes so existing users pick it up.
  * - v1: initial dense layout (all 14 widgets)
  * - v2: curated layout (May 2026) with cleaner ordering
+ * - v3: 5 KPIs in one row, sidebar upcoming, no auto-compact when viewing
+ * - v4: fix react-grid-layout v2 (WidthProvider) + layout sin solapamientos
  */
-const LAYOUT_VERSION = 2;
+const LAYOUT_VERSION = 4;
 
 interface StoredPayload {
   version: number;

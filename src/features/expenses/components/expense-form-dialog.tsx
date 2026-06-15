@@ -37,7 +37,7 @@ import type {
   ExpenseRow,
   ExpenseType,
   SplitMethod,
-} from '@/lib/supabase/aliases';
+} from '@/lib/db/aliases';
 import { toISODate } from '@/lib/date';
 import { useCreateExpense, useUpdateExpense } from '../hooks/use-expenses';
 import { splitExpense, type SplitParticipant } from '@/lib/finance/splits';

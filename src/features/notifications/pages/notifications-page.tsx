@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
 import { Bell, CheckCheck } from 'lucide-react';
 import { PageHeader } from '@/components/layout/page-header';
 import { EmptyState } from '@/components/layout/empty-state';
@@ -57,19 +56,12 @@ export function NotificationsPage() {
       )}
 
       <div className="space-y-2">
-        {notifications?.map((n, idx) => (
-          <motion.div
+        {notifications?.map((n) => (
+          <Card
             key={n.id}
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: idx * 0.02 }}
+            className={n.read ? '' : 'border-primary/30 bg-primary/5'}
           >
-            <Card
-              className={
-                n.read ? '' : 'border-emerald-300/50 bg-emerald-50/30 dark:bg-emerald-950/10'
-              }
-            >
-              <CardContent className="flex items-start justify-between gap-3 p-4">
+            <CardContent className="flex items-start justify-between gap-3 p-4">
                 <div className="flex flex-1 items-start gap-3">
                   <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-muted">
                     <Bell className="h-4 w-4" />
@@ -94,9 +86,8 @@ export function NotificationsPage() {
                     Marcar leída
                   </Button>
                 )}
-              </CardContent>
-            </Card>
-          </motion.div>
+            </CardContent>
+          </Card>
         ))}
       </div>
     </>

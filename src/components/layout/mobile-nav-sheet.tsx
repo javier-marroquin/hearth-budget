@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   Sheet,
@@ -7,62 +7,107 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { useUiStore } from '@/stores/ui.store';
-import { cn } from '@/lib/utils';
-import { NAV_ITEMS } from './sidebar-nav-items';
+import { NAV_ITEMS, SETTINGS_NAV_ITEM } from './sidebar-nav-items';
+import { SidebarNavLink } from './sidebar-nav-link';
+import { GlobalSearch } from './global-search';
 
-/**
- * Slide-in drawer with the same nav items as the desktop sidebar.
- * Visible on mobile only. Auto-closes on route change.
- */
 export function MobileNavSheet() {
   const { t } = useTranslation();
   const open = useUiStore((s) => s.mobileMenuOpen);
   const setOpen = useUiStore((s) => s.setMobileMenuOpen);
   const location = useLocation();
+  const favoritePaths = useUiStore((s) => s.favoritePaths);
+  const recentPaths = useUiStore((s) => s.recentPaths);
 
   useEffect(() => {
     setOpen(false);
   }, [location.pathname, setOpen]);
 
+  useEffect(() => {
+    if (open) document.body.style.overflow = 'hidden';
+    else document.body.style.overflow = '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [open]);
+
+  const favoriteItems = NAV_ITEMS.filter((n) => favoritePaths.includes(n.to));
+  const recentItems = recentPaths
+    .map((path) => NAV_ITEMS.find((n) => n.to === path))
+    .filter(Boolean) as typeof NAV_ITEMS;
+  const mainItems = NAV_ITEMS.filter((n) => !favoritePaths.includes(n.to));
+
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetContent side="left" className="w-72 p-0">
-        <SheetHeader className="border-b p-4 text-left">
-          <SheetTitle className="flex items-center gap-2">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-emerald-500 to-sky-500 text-sm font-bold text-white">
+      <SheetContent side="left" className="w-[280px] border-r border-sidebar-border bg-sidebar p-0">
+        <SheetHeader className="border-b border-sidebar-border px-4 py-4 text-left">
+          <SheetTitle className="flex items-center gap-2 text-[13px] font-semibold">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-foreground text-[11px] font-bold text-background">
               PH
             </div>
-            <span>{t('app.name')}</span>
+            {t('app.name')}
           </SheetTitle>
         </SheetHeader>
 
-        <nav className="p-2">
-          <ul className="space-y-1">
-            {NAV_ITEMS.map((item) => {
-              const Icon = item.icon;
-              return (
-                <li key={item.to}>
-                  <NavLink
-                    to={item.to}
-                    onClick={() => setOpen(false)}
-                    className={({ isActive }) =>
-                      cn(
-                        'flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors',
-                        isActive
-                          ? 'bg-primary text-primary-foreground'
-                          : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
-                      )
-                    }
-                  >
-                    <Icon className="h-4 w-4 shrink-0" />
-                    <span className="truncate">{t(item.labelKey)}</span>
-                  </NavLink>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
+        <GlobalSearch />
+
+        <ScrollArea className="h-[calc(100vh-8rem)] px-2">
+          <nav className="pb-4">
+            {favoriteItems.length > 0 && (
+              <section>
+                <p className="nav-section-label">{t('nav.favorites')}</p>
+                <ul className="space-y-0.5">
+                  {favoriteItems.map((item) => (
+                    <li key={`m-fav-${item.to}`}>
+                      <SidebarNavLink
+                        item={item}
+                        showFavoriteToggle
+                        onNavigate={() => setOpen(false)}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
+            <section>
+              <p className="nav-section-label">{t('nav.main')}</p>
+              <ul className="space-y-0.5">
+                {mainItems.map((item) => (
+                  <li key={item.to}>
+                    <SidebarNavLink
+                      item={item}
+                      showFavoriteToggle
+                      onNavigate={() => setOpen(false)}
+                    />
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            {recentItems.length > 0 && (
+              <section>
+                <p className="nav-section-label">{t('nav.recent')}</p>
+                <ul className="space-y-0.5">
+                  {recentItems.map((item) => (
+                    <li key={`m-recent-${item.to}`}>
+                      <SidebarNavLink item={item} onNavigate={() => setOpen(false)} />
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+          </nav>
+        </ScrollArea>
+
+        <div className="absolute bottom-0 left-0 right-0 border-t border-sidebar-border p-2">
+          <SidebarNavLink
+            item={SETTINGS_NAV_ITEM}
+            onNavigate={() => setOpen(false)}
+          />
+        </div>
       </SheetContent>
     </Sheet>
   );

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
 import { UserPlus, Users } from 'lucide-react';
 import { format } from 'date-fns';
 import { PageHeader } from '@/components/layout/page-header';
@@ -55,7 +54,7 @@ export function MembersPage() {
 
       {!isLoading && members && members.length > 0 && (
         <div className="space-y-2">
-          {members.map((m, idx) => {
+          {members.map((m) => {
             const displayName = memberDisplayName(m);
             const subtitle =
               m.profile?.full_name?.trim() && m.profile?.email
@@ -66,14 +65,8 @@ export function MembersPage() {
                     ? `Invitado ${format(new Date(m.invited_at), 'PP')}`
                     : '';
             return (
-              <motion.div
-                key={m.id}
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.03 }}
-              >
-                <Card>
-                  <CardContent className="flex items-center justify-between p-4">
+              <Card key={m.id}>
+                <CardContent className="flex items-center justify-between p-4">
                     <div className="flex items-center gap-3">
                       <Avatar>
                         <AvatarFallback>{getInitials(displayName)}</AvatarFallback>
@@ -91,9 +84,8 @@ export function MembersPage() {
                         <Badge variant="warning">Pendiente</Badge>
                       )}
                     </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
+                </CardContent>
+              </Card>
             );
           })}
         </div>

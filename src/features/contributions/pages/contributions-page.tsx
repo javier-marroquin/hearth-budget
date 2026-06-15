@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Plus, Pencil, Trash2, HandCoins, CircleCheck, X } from 'lucide-react';
 import { PageHeader } from '@/components/layout/page-header';
 import { EmptyState } from '@/components/layout/empty-state';
+import { DataTableShell } from '@/components/layout/data-table-shell';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ExportCsvButton } from '@/components/io/export-csv-button';
@@ -27,7 +28,7 @@ import { useHouseholdMembers } from '@/features/households/hooks/use-households'
 import { ContributionFormDialog } from '../components/contribution-form-dialog';
 import { usePermissions } from '@/hooks/use-permissions';
 import { formatCurrency, formatDate } from '@/lib/format';
-import type { ContributionRow, ContributionStatus } from '@/lib/supabase/aliases';
+import type { ContributionRow, ContributionStatus } from '@/lib/db/aliases';
 import type { CsvColumn } from '@/lib/io/csv';
 
 const statusVariant: Record<ContributionStatus, 'success' | 'warning' | 'destructive'> = {
@@ -121,7 +122,7 @@ export function ContributionsPage() {
       />
 
       {hasUrlFilters && (
-        <div className="mb-3 flex flex-wrap items-center gap-2 rounded-md border bg-muted/30 p-2 text-xs">
+        <div className="mb-3 flex flex-wrap items-center gap-2 rounded-lg border border-border bg-secondary p-3 text-[13px]">
           <span className="font-medium text-muted-foreground">Filtros activos:</span>
           {urlFilters.status && (
             <Badge variant="outline">Estado: {statusLabel[urlFilters.status]}</Badge>
@@ -163,7 +164,7 @@ export function ContributionsPage() {
       )}
 
       {!isLoading && contributions && contributions.length > 0 && (
-        <div className="rounded-md border bg-card">
+        <DataTableShell>
           <Table>
             <TableHeader>
               <TableRow>
@@ -230,7 +231,7 @@ export function ContributionsPage() {
               ))}
             </TableBody>
           </Table>
-        </div>
+        </DataTableShell>
       )}
 
       <ContributionFormDialog

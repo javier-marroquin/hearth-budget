@@ -33,7 +33,7 @@ import { MoneyInput } from '@/components/forms/money-input';
 import { categorySchema, type CategoryInput } from '@/schemas/category.schema';
 import { useHouseholdStore } from '@/features/households/stores/household.store';
 import { useCreateCategory, useUpdateCategory } from '../hooks/use-categories';
-import type { CategoryRow, CategoryType } from '@/lib/supabase/aliases';
+import type { CategoryRow, CategoryType } from '@/lib/db/aliases';
 
 interface CategoryFormDialogProps {
   open: boolean;
@@ -146,9 +146,7 @@ export function CategoryFormDialog({
                       <SelectContent>
                         {TYPES.map((tp) => (
                           <SelectItem key={tp} value={tp}>
-                            {tp === 'expense' && t('expenses.title')}
-                            {tp === 'income' && t('incomes.title')}
-                            {tp === 'savings' && 'Ahorro'}
+                            {t(`categories.type.${tp}`)}
                           </SelectItem>
                         ))}
                       </SelectContent>

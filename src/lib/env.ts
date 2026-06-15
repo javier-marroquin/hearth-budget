@@ -1,12 +1,9 @@
 /**
  * Centralised, typed access to public env variables (VITE_*).
- * Server-only variables (SUPABASE_SERVICE_ROLE_KEY, RESEND_API_KEY, etc.)
- * are NOT read here — they are accessed only inside Netlify Functions.
  */
 
 interface PublicEnv {
-  SUPABASE_URL: string;
-  SUPABASE_ANON_KEY: string;
+  API_URL: string;
   APP_NAME: string;
   APP_URL: string;
   DEFAULT_LOCALE: 'es' | 'en';
@@ -24,8 +21,7 @@ function read(key: string, fallback?: string): string {
 }
 
 export const env: PublicEnv = {
-  SUPABASE_URL: read('VITE_SUPABASE_URL'),
-  SUPABASE_ANON_KEY: read('VITE_SUPABASE_ANON_KEY'),
+  API_URL: read('VITE_API_URL', 'http://localhost:3000'),
   APP_NAME: read('VITE_APP_NAME', 'PresupuestoHogar'),
   APP_URL: read('VITE_APP_URL', 'http://localhost:5173'),
   DEFAULT_LOCALE: (read('VITE_DEFAULT_LOCALE', 'es') as 'es' | 'en') ?? 'es',
@@ -34,6 +30,5 @@ export const env: PublicEnv = {
   IS_PROD: import.meta.env.PROD,
 };
 
-/** True when both required Supabase variables are present. */
-export const isSupabaseConfigured = (): boolean =>
-  Boolean(env.SUPABASE_URL && env.SUPABASE_ANON_KEY);
+/** Self-hosted Postgres + API in this repo. */
+export const isSelfHosted = (): boolean => true;

@@ -1,8 +1,5 @@
-import { supabase } from '@/lib/supabase/client';
-import type {
-  ContributionRow,
-  ContributionStatus,
-} from '@/lib/supabase/aliases';
+import { apiFetch } from '@/lib/api/client';
+import type { ContributionRow, ContributionStatus } from '@/lib/db/aliases';
 import type { ContributionInput } from '@/schemas/contribution.schema';
 
 export interface ContributionFilters {
@@ -13,21 +10,26 @@ export interface ContributionFilters {
   userId?: string;
 }
 
+function queryString(params: Record<string, string | undefined>): string {
+  const qs = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined) qs.set(key, value);
+  }
+  const s = qs.toString();
+  return s ? `?${s}` : '';
+}
+
 export async function listContributions(
   filters: ContributionFilters,
 ): Promise<ContributionRow[]> {
-  let q = supabase
-    .from('contributions')
-    .select('*')
-    .eq('household_id', filters.householdId)
-    .order('expected_date', { ascending: false });
-  if (filters.from) q = q.gte('expected_date', filters.from);
-  if (filters.to) q = q.lte('expected_date', filters.to);
-  if (filters.status) q = q.eq('status', filters.status);
-  if (filters.userId) q = q.eq('user_id', filters.userId);
-  const { data, error } = await q;
-  if (error) throw error;
-  return data ?? [];
+  return apiFetch(
+    `/api/households/${filters.householdId}/contributions${queryString({
+      from: filters.from,
+      to: filters.to,
+      status: filters.status,
+      userId: filters.userId,
+    })}`,
+  );
 }
 
 export interface CreateContributionInput extends ContributionInput {
@@ -38,54 +40,29 @@ export interface CreateContributionInput extends ContributionInput {
 export async function createContribution(
   input: CreateContributionInput,
 ): Promise<ContributionRow> {
-  const { data, error } = await supabase
-    .from('contributions')
-    .insert({
-      household_id: input.household_id,
-      user_id: input.user_id,
-      amount: input.amount,
-      currency: input.currency,
-      expected_date: input.expected_date,
-      received_date: input.received_date ?? null,
-      status: input.status ?? (input.received_date ? 'received' : 'pending'),
-      notes: input.notes ?? null,
-      created_by: input.created_by,
-    })
-    .select()
-    .single();
-  if (error || !data) throw error ?? new Error('Failed to create contribution');
-  return data;
+  const { household_id, created_by: _createdBy, ...body } = input;
+  return apiFetch(`/api/households/${household_id}/contributions`, {
+    method: 'POST',
+    body: JSON.stringify(body),
+  });
 }
 
 export async function updateContribution(
   id: string,
   patch: Partial<ContributionInput>,
 ): Promise<ContributionRow> {
-  const { data, error } = await supabase
-    .from('contributions')
-    .update(patch)
-    .eq('id', id)
-    .select()
-    .single();
-  if (error || !data) throw error ?? new Error('Failed to update contribution');
-  return data;
+  return apiFetch(`/api/contributions/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(patch),
+  });
 }
 
 export async function markContributionReceived(
   id: string,
 ): Promise<ContributionRow> {
-  const today = new Date().toISOString().slice(0, 10);
-  const { data, error } = await supabase
-    .from('contributions')
-    .update({ status: 'received', received_date: today })
-    .eq('id', id)
-    .select()
-    .single();
-  if (error || !data) throw error ?? new Error('Failed to mark received');
-  return data;
+  return apiFetch(`/api/contributions/${id}/mark-received`, { method: 'POST' });
 }
 
 export async function deleteContribution(id: string): Promise<void> {
-  const { error } = await supabase.from('contributions').delete().eq('id', id);
-  if (error) throw error;
+  await apiFetch(`/api/contributions/${id}`, { method: 'DELETE' });
 }

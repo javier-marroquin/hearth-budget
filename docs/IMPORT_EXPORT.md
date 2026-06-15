@@ -1,43 +1,26 @@
-# Importar / Exportar
+# Import / export
 
-PresupuestoHogar permite mover datos hacia y desde el hogar de tres formas:
+Household Budget supports three ways to move data:
 
-| Formato | Para qué | Dónde |
-|---|---|---|
-| **CSV** (por entidad) | Exportar listado individual de ingresos / gastos / aportes a Excel o Google Sheets | Botón **Exportar CSV** en cada página (`/incomes`, `/expenses`, `/contributions`) |
-| **JSON** (backup completo) | Backup total del hogar — incluye todas las entidades en un solo archivo | Settings → **Importar / Exportar** → "Descargar backup" |
-| **CSV** (importación masiva) | Cargar muchos ingresos o gastos desde un archivo (p. ej. extracto bancario) | Settings → **Importar / Exportar** → "Importar ingresos / gastos" |
+| Format | Use case | Where |
+|--------|----------|--------|
+| **CSV** (per entity) | Export incomes / expenses / contributions to Excel or Sheets | **Export CSV** on each list page |
+| **JSON** (full backup) | Complete household snapshot | Settings → Import / export → Download backup |
+| **CSV** (bulk import) | Load many rows from a spreadsheet | Settings → Import / export → Import incomes / expenses |
 
-## Exportar CSV (por entidad)
+## CSV export (per entity)
 
-En cada página de lista (Ingresos, Gastos, Aportes) hay un botón **Exportar CSV** que descarga un `.csv` con todas las filas visibles. El archivo:
+Each list page exports a UTF-8 CSV (with BOM for Excel). Columns include human-readable category, member, and status names.
 
-- Tiene BOM UTF-8 para que Excel lo abra bien en español.
-- Usa separador coma y comillas dobles donde sea necesario.
-- Resuelve nombres legibles para perceptor, categoría, estado, etc.
+## Full backup (JSON)
 
-Útil para análisis ad-hoc en Excel/Sheets, declaraciones, o como respaldo previo a operaciones masivas.
+Downloads `household-budget-NAME-YYYY-MM-DD.json` containing household, members, categories, incomes, expenses, splits, contributions, goals, calendar events, and recurring data. Schema version: `schema_version: 1`.
 
-## Backup completo (JSON)
+Store monthly backups offline. Restore UI may arrive in a future release.
 
-En **Settings → Importar / Exportar → Descargar backup** se baja un único archivo `presupuesto-hogar-NOMBRE-YYYY-MM-DD.json` con:
+## CSV import (bulk)
 
-- `household` — fila del hogar
-- `members` — todas las membresías (activas + invitadas)
-- `categories` — categorías + presupuestos mensuales
-- `incomes`, `expenses`, `expense_splits`, `contributions`
-- `savings_goals`, `calendar_events`, `recurring_rules`
-- `recurring_templates` (si aplica)
-
-Es un snapshot completo del estado actual. Guárdalo periódicamente (mensual recomendado) como respaldo offline. El esquema tiene `schema_version: 1` para soportar restauraciones futuras.
-
-> Nota: el JSON contiene los IDs originales. La restauración (próxima versión) sabrá si re-insertar o ignorar duplicados.
-
-## Importar CSV (masivo)
-
-### Plantillas
-
-Antes de importar, descarga la plantilla CSV correspondiente (botón **Plantilla CSV**). Tienen los encabezados exactos que la app reconoce automáticamente.
+Download the **CSV template** first — headers must match exactly. See Settings → Import / export for column reference and validation errors.
 
 ### Plantilla de ingresos
 

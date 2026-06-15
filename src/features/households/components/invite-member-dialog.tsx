@@ -28,8 +28,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { apiFetch } from '@/lib/api/client';
 import { useHouseholdStore } from '../stores/household.store';
-import { supabase } from '@/lib/supabase/client';
 import { useTranslation } from 'react-i18next';
 
 const inviteSchema = z.object({
@@ -56,27 +56,14 @@ export function InviteMemberDialog({ open, onOpenChange }: InviteMemberDialogPro
   const invite = useMutation({
     mutationFn: async (input: InviteInput) => {
       if (!activeHousehold) throw new Error('No household');
-      const { data: session } = await supabase.auth.getSession();
-      const access = session.session?.access_token;
-      if (!access) throw new Error('Not authenticated');
-
-      const res = await fetch('/api/invite-member', {
+      return apiFetch('/api/invite-member', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${access}`,
-        },
         body: JSON.stringify({
           household_id: activeHousehold.id,
           email: input.email,
           role: input.role,
         }),
       });
-      if (!res.ok) {
-        const body = (await res.json().catch(() => ({}))) as { error?: string };
-        throw new Error(body.error ?? `HTTP ${res.status}`);
-      }
-      return res.json();
     },
     onSuccess: async () => {
       if (activeHousehold) {

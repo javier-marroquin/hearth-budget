@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Mail } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import {
@@ -12,7 +11,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { sendMagicLink } from '../services/auth.service';
+import { resendSignupConfirmation } from '../services/auth.service';
 import { getAuthErrorMessage } from '../utils/auth-errors';
 
 const RESEND_COOLDOWN = 60;
@@ -25,12 +24,10 @@ export function CheckEmailPage() {
   const [cooldown, setCooldown] = useState(RESEND_COOLDOWN);
   const [resending, setResending] = useState(false);
 
-  // Without an email there's nothing to do here.
   useEffect(() => {
     if (!email) navigate('/login', { replace: true });
   }, [email, navigate]);
 
-  // Countdown until resend is allowed.
   useEffect(() => {
     if (cooldown <= 0) return;
     const id = setInterval(() => setCooldown((c) => Math.max(0, c - 1)), 1000);
@@ -41,8 +38,8 @@ export function CheckEmailPage() {
     if (cooldown > 0 || resending) return;
     setResending(true);
     try {
-      await sendMagicLink({ email });
-      toast.success(t('auth.resend'));
+      await resendSignupConfirmation(email);
+      toast.success(t('auth.confirmation_resent'));
       setCooldown(RESEND_COOLDOWN);
     } catch (err) {
       toast.error(getAuthErrorMessage(err, t));
@@ -52,19 +49,14 @@ export function CheckEmailPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.97 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.25 }}
-        className="w-full max-w-md"
-      >
-        <Card>
+    <div className="flex min-h-screen items-center justify-center bg-secondary p-4">
+      <div className="w-full max-w-md animate-fade-in">
+        <Card className="border-border shadow-none">
           <CardHeader className="space-y-3 text-center">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">
-              <Mail className="h-6 w-6" />
+            <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-muted-foreground">
+              <Mail className="h-5 w-5" />
             </div>
-            <CardTitle>{t('auth.check_email_title')}</CardTitle>
+            <CardTitle className="text-subtitle">{t('auth.check_email_title')}</CardTitle>
             <CardDescription>
               {t('auth.check_email_subtitle', { email })}
             </CardDescription>
@@ -78,14 +70,14 @@ export function CheckEmailPage() {
             >
               {cooldown > 0
                 ? t('auth.resend_in', { seconds: cooldown })
-                : t('auth.resend')}
+                : t('auth.resend_confirmation')}
             </Button>
             <Button variant="outline" asChild className="w-full">
               <Link to="/login">{t('auth.back_to_login')}</Link>
             </Button>
           </CardContent>
         </Card>
-      </motion.div>
+      </div>
     </div>
   );
 }

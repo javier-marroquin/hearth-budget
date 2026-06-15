@@ -3,7 +3,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
 import { Plus, Target, Trash2, TrendingUp } from 'lucide-react';
 import { PageHeader } from '@/components/layout/page-header';
 import { EmptyState } from '@/components/layout/empty-state';
@@ -43,7 +42,7 @@ import {
 import { monthlyGoalTarget } from '@/lib/finance/recurrence';
 import { formatCurrency, formatDate } from '@/lib/format';
 import { usePermissions } from '@/hooks/use-permissions';
-import type { SavingsGoalRow } from '@/lib/supabase/aliases';
+import type { SavingsGoalRow } from '@/lib/db/aliases';
 
 const goalSchema = z.object({
   name: z.string().trim().min(1).max(120),
@@ -110,7 +109,7 @@ export function GoalsPage() {
 
       {goals && goals.length > 0 && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {goals.map((g, idx) => {
+          {goals.map((g) => {
             const targetAmount = Number(g.target_amount);
             const currentAmount = Number(g.current_amount);
             const ratio =
@@ -124,13 +123,8 @@ export function GoalsPage() {
             );
             const currency = activeHousehold?.currency;
             return (
-              <motion.div
-                key={g.id}
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.05 }}
-              >
-                <Card className="card-hover">
+              <div key={g.id}>
+                <Card>
                   <CardContent className="space-y-4 p-5">
                     <div className="flex items-start justify-between">
                       <div>
@@ -161,19 +155,16 @@ export function GoalsPage() {
                           / {formatCurrency(targetAmount, { currency })}
                         </span>
                       </div>
-                      <Progress
-                        value={ratio}
-                        indicatorClassName="bg-gradient-to-r from-emerald-500 to-sky-500"
-                      />
+                      <Progress value={ratio} indicatorClassName="bg-primary" />
                       <p className="text-xs text-muted-foreground">
                         {ratio.toFixed(0)}% completado
                       </p>
                     </div>
 
                     {monthly && monthly > 0 && g.status === 'active' && (
-                      <div className="flex items-center gap-2 rounded-md bg-emerald-50 p-2 text-xs dark:bg-emerald-950/30">
-                        <TrendingUp className="h-3.5 w-3.5 text-emerald-600" />
-                        <span className="text-emerald-700 dark:text-emerald-300">
+                      <div className="flex items-center gap-2 rounded-lg bg-secondary p-2 text-[13px]">
+                        <TrendingUp className="h-3.5 w-3.5 text-primary" />
+                        <span className="text-muted-foreground">
                           Sugerido: {formatCurrency(monthly, { currency })} / mes
                         </span>
                       </div>
@@ -205,7 +196,7 @@ export function GoalsPage() {
                     )}
                   </CardContent>
                 </Card>
-              </motion.div>
+              </div>
             );
           })}
         </div>

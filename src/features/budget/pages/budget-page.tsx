@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
 import { PiggyBank, AlertCircle } from 'lucide-react';
 import { PageHeader } from '@/components/layout/page-header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -63,9 +62,9 @@ export function BudgetPage() {
     return (
       <>
         <PageHeader title={t('nav.budget')} description="Modo Envelope inactivo" />
-        <Card className="border-violet-300/50 bg-violet-50/40 dark:border-violet-900/40 dark:bg-violet-950/20">
+        <Card className="border-border bg-secondary">
           <CardContent className="flex items-start gap-4 p-6">
-            <PiggyBank className="h-6 w-6 shrink-0 text-violet-600 dark:text-violet-400" />
+            <PiggyBank className="h-6 w-6 shrink-0 text-muted-foreground" />
             <div className="space-y-2">
               <p className="font-semibold">Activa el modo Envelope</p>
               <p className="text-sm text-muted-foreground">
@@ -122,23 +121,17 @@ export function BudgetPage() {
             />
           ) : (
             <div className="space-y-3">
-              {summary.buckets.map((b, idx) => {
+              {summary.buckets.map((b) => {
                 const pct = Math.min(b.utilizationRatio * 100, 100);
                 const tone =
                   b.status === 'over'
-                    ? 'bg-red-500'
+                    ? 'bg-destructive'
                     : b.status === 'warning'
-                      ? 'bg-amber-500'
-                      : 'bg-emerald-500';
+                      ? 'bg-warning'
+                      : 'bg-primary';
                 return (
-                  <motion.div
-                    key={b.category.id}
-                    initial={{ opacity: 0, y: 4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.03 }}
-                  >
-                    <Card>
-                      <CardContent className="space-y-3 p-4">
+                  <Card key={b.category.id}>
+                    <CardContent className="space-y-3 p-4">
                         <div className="flex items-center justify-between gap-3">
                           <div className="flex items-center gap-3">
                             <span
@@ -184,9 +177,8 @@ export function BudgetPage() {
                             </span>
                           )}
                         </div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
+                    </CardContent>
+                  </Card>
                 );
               })}
             </div>

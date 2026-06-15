@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAuthStore } from '@/features/auth/stores/auth.store';
 import { useAuth } from '@/features/auth/hooks/use-auth';
 import { useHouseholdStore } from '@/features/households/stores/household.store';
-import { supabase } from '@/lib/supabase/client';
+import { apiFetch } from '@/lib/api/client';
 import { usePermissions } from '@/hooks/use-permissions';
 import { ImportExportSection } from '../components/import-export-section';
 
@@ -35,13 +35,13 @@ export function SettingsPage() {
   const toggleEnvelope = useMutation({
     mutationFn: async (enabled: boolean) => {
       if (!activeHousehold) throw new Error('No household');
-      const { data, error } = await supabase
-        .from('households')
-        .update({ envelope_mode_enabled: enabled })
-        .eq('id', activeHousehold.id)
-        .select()
-        .single();
-      if (error) throw error;
+      const data = await apiFetch<{
+        id: string;
+        envelope_mode_enabled: boolean;
+      }>(`/api/households/${activeHousehold.id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ envelope_mode_enabled: enabled }),
+      });
       return data;
     },
     onSuccess: async (data) => {
@@ -144,7 +144,7 @@ export function SettingsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between rounded-md border p-3">
+            <div className="flex items-center justify-between rounded-xl border border-border bg-secondary px-4 py-3">
               <div className="space-y-0.5">
                 <Label>Modo Envelope</Label>
                 <p className="text-xs text-muted-foreground">

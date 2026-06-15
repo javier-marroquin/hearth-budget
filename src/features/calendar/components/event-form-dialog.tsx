@@ -46,7 +46,7 @@ import type {
   CalendarEventRow,
   CalendarEventStatus,
   CalendarEventType,
-} from '@/lib/supabase/aliases';
+} from '@/lib/db/aliases';
 
 interface EventFormDialogProps {
   open: boolean;
@@ -202,7 +202,7 @@ export function EventFormDialog({
                       <SelectContent>
                         {EVENT_TYPES.map((tp) => (
                           <SelectItem key={tp} value={tp}>
-                            {tp}
+                            {t(`calendar.event_type.${tp}`)}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -242,7 +242,7 @@ export function EventFormDialog({
               control={form.control}
               name="all_day"
               render={({ field }) => (
-                <FormItem className="flex items-center justify-between rounded-md border p-3">
+                <FormItem className="flex items-center justify-between rounded-xl border border-border bg-secondary px-4 py-3">
                   <FormLabel>Todo el día</FormLabel>
                   <FormControl>
                     <Switch checked={field.value} onCheckedChange={field.onChange} />

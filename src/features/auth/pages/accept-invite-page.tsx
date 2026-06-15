@@ -10,8 +10,8 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { apiFetch } from '@/lib/api/client';
 import { useAuthStore } from '../stores/auth.store';
-import { supabase } from '@/lib/supabase/client';
 
 type State =
   | { kind: 'loading' }
@@ -39,25 +39,10 @@ export function AcceptInvitePage() {
 
     const accept = async () => {
       try {
-        const { data: session } = await supabase.auth.getSession();
-        const access = session.session?.access_token;
-        if (!access) {
-          setState({ kind: 'needs-login', token });
-          return;
-        }
-        const res = await fetch('/api/accept-invite', {
+        const body = await apiFetch<{ household_name?: string }>('/api/accept-invite', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${access}`,
-          },
           body: JSON.stringify({ token }),
         });
-        if (!res.ok) {
-          const body = (await res.json().catch(() => ({}))) as { error?: string };
-          throw new Error(body.error ?? `HTTP ${res.status}`);
-        }
-        const body = (await res.json()) as { household_name?: string };
         setState({ kind: 'success', householdName: body.household_name ?? '' });
         setTimeout(() => navigate('/dashboard', { replace: true }), 1500);
       } catch (err) {
@@ -72,14 +57,14 @@ export function AcceptInvitePage() {
   }, [token, user, navigate]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
+    <div className="flex min-h-screen items-center justify-center bg-secondary p-4">
+      <Card className="w-full max-w-md border-border shadow-none">
         <CardHeader className="space-y-3 text-center">
           {state.kind === 'loading' && (
             <Loader2 className="mx-auto h-10 w-10 animate-spin text-muted-foreground" />
           )}
           {state.kind === 'success' && (
-            <CheckCircle2 className="mx-auto h-10 w-10 text-emerald-500" />
+            <CheckCircle2 className="mx-auto h-10 w-10 text-primary" />
           )}
           {state.kind === 'error' && (
             <XCircle className="mx-auto h-10 w-10 text-destructive" />
@@ -104,7 +89,7 @@ export function AcceptInvitePage() {
           {state.kind === 'needs-login' && (
             <>
               <p className="mb-4 text-sm text-muted-foreground">
-                Para aceptar la invitación primero inicia sesión con tu correo.
+                Para aceptar la invitación primero inicia sesión o crea una cuenta.
               </p>
               <Button
                 className="w-full"

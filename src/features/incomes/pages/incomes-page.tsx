@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Plus, Pencil, Trash2, Wallet, X } from 'lucide-react';
 import { PageHeader } from '@/components/layout/page-header';
 import { EmptyState } from '@/components/layout/empty-state';
+import { DataTableShell } from '@/components/layout/data-table-shell';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ExportCsvButton } from '@/components/io/export-csv-button';
@@ -24,7 +25,7 @@ import { useHouseholdMembers } from '@/features/households/hooks/use-households'
 import { IncomeFormDialog } from '../components/income-form-dialog';
 import { usePermissions } from '@/hooks/use-permissions';
 import { formatCurrency, formatDate } from '@/lib/format';
-import type { IncomeRow } from '@/lib/supabase/aliases';
+import type { IncomeRow } from '@/lib/db/aliases';
 import type { CsvColumn } from '@/lib/io/csv';
 
 export function IncomesPage() {
@@ -107,7 +108,7 @@ export function IncomesPage() {
       />
 
       {hasUrlFilters && (
-        <div className="mb-3 flex flex-wrap items-center gap-2 rounded-md border bg-muted/30 p-2 text-xs">
+        <div className="mb-3 flex flex-wrap items-center gap-2 rounded-lg border border-border bg-secondary p-3 text-[13px]">
           <span className="font-medium text-muted-foreground">Filtros activos:</span>
           {(urlFilters.from || urlFilters.to) && (
             <Badge variant="outline">
@@ -166,7 +167,7 @@ export function IncomesPage() {
       )}
 
       {!isLoading && incomes && incomes.length > 0 && (
-        <div className="rounded-md border bg-card">
+        <DataTableShell>
           <Table>
             <TableHeader>
               <TableRow>
@@ -219,7 +220,7 @@ export function IncomesPage() {
               ))}
             </TableBody>
           </Table>
-        </div>
+        </DataTableShell>
       )}
 
       <IncomeFormDialog open={open} onOpenChange={setOpen} income={editing} />

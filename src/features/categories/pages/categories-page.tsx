@@ -14,7 +14,7 @@ import { useCategories, useDeleteCategory } from '../hooks/use-categories';
 import { CategoryFormDialog } from '../components/category-form-dialog';
 import { usePermissions } from '@/hooks/use-permissions';
 import { formatCurrency } from '@/lib/format';
-import type { CategoryRow, CategoryType } from '@/lib/supabase/aliases';
+import type { CategoryRow, CategoryType } from '@/lib/db/aliases';
 
 export function CategoriesPage() {
   const { t } = useTranslation();
@@ -51,9 +51,9 @@ export function CategoriesPage() {
 
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as CategoryType)}>
         <TabsList>
-          <TabsTrigger value="expense">Gasto</TabsTrigger>
-          <TabsTrigger value="income">Ingreso</TabsTrigger>
-          <TabsTrigger value="savings">Ahorro</TabsTrigger>
+          <TabsTrigger value="expense">{t('categories.type.expense')}</TabsTrigger>
+          <TabsTrigger value="income">{t('categories.type.income')}</TabsTrigger>
+          <TabsTrigger value="savings">{t('categories.type.savings')}</TabsTrigger>
         </TabsList>
         <TabsContent value={activeTab} className="mt-4">
           {isLoading && (
@@ -75,7 +75,7 @@ export function CategoriesPage() {
           {!isLoading && categories && categories.length > 0 && (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {categories.map((c) => (
-                <Card key={c.id} className="card-hover">
+                <Card key={c.id}>
                   <CardContent className="flex items-center justify-between p-4">
                     <div className="flex items-center gap-3">
                       <span

@@ -25,7 +25,7 @@ import { CategorySelect } from '@/components/forms/category-select';
 import { MemberSelect } from '@/components/forms/member-select';
 import { incomeSchema, type IncomeInput } from '@/schemas/income.schema';
 import { useHouseholdStore } from '@/features/households/stores/household.store';
-import type { IncomeRow } from '@/lib/supabase/aliases';
+import type { IncomeRow } from '@/lib/db/aliases';
 import { toISODate } from '@/lib/date';
 import { useCreateIncome, useUpdateIncome } from '../hooks/use-incomes';
 

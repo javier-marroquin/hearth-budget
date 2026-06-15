@@ -15,7 +15,7 @@ import {
 import { useRealtimeCalendarSync } from '../hooks/use-realtime-sync';
 import { useCalendarStore } from '@/stores/calendar.store';
 import { usePermissions } from '@/hooks/use-permissions';
-import type { CalendarEventRow } from '@/lib/supabase/aliases';
+import type { CalendarEventRow } from '@/lib/db/aliases';
 
 export function CalendarPage() {
   const { t } = useTranslation();

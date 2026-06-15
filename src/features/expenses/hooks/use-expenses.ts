@@ -12,7 +12,7 @@ import {
 } from '../services/expenses.service';
 import { useAuthStore } from '@/features/auth/stores/auth.store';
 import type { ExpenseInput } from '@/schemas/expense.schema';
-import type { SplitMethod } from '@/lib/supabase/aliases';
+import type { SplitMethod } from '@/lib/db/aliases';
 import type { SplitParticipant } from '@/lib/finance/splits';
 
 const QK = {

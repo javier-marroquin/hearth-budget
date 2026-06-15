@@ -192,7 +192,7 @@ export function UpcomingTimeline({
           <>
             <div
               className={cn(
-                'mb-2 flex shrink-0 flex-wrap gap-x-3 gap-y-1 rounded-md border bg-muted/25 px-2.5 py-2 text-[10px]',
+                'mb-2 flex shrink-0 flex-wrap gap-x-3 gap-y-1 rounded-lg border border-border bg-secondary px-2.5 py-2 text-[10px]',
                 sidebar && 'flex-col gap-1',
               )}
             >
@@ -319,7 +319,7 @@ function UpcomingRow({
         onDrop();
       }}
       className={cn(
-        'flex items-stretch gap-0.5 rounded-md border bg-card transition-shadow',
+        'flex items-stretch gap-0.5 rounded-lg border border-border bg-card transition-colors duration-150',
         isDragging && 'opacity-50',
         isDropTarget && 'ring-2 ring-primary/40',
         isOverdue && 'border-red-300/50 dark:border-red-900/40',

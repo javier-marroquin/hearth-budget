@@ -1,8 +1,8 @@
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
-import { Sparkles } from 'lucide-react';
+import { Navigate, useSearchParams } from 'react-router-dom';
 import {
   Card,
   CardContent,
@@ -18,91 +18,252 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { magicLinkSchema, type MagicLinkInput } from '@/schemas/auth.schema';
+import {
+  signInSchema,
+  signUpSchema,
+  type SignInInput,
+  type SignUpInput,
+} from '@/schemas/auth.schema';
 import { useAuth } from '../hooks/use-auth';
 import { useAuthStore } from '../stores/auth.store';
-import { Navigate, useSearchParams } from 'react-router-dom';
 
 export function LoginPage() {
   const { t } = useTranslation();
-  const { sendMagicLink, isSendingMagicLink } = useAuth();
+  const { signIn, isSigningIn, signUp, isSigningUp } = useAuth();
   const user = useAuthStore((s) => s.user);
   const [params] = useSearchParams();
   const inviteToken = params.get('invite') ?? undefined;
+  const [tab, setTab] = useState<'sign-in' | 'sign-up'>('sign-in');
 
-  const form = useForm<MagicLinkInput>({
-    resolver: zodResolver(magicLinkSchema),
-    defaultValues: { email: '' },
+  const signInForm = useForm<SignInInput>({
+    resolver: zodResolver(signInSchema),
+    defaultValues: { email: '', password: '' },
+  });
+
+  const signUpForm = useForm<SignUpInput>({
+    resolver: zodResolver(signUpSchema),
+    defaultValues: { email: '', password: '', confirmPassword: '', fullName: '' },
   });
 
   if (user) return <Navigate to="/dashboard" replace />;
 
-  const onSubmit = (values: MagicLinkInput) => {
-    sendMagicLink({ email: values.email, inviteToken });
+  const onSignIn = (values: SignInInput) => {
+    signIn({ ...values, inviteToken });
+  };
+
+  const onSignUp = (values: SignUpInput) => {
+    signUp({
+      email: values.email,
+      password: values.password,
+      fullName: values.fullName,
+      inviteToken,
+    });
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-emerald-50 via-background to-sky-50 p-4 dark:from-emerald-950/30 dark:via-background dark:to-sky-950/30">
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-        className="w-full max-w-md"
-      >
-        <Card>
+    <div className="flex min-h-screen items-center justify-center bg-secondary p-4">
+      <div className="w-full max-w-md animate-fade-in">
+        <Card className="border-border shadow-none">
           <CardHeader className="space-y-3 text-center">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-sky-500 text-white shadow-lg">
-              <Sparkles className="h-7 w-7" />
+            <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-lg bg-foreground text-[11px] font-bold text-background">
+              PH
             </div>
-            <CardTitle className="text-2xl tracking-tight">
-              {t('auth.magic_link_title')}
+            <CardTitle className="text-subtitle">
+              {tab === 'sign-in' ? t('auth.login_title') : t('auth.signup_title')}
             </CardTitle>
-            <CardDescription>{t('auth.magic_link_subtitle')}</CardDescription>
+            <CardDescription>
+              {tab === 'sign-in'
+                ? t('auth.login_subtitle')
+                : t('auth.signup_subtitle')}
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('auth.email_label')}</FormLabel>
-                      <FormControl>
-                        <Input
-                          autoComplete="email"
-                          inputMode="email"
-                          placeholder={t('auth.email_placeholder')}
-                          autoFocus
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage>
-                        {form.formState.errors.email?.message
-                          ? t(form.formState.errors.email.message as string)
-                          : null}
-                      </FormMessage>
-                    </FormItem>
-                  )}
-                />
-                <Button
-                  type="submit"
-                  className="w-full"
-                  size="lg"
-                  disabled={isSendingMagicLink}
-                >
-                  {isSendingMagicLink ? t('common.loading') : t('auth.send_magic_link')}
-                </Button>
-              </form>
-            </Form>
+            <Tabs
+              value={tab}
+              onValueChange={(v) => setTab(v as 'sign-in' | 'sign-up')}
+            >
+              <TabsList className="mb-4 grid w-full grid-cols-2">
+                <TabsTrigger value="sign-in">{t('auth.login')}</TabsTrigger>
+                <TabsTrigger value="sign-up">{t('auth.signup')}</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="sign-in">
+                <Form {...signInForm}>
+                  <form
+                    onSubmit={signInForm.handleSubmit(onSignIn)}
+                    className="space-y-4"
+                  >
+                    <FormField
+                      control={signInForm.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('auth.email_label')}</FormLabel>
+                          <FormControl>
+                            <Input
+                              autoComplete="email"
+                              inputMode="email"
+                              placeholder={t('auth.email_placeholder')}
+                              autoFocus
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage>
+                            {signInForm.formState.errors.email?.message
+                              ? t(signInForm.formState.errors.email.message)
+                              : null}
+                          </FormMessage>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={signInForm.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('auth.password_label')}</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="password"
+                              autoComplete="current-password"
+                              placeholder="••••••••"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage>
+                            {signInForm.formState.errors.password?.message
+                              ? t(signInForm.formState.errors.password.message)
+                              : null}
+                          </FormMessage>
+                        </FormItem>
+                      )}
+                    />
+                    <Button
+                      type="submit"
+                      className="w-full"
+                      size="lg"
+                      disabled={isSigningIn}
+                    >
+                      {isSigningIn ? t('common.loading') : t('auth.login')}
+                    </Button>
+                  </form>
+                </Form>
+              </TabsContent>
+
+              <TabsContent value="sign-up">
+                <Form {...signUpForm}>
+                  <form
+                    onSubmit={signUpForm.handleSubmit(onSignUp)}
+                    className="space-y-4"
+                  >
+                    <FormField
+                      control={signUpForm.control}
+                      name="fullName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('auth.full_name_label')}</FormLabel>
+                          <FormControl>
+                            <Input
+                              autoComplete="name"
+                              placeholder={t('auth.full_name_placeholder')}
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={signUpForm.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('auth.email_label')}</FormLabel>
+                          <FormControl>
+                            <Input
+                              autoComplete="email"
+                              inputMode="email"
+                              placeholder={t('auth.email_placeholder')}
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage>
+                            {signUpForm.formState.errors.email?.message
+                              ? t(signUpForm.formState.errors.email.message)
+                              : null}
+                          </FormMessage>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={signUpForm.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('auth.password_label')}</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="password"
+                              autoComplete="new-password"
+                              placeholder="••••••••"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage>
+                            {signUpForm.formState.errors.password?.message
+                              ? t(signUpForm.formState.errors.password.message)
+                              : null}
+                          </FormMessage>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={signUpForm.control}
+                      name="confirmPassword"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('auth.confirm_password_label')}</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="password"
+                              autoComplete="new-password"
+                              placeholder="••••••••"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage>
+                            {signUpForm.formState.errors.confirmPassword?.message
+                              ? t(
+                                  signUpForm.formState.errors.confirmPassword
+                                    .message,
+                                )
+                              : null}
+                          </FormMessage>
+                        </FormItem>
+                      )}
+                    />
+                    <Button
+                      type="submit"
+                      className="w-full"
+                      size="lg"
+                      disabled={isSigningUp}
+                    >
+                      {isSigningUp ? t('common.loading') : t('auth.create_account')}
+                    </Button>
+                  </form>
+                </Form>
+              </TabsContent>
+            </Tabs>
+
             <p className="mt-6 text-center text-xs text-muted-foreground">
               {t('app.tagline')}
             </p>
           </CardContent>
         </Card>
-      </motion.div>
+      </div>
     </div>
   );
 }

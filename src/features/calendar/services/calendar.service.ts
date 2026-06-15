@@ -1,36 +1,40 @@
-import { supabase } from '@/lib/supabase/client';
+import { apiFetch } from '@/lib/api/client';
 import type {
   CalendarEventRow,
   CalendarEventStatus,
   CalendarEventType,
-} from '@/lib/supabase/aliases';
+} from '@/lib/db/aliases';
 
 export interface CalendarEventFilters {
   householdId: string;
-  from?: string; // ISO timestamp
+  from?: string;
   to?: string;
   userId?: string;
   status?: CalendarEventStatus;
   eventType?: CalendarEventType;
 }
 
+function queryString(params: Record<string, string | undefined>): string {
+  const qs = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined) qs.set(key, value);
+  }
+  const s = qs.toString();
+  return s ? `?${s}` : '';
+}
+
 export async function listCalendarEvents(
   filters: CalendarEventFilters,
 ): Promise<CalendarEventRow[]> {
-  let q = supabase
-    .from('calendar_events')
-    .select('*')
-    .eq('household_id', filters.householdId)
-    .order('start_at');
-  if (filters.from) q = q.gte('start_at', filters.from);
-  if (filters.to) q = q.lte('start_at', filters.to);
-  if (filters.userId) q = q.eq('user_id', filters.userId);
-  if (filters.status) q = q.eq('status', filters.status);
-  if (filters.eventType) q = q.eq('event_type', filters.eventType);
-
-  const { data, error } = await q;
-  if (error) throw error;
-  return data ?? [];
+  return apiFetch(
+    `/api/households/${filters.householdId}/calendar-events${queryString({
+      from: filters.from,
+      to: filters.to,
+      userId: filters.userId,
+      status: filters.status,
+      eventType: filters.eventType,
+    })}`,
+  );
 }
 
 export interface CreateCalendarEventInput {
@@ -52,44 +56,23 @@ export interface CreateCalendarEventInput {
 export async function createCalendarEvent(
   input: CreateCalendarEventInput,
 ): Promise<CalendarEventRow> {
-  const { data, error } = await supabase
-    .from('calendar_events')
-    .insert({
-      household_id: input.household_id,
-      title: input.title,
-      description: input.description ?? null,
-      event_type: input.event_type,
-      start_at: input.start_at,
-      end_at: input.end_at ?? null,
-      all_day: input.all_day ?? true,
-      status: input.status ?? 'pending',
-      user_id: input.user_id ?? null,
-      amount: input.amount ?? null,
-      color: input.color ?? null,
-      related_id: input.related_id ?? null,
-      related_type: input.related_type ?? null,
-    })
-    .select()
-    .single();
-  if (error || !data) throw error ?? new Error('Failed to create event');
-  return data;
+  const { household_id, ...body } = input;
+  return apiFetch(`/api/households/${household_id}/calendar-events`, {
+    method: 'POST',
+    body: JSON.stringify(body),
+  });
 }
 
 export async function updateCalendarEvent(
   id: string,
   patch: Partial<CreateCalendarEventInput> & { start_at?: string; end_at?: string | null },
 ): Promise<CalendarEventRow> {
-  const { data, error } = await supabase
-    .from('calendar_events')
-    .update(patch)
-    .eq('id', id)
-    .select()
-    .single();
-  if (error || !data) throw error ?? new Error('Failed to update event');
-  return data;
+  return apiFetch(`/api/calendar-events/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(patch),
+  });
 }
 
 export async function deleteCalendarEvent(id: string): Promise<void> {
-  const { error } = await supabase.from('calendar_events').delete().eq('id', id);
-  if (error) throw error;
+  await apiFetch(`/api/calendar-events/${id}`, { method: 'DELETE' });
 }

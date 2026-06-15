@@ -15,6 +15,7 @@
     "search": "Search",
     "filter": "Filter",
     "all": "All",
+    "member": "Member",
     "yes": "Yes",
     "no": "No",
     "back": "Back",
@@ -33,22 +34,38 @@
   },
   "auth": {
     "login": "Sign in",
+    "signup": "Sign up",
     "logout": "Sign out",
-    "magic_link_title": "Sign in with a magic link",
-    "magic_link_subtitle": "We'll send a secure link to your email. No passwords.",
+    "login_title": "Welcome back",
+    "login_subtitle": "Sign in with your email and password.",
+    "signup_title": "Create your account",
+    "signup_subtitle": "Register to manage your household budget.",
     "email_label": "Email",
     "email_placeholder": "you@email.com",
-    "send_magic_link": "Send magic link",
-    "check_email_title": "Check your inbox",
-    "check_email_subtitle": "We sent a link to {{email}}. Click it to sign in.",
-    "resend": "Resend link",
+    "password_label": "Password",
+    "password_required": "Password is required",
+    "password_too_short": "At least 8 characters",
+    "password_too_long": "Maximum 72 characters",
+    "password_mismatch": "Passwords do not match",
+    "confirm_password_label": "Confirm password",
+    "full_name_label": "Your name (optional)",
+    "full_name_placeholder": "e.g. Alex",
+    "create_account": "Create account",
+    "check_email_title": "Confirm your email",
+    "check_email_subtitle": "We sent a confirmation link to {{email}}. Open it to activate your account.",
+    "resend_confirmation": "Resend confirmation",
+    "confirmation_resent": "Confirmation email resent",
     "resend_in": "Resend in {{seconds}}s",
     "back_to_login": "Back to sign in",
     "verifying": "Verifying your session…",
-    "callback_error": "We couldn't validate the link. Please try again.",
+    "callback_error": "We couldn't validate the confirmation. Try signing in again.",
     "invalid_email": "Invalid email",
-    "rate_limit_error": "Supabase email rate limit reached (~4/hour). Configure Resend SMTP in the Supabase dashboard (see docs/AUTH_SETUP.md) or wait ~1 hour.",
-    "smtp_error": "Supabase could not send the email (SMTP). Check Authentication → Logs in Supabase and docs/AUTH_SETUP.md."
+    "invalid_credentials": "Incorrect email or password",
+    "api_unreachable": "Could not reach the server. Run npm run dev:api in another terminal.",
+    "email_not_confirmed": "Confirm your email before signing in",
+    "user_already_exists": "An account with this email already exists. Sign in instead.",
+    "rate_limit_error": "Email rate limit reached. Wait a few minutes or configure SMTP in Supabase.",
+    "smtp_error": "Could not send confirmation email. Check SMTP in Supabase (docs/AUTH_SETUP.md)."
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -62,7 +79,11 @@
     "budget": "Budget",
     "members": "Members",
     "notifications": "Notifications",
-    "settings": "Settings"
+    "settings": "Settings",
+    "main": "Main",
+    "favorites": "Favorites",
+    "recent": "Recent",
+    "search_placeholder": "Search…"
   },
   "onboarding": {
     "title": "Create your first household",
@@ -149,7 +170,36 @@
       "category": "Category",
       "status": "Status",
       "type": "Type",
-      "range": "Range"
+      "range": "Range",
+      "search": "Search events…",
+      "clear": "Clear filters"
+    },
+    "nav": {
+      "prev": "Previous",
+      "next": "Next",
+      "today": "Today"
+    },
+    "views": {
+      "label": "Calendar view",
+      "month": "Month",
+      "week": "Week",
+      "day": "Day",
+      "list": "Agenda"
+    },
+    "legend": "Legend",
+    "event_type": {
+      "expense": "Expense",
+      "income": "Income",
+      "contribution": "Contribution",
+      "goal": "Goal",
+      "reminder": "Reminder"
+    }
+  },
+  "categories": {
+    "type": {
+      "expense": "Expense",
+      "income": "Income",
+      "savings": "Savings"
     }
   },
   "expenses": {

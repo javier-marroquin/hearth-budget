@@ -24,7 +24,7 @@ import {
 } from '@/lib/io/import-mapping';
 import { csvBlob, downloadBlob } from '@/lib/io/csv';
 import { backupFilename, exportHouseholdBackup } from '@/lib/io/backup';
-import type { ExpenseType, SplitMethod } from '@/lib/supabase/aliases';
+import type { ExpenseType, SplitMethod } from '@/lib/db/aliases';
 
 interface ImportedIncome {
   user_id: string | null;

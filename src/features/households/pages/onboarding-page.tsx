@@ -1,8 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
-import { Home, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -58,7 +57,6 @@ export function OnboardingPage() {
     },
   });
 
-  // Already has a household → skip onboarding.
   if (!isLoading && myHouseholds && myHouseholds.length > 0) {
     return <Navigate to="/dashboard" replace />;
   }
@@ -68,18 +66,14 @@ export function OnboardingPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-emerald-50 via-background to-sky-50 p-4 dark:from-emerald-950/30 dark:to-sky-950/30">
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-lg"
-      >
-        <Card>
+    <div className="flex min-h-screen items-center justify-center bg-secondary p-4">
+      <div className="w-full max-w-lg animate-fade-in">
+        <Card className="border-border shadow-none">
           <CardHeader className="space-y-3 text-center">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-sky-500 text-white shadow-lg">
-              <Home className="h-7 w-7" />
+            <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-lg bg-foreground text-[11px] font-bold text-background">
+              PH
             </div>
-            <CardTitle className="text-2xl">{t('onboarding.title')}</CardTitle>
+            <CardTitle className="text-subtitle">{t('onboarding.title')}</CardTitle>
             <CardDescription>{t('onboarding.subtitle')}</CardDescription>
           </CardHeader>
           <CardContent>
@@ -186,7 +180,7 @@ export function OnboardingPage() {
             </Form>
           </CardContent>
         </Card>
-      </motion.div>
+      </div>
     </div>
   );
 }

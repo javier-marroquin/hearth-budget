@@ -131,9 +131,9 @@ export function DashboardPage() {
       {editing && (
         <div className="mb-3 rounded-md border border-dashed bg-muted/30 p-3 text-xs text-muted-foreground">
           <strong className="text-foreground">Modo edición:</strong> arrastra
-          por la pestaña superior izquierda de cada widget, redimensiona desde
-          la esquina inferior derecha, y haz click en × para quitar. Tu layout
-          se guarda automáticamente.
+          cada widget por el icono ≡ (como en la pantalla de inicio del
+          celular), redimensiona desde la esquina inferior derecha y usa ×
+          para quitar. El orden se guarda al soltar.
         </div>
       )}
 

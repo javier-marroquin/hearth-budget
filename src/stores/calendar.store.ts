@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import type {
   CalendarEventStatus,
   CalendarEventType,
-} from '@/lib/supabase/aliases';
+} from '@/lib/db/aliases';
 
 export interface CalendarFilters {
   status: CalendarEventStatus | 'all';

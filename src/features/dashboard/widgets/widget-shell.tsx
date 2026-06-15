@@ -43,14 +43,14 @@ export function WidgetShell({
   return (
     <Card
       className={cn(
-        'flex h-full flex-col overflow-hidden transition-shadow',
-        editing && 'ring-2 ring-primary/30 ring-offset-2 ring-offset-background',
-        clickable && 'cursor-pointer hover:shadow-md',
+        'flex h-full flex-col overflow-hidden border-border shadow-none transition-shadow duration-150',
+        editing && 'ring-1 ring-primary/40',
+        clickable && 'cursor-pointer hover:border-border/80',
       )}
       onClick={clickable ? onActivate : undefined}
     >
       {hasHeader && (
-        <div className="flex shrink-0 items-center justify-between gap-2 border-b px-3 py-1.5">
+        <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border/60 px-3 py-2">
           <div className="flex min-w-0 items-center gap-1.5">
             {editing && (
               <span

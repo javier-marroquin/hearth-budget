@@ -2,45 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
-/* react-grid-layout base styles + our overrides */
-@import 'react-grid-layout/css/styles.css';
-@import 'react-resizable/css/styles.css';
-@import './grid-layout.css';
-
 @layer base {
   :root {
-    /* shadcn/ui slate palette */
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Notion / Linear inspired — light */
+    --background: 0 0% 100%; /* #FFFFFF */
+    --foreground: 220 13% 11%; /* #111827 */
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 220 13% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 220 13% 11%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 221 83% 53%; /* #2563EB */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 220 14% 98%; /* #F8F9FB */
+    --secondary-foreground: 220 13% 11%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 220 14% 98%;
+    --muted-foreground: 220 9% 46%; /* #6B7280 */
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 220 14% 96%;
+    --accent-foreground: 220 13% 11%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 220 13% 91%; /* #E5E7EB */
+    --input: 220 13% 91%;
+    --ring: 221 83% 53%;
 
-    --radius: 0.75rem;
+    --sidebar: 220 14% 98%;
+    --sidebar-foreground: 220 13% 11%;
+    --sidebar-border: 220 13% 91%;
 
-    /* Semantic financial colors */
+    --radius: 0.625rem; /* 10px */
+
     --success: 142 71% 45%;
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
@@ -48,16 +46,14 @@
     --info: 199 89% 48%;
     --info-foreground: 0 0% 100%;
 
-    /* Calendar event status colors */
     --status-pending: 38 92% 50%;
     --status-paid: 142 71% 45%;
-    --status-overdue: 0 84.2% 60.2%;
+    --status-overdue: 0 72% 51%;
     --status-recurring: 252 75% 60%;
     --status-contribution: 199 89% 48%;
     --status-savings: 280 75% 60%;
 
-    /* Chart palette (light mode) */
-    --chart-1: 222 47% 35%;
+    --chart-1: 221 83% 53%;
     --chart-2: 142 71% 45%;
     --chart-3: 38 92% 50%;
     --chart-4: 280 75% 60%;
@@ -65,53 +61,47 @@
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 224 14% 8%;
+    --foreground: 210 20% 98%;
 
-    --card: 222.2 84% 6.5%;
-    --card-foreground: 210 40% 98%;
+    --card: 224 14% 10%;
+    --card-foreground: 210 20% 98%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 224 14% 10%;
+    --popover-foreground: 210 20% 98%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 221 83% 58%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 224 12% 14%;
+    --secondary-foreground: 210 20% 98%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 224 12% 14%;
+    --muted-foreground: 220 9% 60%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 224 12% 16%;
+    --accent-foreground: 210 20% 98%;
 
-    --destructive: 0 62.8% 50.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 210 20% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --border: 224 12% 18%;
+    --input: 224 12% 18%;
+    --ring: 221 83% 58%;
 
-    --success: 142 71% 45%;
-    --success-foreground: 0 0% 100%;
-    --warning: 38 92% 55%;
-    --warning-foreground: 0 0% 0%;
-    --info: 199 89% 55%;
-    --info-foreground: 0 0% 0%;
+    --sidebar: 224 14% 7%;
+    --sidebar-foreground: 210 20% 98%;
+    --sidebar-border: 224 12% 16%;
 
-    --status-pending: 38 92% 55%;
-    --status-paid: 142 71% 45%;
-    --status-overdue: 0 72% 51%;
-    --status-recurring: 252 75% 65%;
-    --status-contribution: 199 89% 55%;
-    --status-savings: 280 75% 65%;
+    --success: 142 60% 45%;
+    --warning: 38 85% 55%;
+    --info: 199 80% 55%;
 
-    --chart-1: 210 40% 80%;
-    --chart-2: 142 71% 55%;
-    --chart-3: 38 92% 60%;
-    --chart-4: 280 75% 70%;
-    --chart-5: 199 89% 60%;
+    --chart-1: 221 83% 65%;
+    --chart-2: 142 60% 55%;
+    --chart-3: 38 85% 60%;
+    --chart-4: 280 65% 70%;
+    --chart-5: 199 80% 60%;
   }
 }
 
@@ -119,66 +109,215 @@
   * {
     @apply border-border;
   }
-  body {
-    @apply bg-background text-foreground;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-  }
+
   html {
     scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-background text-foreground text-sm leading-relaxed;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+
+  h1 {
+    @apply text-[32px] font-bold tracking-tight text-foreground;
+  }
+
+  h2 {
+    @apply text-2xl font-semibold tracking-tight text-foreground;
+  }
+
+  h3 {
+    @apply text-lg font-semibold text-foreground;
   }
 }
 
 @layer components {
-  /* Card hover lift */
-  .card-hover {
-    @apply transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg;
+  /* Sidebar nav item — Notion-like */
+  .nav-item {
+    @apply flex items-center gap-2 rounded-lg px-2 py-1.5 text-[13px] font-medium text-muted-foreground transition-colors duration-150 ease-out;
+  }
+  .nav-item:hover {
+    @apply bg-accent text-foreground;
+  }
+  .nav-item-active {
+    @apply bg-accent text-foreground;
   }
 
-  /* Skeleton with shimmer */
-  .skeleton-shimmer {
-    @apply relative overflow-hidden bg-muted;
-  }
-  .skeleton-shimmer::after {
-    @apply absolute inset-0 -translate-x-full animate-shimmer;
-    content: '';
-    background-image: linear-gradient(
-      90deg,
-      transparent,
-      hsl(var(--background) / 0.4),
-      transparent
-    );
+  /* Section label in sidebar */
+  .nav-section-label {
+    @apply px-2 pb-1 pt-4 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/80;
   }
 
-  /* FullCalendar custom overrides */
-  .fc {
+  /* Data table shell — Notion database feel */
+  .data-table-shell {
+    @apply overflow-hidden rounded-xl border border-border bg-card;
+  }
+  .data-table-shell .table-scroll {
+    @apply max-h-[calc(100vh-16rem)] overflow-auto;
+  }
+  .data-table-shell thead th {
+    @apply sticky top-0 z-10 bg-card text-[11px] font-semibold uppercase tracking-wide text-muted-foreground;
+  }
+
+  /* Form section */
+  .form-section {
+    @apply space-y-4 rounded-xl border border-border bg-card p-6;
+  }
+
+  /* ── Control system: one radius (10px), one height (40px) for buttons/inputs ── */
+  .control-surface {
+    @apply rounded-lg border border-border bg-secondary;
+  }
+
+  /* FullCalendar — Notion/Linear minimal (custom toolbar, no FC buttons) */
+  .budget-calendar-shell .fc {
     @apply font-sans text-sm;
   }
-  .fc .fc-toolbar-title {
-    @apply text-lg font-semibold;
-  }
-  .fc .fc-button {
-    @apply !bg-secondary !text-secondary-foreground !border-border hover:!bg-secondary/80;
-  }
-  .fc .fc-button-primary:not(:disabled).fc-button-active,
-  .fc .fc-button-primary:not(:disabled):active {
-    @apply !bg-primary !text-primary-foreground;
-  }
-  .fc-theme-standard td,
-  .fc-theme-standard th,
-  .fc-theme-standard .fc-scrollgrid {
+
+  .budget-calendar-shell .fc .fc-scrollgrid,
+  .budget-calendar-shell .fc-theme-standard td,
+  .budget-calendar-shell .fc-theme-standard th {
     @apply !border-border;
   }
-  .fc .fc-daygrid-day.fc-day-today {
-    @apply !bg-accent/40;
+
+  .budget-calendar-shell .fc .fc-scrollgrid {
+    @apply !rounded-lg !border;
   }
-  .fc-event {
-    @apply cursor-pointer rounded-md border-0 px-1 py-0.5 text-xs font-medium;
+
+  .budget-calendar-shell .fc .fc-col-header-cell {
+    @apply !border-border !bg-secondary py-2;
+  }
+
+  .budget-calendar-shell .fc .fc-col-header-cell-cushion {
+    @apply text-[11px] font-semibold uppercase tracking-wide text-muted-foreground no-underline;
+  }
+
+  .budget-calendar-shell .fc .fc-daygrid-day {
+    @apply transition-colors duration-150;
+  }
+
+  .budget-calendar-shell .fc .fc-daygrid-day.fc-day-today {
+    @apply !bg-primary/5;
+  }
+
+  .budget-calendar-shell .fc .fc-daygrid-day-number {
+    @apply p-2 text-[13px] font-medium text-muted-foreground no-underline;
+  }
+
+  .budget-calendar-shell .fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
+    @apply font-semibold text-primary;
+  }
+
+  .budget-calendar-shell .fc .fc-daygrid-more-link {
+    @apply rounded-md px-1.5 py-0.5 text-[11px] font-medium text-primary hover:bg-primary/10;
+  }
+
+  .budget-calendar-shell .fc .fc-timegrid-slot-label-cushion,
+  .budget-calendar-shell .fc .fc-timegrid-axis-cushion {
+    @apply text-[11px] text-muted-foreground;
+  }
+
+  .budget-calendar-shell .fc .fc-timegrid-now-indicator-line {
+    @apply border-primary;
+  }
+
+  .budget-calendar-shell .fc .fc-timegrid-now-indicator-arrow {
+    @apply border-primary;
+  }
+
+  .budget-calendar-shell .fc .fc-list {
+    @apply !rounded-lg !border !border-border;
+  }
+
+  .budget-calendar-shell .fc .fc-list-day-cushion {
+    @apply !bg-secondary px-3 py-2 text-[13px] font-semibold text-foreground;
+  }
+
+  .budget-calendar-shell .fc .fc-list-event:hover td {
+    @apply bg-accent/40;
+  }
+
+  .budget-calendar-shell .fc .fc-list-event-dot {
+    @apply rounded-full border-0;
+  }
+
+  .budget-calendar-shell .fc .fc-list-event-title a {
+    @apply text-foreground no-underline hover:text-primary;
+  }
+
+  .budget-calendar-shell .fc .fc-list-event-time {
+    @apply text-[13px] text-muted-foreground;
+  }
+
+  /* Events — soft pills with left accent */
+  .budget-calendar-shell .fc-event.fc-event-minimal {
+    @apply cursor-pointer rounded-md border-0 px-1.5 py-0.5 text-[11px] font-medium shadow-none;
+  }
+
+  .budget-calendar-shell .fc-event-status-pending {
+    @apply !bg-[hsl(38_92%_95%)] !text-[hsl(25_60%_30%)];
+    box-shadow: inset 3px 0 0 hsl(38 92% 50%);
+  }
+
+  .budget-calendar-shell .fc-event-status-paid {
+    @apply !bg-[hsl(142_71%_95%)] !text-[hsl(142_50%_25%)];
+    box-shadow: inset 3px 0 0 hsl(142 71% 45%);
+  }
+
+  .budget-calendar-shell .fc-event-status-overdue {
+    @apply !bg-[hsl(0_72%_96%)] !text-[hsl(0_60%_35%)];
+    box-shadow: inset 3px 0 0 hsl(0 72% 51%);
+  }
+
+  .budget-calendar-shell .fc-event-status-recurring {
+    @apply !bg-[hsl(252_75%_96%)] !text-[hsl(252_50%_35%)];
+    box-shadow: inset 3px 0 0 hsl(252 75% 60%);
+  }
+
+  .budget-calendar-shell .fc-event-status-contribution {
+    @apply !bg-[hsl(199_89%_95%)] !text-[hsl(199_60%_30%)];
+    box-shadow: inset 3px 0 0 hsl(199 89% 48%);
+  }
+
+  .budget-calendar-shell .fc-event-status-savings {
+    @apply !bg-[hsl(280_75%_96%)] !text-[hsl(280_50%_35%)];
+    box-shadow: inset 3px 0 0 hsl(280 75% 60%);
+  }
+
+  .budget-calendar-shell .fc-event-status-completed {
+    @apply !bg-secondary !text-muted-foreground;
+    box-shadow: inset 3px 0 0 hsl(215 16% 47%);
+  }
+
+  .dark .budget-calendar-shell .fc-event-status-pending {
+    @apply !bg-[hsl(38_40%_15%)] !text-[hsl(38_80%_75%)];
+  }
+
+  .dark .budget-calendar-shell .fc-event-status-paid {
+    @apply !bg-[hsl(142_40%_15%)] !text-[hsl(142_60%_75%)];
+  }
+
+  .dark .budget-calendar-shell .fc-event-status-overdue {
+    @apply !bg-[hsl(0_40%_15%)] !text-[hsl(0_70%_75%)];
+  }
+
+  .dark .budget-calendar-shell .fc-event-status-recurring {
+    @apply !bg-[hsl(252_40%_15%)] !text-[hsl(252_70%_80%)];
+  }
+
+  .dark .budget-calendar-shell .fc-event-status-contribution {
+    @apply !bg-[hsl(199_40%_15%)] !text-[hsl(199_70%_75%)];
+  }
+
+  .dark .budget-calendar-shell .fc-event-status-savings {
+    @apply !bg-[hsl(280_40%_15%)] !text-[hsl(280_70%_80%)];
   }
 }
 
-/* Print styles */
 @media print {
   .no-print {
     display: none !important;

@@ -21,7 +21,6 @@
     "vitest.config.ts",
     "playwright.config.ts",
     "tailwind.config.ts",
-    "postcss.config.cjs",
-    "netlify/functions/**/*.ts"
+    "postcss.config.cjs"
   ]
 }

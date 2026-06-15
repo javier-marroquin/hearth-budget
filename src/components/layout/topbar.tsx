@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Bell, LogOut, Languages, Menu, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -11,7 +12,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { useAuthStore } from '@/features/auth/stores/auth.store';
 import { getInitials } from '@/lib/format';
 import { useAuth } from '@/features/auth/hooks/use-auth';
@@ -19,7 +19,6 @@ import { useUiStore } from '@/stores/ui.store';
 import { useHouseholdStore } from '@/features/households/stores/household.store';
 import { useNotifications } from '@/features/notifications/hooks/use-notifications';
 import { HouseholdSelector } from '@/features/households/components/household-selector';
-import { useNavigate } from 'react-router-dom';
 
 export function Topbar() {
   const { t, i18n } = useTranslation();
@@ -35,30 +34,28 @@ export function Topbar() {
   const initials = getInitials(user?.email ?? user?.id ?? '?');
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-2 border-b bg-background/80 px-3 backdrop-blur md:gap-4 md:px-6">
-      <div className="flex min-w-0 items-center gap-2 md:gap-3">
-        {/* Mobile menu */}
+    <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-3 border-b border-border/60 bg-background/95 px-4 backdrop-blur-sm md:px-8">
+      <div className="flex min-w-0 items-center gap-2">
         <Button
           variant="ghost"
           size="icon"
           className="md:hidden"
           onClick={() => setMobileMenuOpen(true)}
-          aria-label="Open menu"
+          aria-label="Abrir menú"
         >
           <Menu className="h-5 w-5" />
         </Button>
         <HouseholdSelector />
       </div>
 
-      <div className="flex items-center gap-0.5 md:gap-1">
-        {/* Language switcher */}
+      <div className="flex items-center gap-1">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" aria-label="Language">
-              <Languages className="h-4 w-4" />
+            <Button variant="ghost" size="icon-sm" aria-label="Idioma">
+              <Languages className="h-4 w-4 text-muted-foreground" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent align="end" className="w-40">
             <DropdownMenuItem onClick={() => void i18n.changeLanguage('es')}>
               Español
             </DropdownMenuItem>
@@ -68,53 +65,51 @@ export function Topbar() {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Theme toggle */}
         <Button
           variant="ghost"
-          size="icon"
+          size="icon-sm"
           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          aria-label="Toggle theme"
+          aria-label="Tema"
         >
           {theme === 'dark' ? (
-            <Sun className="h-4 w-4" />
+            <Sun className="h-4 w-4 text-muted-foreground" />
           ) : (
-            <Moon className="h-4 w-4" />
+            <Moon className="h-4 w-4 text-muted-foreground" />
           )}
         </Button>
 
-        {/* Notifications */}
         <Button
           variant="ghost"
-          size="icon"
-          aria-label="Notifications"
-          onClick={() => navigate('/notifications')}
+          size="icon-sm"
           className="relative"
+          aria-label="Notificaciones"
+          onClick={() => navigate('/notifications')}
         >
-          <Bell className="h-4 w-4" />
+          <Bell className="h-4 w-4 text-muted-foreground" />
           {unread > 0 && (
-            <Badge
-              variant="destructive"
-              className="absolute -right-1 -top-1 h-4 min-w-[16px] justify-center px-1 text-[10px] leading-none"
-            >
+            <span className="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-medium text-primary-foreground">
               {unread > 9 ? '9+' : unread}
-            </Badge>
+            </span>
           )}
         </Button>
 
-        {/* User menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="gap-2 px-2">
+            <Button variant="ghost" className="h-9 gap-2 px-2">
               <Avatar className="h-7 w-7">
-                <AvatarFallback className="text-xs">{initials}</AvatarFallback>
+                <AvatarFallback className="bg-secondary text-[11px] font-medium">
+                  {initials}
+                </AvatarFallback>
               </Avatar>
-              <span className="hidden max-w-[160px] truncate text-sm md:inline-block">
-                {user?.email ?? 'Usuario'}
+              <span className="hidden max-w-[140px] truncate text-[13px] md:inline-block">
+                {user?.full_name ?? user?.email ?? 'Usuario'}
               </span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel className="truncate">{user?.email}</DropdownMenuLabel>
+            <DropdownMenuLabel className="truncate text-[13px] font-normal text-muted-foreground">
+              {user?.email}
+            </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => navigate('/settings')}>
               {t('nav.settings')}

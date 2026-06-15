@@ -6,11 +6,21 @@
 .react-grid-layout {
   position: relative;
   transition: height 200ms ease;
+  min-height: 120px;
+}
+
+.dashboard-grid {
+  width: 100%;
 }
 
 .react-grid-item {
   transition: all 200ms ease;
   transition-property: left, top, width, height;
+}
+
+/* Widget cards must fill the grid cell */
+.react-grid-item > div {
+  height: 100%;
 }
 
 .react-grid-item.cssTransforms {

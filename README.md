@@ -1,130 +1,159 @@
-# PresupuestoHogar
+# Household Budget
 
-> Aplicativo web profesional de presupuesto colaborativo para hogares.
-> Multi-usuario, multi-idioma, PWA-ready, desplegable en Netlify.
+**Self-hosted collaborative household budgeting** — track income, expenses, member contributions, and savings goals in one place.
 
-Responde una pregunta única: **¿cuánto necesita ganar tu hogar este mes para vivir, comer, pagar obligaciones y ahorrar al menos el 10%?**
+Answer one question every month: **how much does your household need to earn to cover living costs, obligations, and at least 10% savings?**
+
+Also known as **Presupuesto Hogar** in the Spanish UI (`es` + `en` via i18next).
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+
+---
+
+## Features
+
+- **Households** — multi-user workspaces with roles (admin, family, tenant, guest)
+- **Dashboard** — customizable KPI widgets, drag-and-drop layout, upcoming timeline
+- **Income & expenses** — categories, splits, statuses, CSV export
+- **Contributions** — track expected member payments
+- **Calendar** — month / week / day / agenda views for bills and events
+- **Savings goals** — targets with monthly savings suggestions
+- **Envelope budgeting** — zero-sum category envelopes (optional mode)
+- **Recurring schedules** — fixed income and expenses on autopilot
+- **Members & invites** — email invitations, self-hosted auth
+- **Import / export** — CSV backup and restore ([docs](./docs/IMPORT_EXPORT.md))
+- **PWA-ready** — installable web app, light / dark / system theme
 
 ---
 
 ## Stack
 
-- **Frontend**: React 18 + TypeScript + Vite 5
-- **Styling**: Tailwind CSS + shadcn/ui + Framer Motion
-- **State**: Zustand (UI) + TanStack Query (server state)
-- **Forms**: React Hook Form + Zod
-- **Charts**: Chart.js + react-chartjs-2
-- **Calendar**: FullCalendar (daygrid + timegrid + list + interaction)
-- **Dates**: date-fns + date-fns-tz
-- **i18n**: react-i18next (es + en)
-- **Theming**: next-themes (light/dark/system)
-- **PWA**: vite-plugin-pwa
-- **Backend**: Supabase (PostgreSQL + Auth + Realtime)
-- **Auth**: Supabase Magic Link (passwordless)
-- **Functions**: Netlify Functions (TypeScript, esbuild)
-- **Email**: Resend (transactional)
-- **Testing**: Vitest (unit) + Playwright (E2E)
-- **Deploy**: Netlify
+| Layer | Technology |
+|-------|------------|
+| Frontend | React 18, TypeScript, Vite 5, React Router |
+| UI | Tailwind CSS, shadcn/ui, Radix UI |
+| State | Zustand (UI) + TanStack Query (server) |
+| Forms | React Hook Form + Zod |
+| Charts / calendar | Chart.js, FullCalendar |
+| i18n | react-i18next (English + Spanish) |
+| Backend | **PostgreSQL 16** + **Hono** API (`server/`) |
+| Auth | Email + password, session cookie |
+| Tests | Vitest (unit), Playwright (E2E) |
+
+No Supabase required. Everything runs from this repository.
 
 ---
 
 ## Quick start
 
-### 1. Install dependencies
+### Option A — Docker (recommended)
+
+```bash
+git clone https://github.com/javier-marroquin/hearth-budget.git
+cd hearth-budget
+chmod +x scripts/install.sh
+npm run install:self-hosted
+```
+
+Then in **two terminals**:
+
+```bash
+npm run dev:api    # terminal 1 — API on :3000
+npm run dev        # terminal 2 — app on :5173
+```
+
+| Service | URL |
+|---------|-----|
+| Web app | http://localhost:5173 |
+| API health | http://localhost:3000/api/health |
+| Mailpit (dev email) | http://localhost:8025 |
+| PostgreSQL | `localhost:5432` |
+
+### Option B — Local PostgreSQL (no Docker)
 
 ```bash
 npm install
+npm run db:setup-local   # creates DB, updates .env
+npm run db:migrate
+npm run db:seed
+npm run dev:api          # terminal 1
+npm run dev              # terminal 2
 ```
 
-### 2. Configure environment
+**Demo user** (when `SEED_DEMO_USER=true`):
 
-```bash
-cp .env.example .env.local
-# Then fill in the required values (see docs/SUPABASE_SETUP.md)
+- Email: `demo@local.dev`
+- Password: `demo1234`
+
+Full install guide: **[INSTALL.md](./INSTALL.md)**
+
+---
+
+## Environment
+
+Copy `.env.example` to `.env` (or let `install:self-hosted` / `db:setup-local` create it). Minimum:
+
+```env
+DATABASE_URL=postgres://user@localhost:5432/household_budget
+AUTH_SECRET=change-me-min-16-characters
+VITE_API_URL=http://localhost:3000
 ```
 
-### 3. Run the dev server
+See [INSTALL.md](./INSTALL.md) for email (Resend), demo seed, and production notes.
 
-```bash
-npm run dev
-```
+---
 
-Visit <http://localhost:5173>.
+## Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Frontend dev server |
+| `npm run dev:api` | Hono API dev server |
+| `npm run dev:stack` | Docker DB + Mailpit, migrate, API |
+| `npm run build` | Production build |
+| `npm run typecheck` | TypeScript check |
+| `npm test` | Unit tests (Vitest) |
+| `npm run e2e` | E2E tests (Playwright) |
 
 ---
 
 ## Project structure
 
 ```
-household-budget/
-├── netlify/functions/       # Serverless functions (invitations, scheduled jobs)
-├── public/                  # Static assets (manifest, icons)
+hearth-budget/
+├── server/              # Hono API (auth, CRUD, KPIs, invites, backup)
+├── db/migrations/       # PostgreSQL SQL migrations
+├── scripts/             # install.sh, setup-local-db.sh
 ├── src/
-│   ├── app/                 # Providers, router, layout shell
-│   ├── components/
-│   │   ├── ui/              # shadcn/ui primitives
-│   │   ├── layout/          # AppShell, Sidebar, Topbar
-│   │   ├── kpi/             # KPI cards
-│   │   ├── charts/          # Chart.js wrappers
-│   │   └── calendar/        # FullCalendar wrappers
-│   ├── features/            # Feature modules (auth, households, expenses, …)
-│   ├── lib/
-│   │   ├── supabase/        # Client + generated types
-│   │   ├── finance/         # Pure financial calculations (tested)
-│   │   ├── date.ts          # date-fns helpers
-│   │   └── format.ts        # Currency, percent, locale formatters
-│   ├── hooks/queries/       # TanStack Query hooks
-│   ├── stores/              # Zustand stores
-│   ├── schemas/             # Zod schemas
-│   ├── locales/             # es.json, en.json
-│   └── styles/globals.css   # Tailwind + CSS variables
-├── supabase/migrations/     # Versioned SQL migrations
-├── tests/
-│   ├── unit/                # Vitest
-│   └── e2e/                 # Playwright
-└── docs/                    # Setup guides
+│   ├── app/             # Router, providers, shell
+│   ├── components/      # UI primitives, layout, forms
+│   ├── features/        # Domain modules (auth, expenses, dashboard, …)
+│   ├── lib/             # api client, finance math, formatters
+│   ├── stores/          # Zustand
+│   ├── schemas/         # Zod
+│   └── locales/         # en.json, es.json
+├── tests/               # unit + e2e
+└── docs/                # Architecture, import/export, envelope mode, …
 ```
-
----
-
-## Scripts
-
-| Script | What it does |
-|---|---|
-| `npm run dev` | Start Vite dev server on :5173 |
-| `npm run build` | Build for production into `dist/` |
-| `npm run preview` | Preview the production build |
-| `npm run lint` | Run ESLint |
-| `npm run format` | Format with Prettier |
-| `npm test` | Run Vitest unit tests |
-| `npm run test:watch` | Vitest watch mode |
-| `npm run e2e` | Run Playwright E2E |
-| `npm run typecheck` | TS type checking |
 
 ---
 
 ## Documentation
 
-- [`docs/SUPABASE_SETUP.md`](./docs/SUPABASE_SETUP.md) — create the Supabase project + run migrations
-- [`docs/AUTH_SETUP.md`](./docs/AUTH_SETUP.md) — configure Magic Link + Resend as SMTP
-- [`docs/EMAIL_SETUP.md`](./docs/EMAIL_SETUP.md) — Resend for invitations & reminders
-- [`docs/DEPLOY_NETLIFY.md`](./docs/DEPLOY_NETLIFY.md) — Netlify deployment guide
-- [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) — architecture overview
-- [`docs/ENVELOPE_BUDGETING.md`](./docs/ENVELOPE_BUDGETING.md) — envelope mode explained
-
----
-
-## Roles
-
-| Role | Read | Write expenses | Edit own income | Invite | Delete household |
-|---|---|---|---|---|---|
-| `admin` | ✓ | ✓ | ✓ | ✓ | ✓ |
-| `familiar` | ✓ | ✓ | ✓ | ✗ | ✗ |
-| `inquilino` | ✓ | ✓ (own/shared) | ✓ | ✗ | ✗ |
-| `invitado` | ✓ | ✗ | ✗ | ✗ | ✗ |
+| Doc | Topic |
+|-----|-------|
+| [INSTALL.md](./INSTALL.md) | Local setup (Docker & bare metal) |
+| [docs/DEPLOY.md](./docs/DEPLOY.md) | Production deployment + reverse proxy |
+| [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) | System overview (React + Hono + Postgres) |
+| [docs/AUTH_SETUP.md](./docs/AUTH_SETUP.md) | Email/password auth & sessions |
+| [docs/EMAIL_SETUP.md](./docs/EMAIL_SETUP.md) | Mailpit (dev) & SMTP for invites |
+| [docs/ENVELOPE_BUDGETING.md](./docs/ENVELOPE_BUDGETING.md) | Zero-sum envelope mode |
+| [docs/IMPORT_EXPORT.md](./docs/IMPORT_EXPORT.md) | CSV import & JSON backup |
 
 ---
 
 ## License
 
-MIT. See [LICENSE](./LICENSE).
+[MIT](./LICENSE) © Javier Marroquin
+
+Contributions welcome. Open an issue or PR if you self-host this and hit gaps — that's how we improve it for everyone.

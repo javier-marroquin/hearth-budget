@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Plus, Pencil, Trash2, Receipt, CircleCheck, X } from 'lucide-react';
 import { PageHeader } from '@/components/layout/page-header';
 import { EmptyState } from '@/components/layout/empty-state';
+import { DataTableShell } from '@/components/layout/data-table-shell';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ExportCsvButton } from '@/components/io/export-csv-button';
@@ -27,7 +28,7 @@ import { useCategories } from '@/features/categories/hooks/use-categories';
 import { ExpenseFormDialog } from '../components/expense-form-dialog';
 import { usePermissions } from '@/hooks/use-permissions';
 import { formatCurrency, formatDate } from '@/lib/format';
-import type { ExpenseRow, ExpenseType, PaymentStatus } from '@/lib/supabase/aliases';
+import type { ExpenseRow, ExpenseType, PaymentStatus } from '@/lib/db/aliases';
 import type { CsvColumn } from '@/lib/io/csv';
 
 const statusVariant: Record<PaymentStatus, 'success' | 'warning' | 'destructive'> = {
@@ -130,7 +131,7 @@ export function ExpensesPage() {
       />
 
       {hasUrlFilters && (
-        <div className="mb-3 flex flex-wrap items-center gap-2 rounded-md border bg-muted/30 p-2 text-xs">
+        <div className="mb-3 flex flex-wrap items-center gap-2 rounded-lg border border-border bg-secondary p-3 text-[13px]">
           <span className="font-medium text-muted-foreground">Filtros activos:</span>
           {urlFilters.status && (
             <Badge variant="outline">
@@ -196,7 +197,7 @@ export function ExpensesPage() {
       )}
 
       {!isLoading && expenses && expenses.length > 0 && (
-        <div className="rounded-md border bg-card">
+        <DataTableShell>
           <Table>
             <TableHeader>
               <TableRow>
@@ -265,7 +266,7 @@ export function ExpensesPage() {
               ))}
             </TableBody>
           </Table>
-        </div>
+        </DataTableShell>
       )}
 
       <ExpenseFormDialog open={open} onOpenChange={setOpen} expense={editing} />

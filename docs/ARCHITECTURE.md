@@ -1,200 +1,139 @@
 # Architecture
 
-High-level overview of how PresupuestoHogar is wired together.
+High-level overview of **Household Budget** (Presupuesto Hogar).
 
 ## Big picture
 
 ```
-                  ┌────────────────────────────────────────┐
-                  │            Browser (React)             │
-                  │  React Router · Zustand · TanStack QC  │
-                  │  shadcn/ui · Framer Motion · FullCal.  │
-                  │  Chart.js · React Hook Form · Zod      │
-                  │  i18next · next-themes · vite PWA      │
-                  └─────────┬─────────────────┬────────────┘
-                            │ HTTPS           │ WSS
-                ┌───────────▼──────┐   ┌──────▼───────────────┐
-                │ Netlify CDN +    │   │ Supabase             │
-                │ Functions        │   │  PostgreSQL + Auth + │
-                │  (esbuild)       │   │  Realtime + Storage  │
-                └────────┬─────────┘   │  RLS policies as the │
-                         │             │  authoritative gate  │
-                         │             └──────────▲───────────┘
-                         │ service-role           │
-                         ▼                        │
-                  ┌────────────┐                  │
-                  │  Resend    │                  │
-                  │  (emails)  │                  │
-                  └────────────┘    Magic Link emails (SMTP)
+┌─────────────────────────────────────────────────────────────┐
+│                     Browser (React SPA)                     │
+│  React Router · Zustand · TanStack Query · react-i18next    │
+│  shadcn/ui · Tailwind · FullCalendar · Chart.js             │
+│  React Hook Form · Zod · vite-plugin-pwa                    │
+└───────────────────────────┬─────────────────────────────────┘
+                            │ HTTPS  /api/*  (cookie session)
+                            ▼
+┌─────────────────────────────────────────────────────────────┐
+│              Hono API (Node 20+) — server/                  │
+│  Auth · households · CRUD · KPIs · invites · recurring      │
+└───────────────────────────┬─────────────────────────────────┘
+                            │ SQL (pg)
+                            ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    PostgreSQL 16                            │
+│  Migrations: db/migrations/*.sql                            │
+└─────────────────────────────────────────────────────────────┘
+
+Optional (dev): Mailpit (SMTP) · Optional (prod): SMTP / Resend
 ```
+
+In development, Vite proxies `/api` → `localhost:3000` so the browser sends session cookies on the same origin.
 
 ## Layers
 
-### 1. **UI components** (`src/components/`)
-- `ui/` — shadcn/ui primitives, generated and customised for our token system
-- `kpi/` — KPI cards with semantic tone, trend indicators, animation
-- `charts/` — wrappers around Chart.js that share a registration helper
-- `calendar/` — FullCalendar wrapper + status palette
-- `forms/` — shared inputs (`MoneyInput`, `CategorySelect`, `MemberSelect`)
-- `layout/` — `AppShell`, `Sidebar`, `Topbar`, `PageHeader`, `EmptyState`, `FullScreenLoader`
+### 1. UI (`src/components/`)
 
-### 2. **Features** (`src/features/<entity>/`)
-Each feature is a vertical slice:
+- `ui/` — shadcn/Radix primitives (buttons, dialogs, tables, …)
+- `layout/` — `AppShell`, sidebar, topbar, page header, empty states
+- `forms/` — `MoneyInput`, `CategorySelect`, `MemberSelect`
+- `kpi/`, `charts/` — dashboard widgets
+
+### 2. Features (`src/features/<domain>/`)
+
+Vertical slices: pages, hooks (TanStack Query), services (`apiFetch`), optional Zustand stores.
+
 ```
-features/incomes/
-├── components/      # Forms, dialogs specific to the feature
-├── hooks/           # TanStack Query hooks
-├── pages/           # Route pages
-├── services/        # Supabase client calls (typed)
-└── stores/          # Zustand stores when needed
+features/expenses/
+├── components/   # dialogs, filters
+├── hooks/        # useExpenses, useCreateExpense, …
+├── pages/
+└── services/     # HTTP calls to /api/...
 ```
 
-### 3. **Pure libraries** (`src/lib/`)
-Pure TypeScript with no React or Supabase dependencies — unit-tested by Vitest:
-- `finance/calculations.ts` — the seven canonical formulas (savings minimum, deficit, balance…)
-- `finance/projections.ts` — month-end projection
-- `finance/envelopes.ts` — zero-sum budgeting helpers
-- `finance/splits.ts` — equal/percentage/income-based/custom splits with cent-perfect rounding
-- `finance/recurrence.ts` — daily/weekly/biweekly/monthly/quarterly/yearly engine + goal target
-- `date.ts` — typed wrappers around date-fns
-- `format.ts` — locale-aware currency, percent, dates
+### 3. Pure libraries (`src/lib/`)
 
-### 4. **Supabase layer** (`src/lib/supabase/`)
-- `client.ts` — singleton Supabase JS client. `detectSessionInUrl: true` so Magic Link auto-consumes the URL hash. PKCE flow.
-- `database.types.ts` — hand-written types (regenerable with `supabase gen types`).
+No React, no network — covered by Vitest:
 
-### 5. **Server-side functions** (`netlify/functions/`)
-Only the things that **must not** run client-side go here:
-- `invite-member` — service role + JWT sign + email via Resend
-- `accept-invite` — JWT verify + promote membership row
-- `send-reminders` — scheduled daily 08:00 UTC
-- `materialize-recurring` — scheduled daily 01:00 UTC
-- `monthly-rollover` — scheduled 1st of month 00:30 UTC
+- `finance/calculations.ts` — savings minimum, deficit, balance
+- `finance/envelopes.ts` — zero-sum envelope budgeting
+- `finance/splits.ts` — expense split methods
+- `finance/recurrence.ts` — recurring dates, goal targets
+- `api/client.ts` — `apiFetch` with credentials
+- `format.ts`, `date.ts` — locale-aware helpers
 
-Helpers in `_lib/`:
-- `supabase-admin.ts` — service-role client + Authorization-Bearer validator
-- `invite-token.ts` — HMAC SHA256 sign/verify (no JWT lib needed)
-- `email.ts` — Resend SDK + HTML/text templates
-- `http.ts` — JSON Response helpers
+Types live in `src/lib/database.types.ts` and `src/lib/db/aliases.ts`.
 
-### 6. **Database** (`supabase/migrations/`)
-Six versioned SQL migrations, ordered:
-1. `0001_init.sql` — profiles, households, household_members, audit_logs + RLS helper functions
-2. `0002_rls_policies.sql` — granular policies per table / per role
-3. `0003_core_tables.sql` — categories, incomes, expenses, expense_splits, contributions, payment_statuses + RLS
-4. `0004_seed_categories.sql` — trigger that auto-seeds 14 default categories per new household
-5. `0005_calendar_events.sql` — calendar_events + Realtime publication
-6. `0006_recurring_goals_notifications.sql` — recurring_rules, savings_goals, notifications
+### 4. API server (`server/`)
 
-## Data flow examples
+| Area | Path prefix | Notes |
+|------|-------------|--------|
+| Health | `/api/health` | DB ping |
+| Auth | `/api/auth/*` | sign-up, sign-in, sign-out, me |
+| Profile | `/api/auth/profile` | display name |
+| Households | `/api/households/*` | CRUD, members, KPIs, backup |
+| Resources | `/api/*` | incomes, expenses, categories, calendar, goals, … |
+| Invites | `/api/invite-member`, `/api/accept-invite` | JWT invite tokens |
+| Recurring | `/api/households/:id/recurring-templates/*` | templates + materialize |
 
-### Creating an expense (write path)
+Session cookie: `hb_session` (`httpOnly`, signed with `AUTH_SECRET`).
+
+Authorisation is enforced in the API (membership + role checks), not Postgres RLS.
+
+### 5. Database (`db/migrations/`)
+
+Ordered SQL migrations applied on API startup (`npm run db:migrate`). Includes users/sessions, households, financial tables, calendar, recurring, notifications.
+
+> Legacy `supabase/migrations/` in the repo is historical reference only. Use `db/migrations/` for self-hosted installs.
+
+## Data flow example — create expense
 
 ```
 ExpenseFormDialog
-  └─ useForm(RHF) + zodResolver(expenseSchema)
-       └─ onSubmit → useCreateExpense(householdId).mutate
-            └─ createExpense() in expenses.service.ts
-                 ├─ supabase.from('expenses').insert(...)  ← RLS gated
-                 └─ supabase.from('expense_splits').insert(...)
-                      ← rollback parent on failure
-            └─ onSuccess: queryClient.invalidateQueries
-                 ├─ ['expenses', householdId]
-                 └─ ['kpis', householdId]   ← Dashboard auto-refreshes
+  └─ RHF + expenseSchema (Zod)
+       └─ useCreateExpense.mutate
+            └─ POST /api/households/:id/expenses  (apiFetch + cookie)
+                 └─ server validates membership + role
+                 └─ INSERT expenses + expense_splits
+            └─ invalidateQueries(['expenses'], ['kpis'])
+                 └─ Dashboard KPIs refresh
 ```
-
-### Dashboard KPI aggregation (read path)
-
-```
-DashboardPage
-  └─ useHouseholdKpis(householdId)
-       └─ fetchHouseholdKpis() in kpis.service.ts
-            └─ Promise.all([
-                 incomesMonth, expensesMonth, contributionsMonth,
-                 categoriesAll, incomesTrend, expensesTrend,
-                 overdueExpenses, upcomingExpenses,
-               ])  ← 8 parallel queries, all RLS-gated
-            └─ Local aggregations:
-                 - calculateBreakdown()        (pure)
-                 - buildByCategory()           (pure)
-                 - aggregateByMember()         (pure)
-                 - buildMonthlyTrend()         (pure)
-                 - projectMonth()              (pure)
-```
-
-### Calendar drag&drop (mutation + realtime)
-
-```
-User drags an event
-  └─ FullCalendar fires eventChange
-       └─ useUpdateCalendarEvent.mutate(id, patch)
-            ├─ onMutate: optimistic update of the local query data
-            ├─ → supabase.from('calendar_events').update(...)
-            ├─ onError: rollback to snapshot
-            └─ onSettled: invalidate ['calendar', ...] + ['kpis', ...]
-
-Meanwhile:
-  Postgres notifies via Realtime
-       └─ useRealtimeCalendarSync (subscription)
-            └─ invalidate same queries in *other* connected members' tabs
-```
-
-## Authorisation model
-
-Two layers, both required:
-
-### Layer 1 — Postgres Row Level Security
-This is the **only authoritative gate**. Every table has policies that:
-- Allow `SELECT` for active members of the household
-- Allow `INSERT`/`UPDATE` for roles `admin`/`familiar`/`inquilino`
-- Restrict `DELETE` to admins (or row creators for some tables)
-- Block `invitado` from any write
-
-Implemented via SECURITY DEFINER helper functions (`is_member_of`, `is_writable_member`, `is_household_admin`) to avoid policy recursion.
-
-### Layer 2 — Client UX
-`usePermissions()` reads the user's role from Zustand and exposes flags. This:
-- Hides buttons that wouldn't work
-- Disables form inputs
-- Shows informative tooltips
-
-Never trusted alone. If the client is bypassed, RLS still blocks the operation.
 
 ## State management
 
-| Tool | What it stores |
-|---|---|
-| **Zustand `auth.store`** | Current auth user + initialising flag |
-| **Zustand `household.store`** | Active household + membership + all households list. Persisted to localStorage (only active selection). |
-| **Zustand `ui.store`** | Sidebar collapsed flag. Persisted. |
-| **Zustand `calendar.store`** | Calendar view (month/week/day/list), filters, current date. |
-| **TanStack Query** | All server data with cache keys like `[entity, householdId, filters]`. |
-| **React Hook Form** | All forms — controlled inputs through `<FormField>` wrappers. |
+| Store / tool | Purpose |
+|--------------|---------|
+| `auth.store` | Current user |
+| `household.store` | Active household (persisted) |
+| `ui.store` | Sidebar, favorites, recent routes |
+| `calendar.store` | View, filters |
+| TanStack Query | All server data |
+| React Hook Form | Forms |
 
-## Testing strategy
+## Realtime
 
-- **Unit (Vitest + happy-dom)** — `tests/unit/`:
-  - `calculations.test.ts` — the 7 financial formulas + compliance
-  - `splits.test.ts` — the 4 split methods + edge cases
-  - `envelopes.test.ts` — zero-sum + rollover + status classification
-  - `recurrence.test.ts` — frequency engine + monthly goal target
-- **E2E (Playwright)** — `tests/e2e/`:
-  - `auth.spec.ts` — login page rendering, validation, protected redirect
-  - `navigation.spec.ts` — 404 page, check-email guard
+No WebSocket layer. Calendar drag-and-drop persists via API; other tabs refresh on next query or manual navigation. `useRealtimeCalendarSync` is a no-op stub kept for future use.
 
-Pure financial logic is what *must* be correct — we put 100 % of our test coverage there.
+## Background jobs
 
-## Performance notes
+| Job | Status | Notes |
+|-----|--------|-------|
+| Materialize recurring | **Manual + API** | `POST …/recurring-templates/materialize` or UI “Sync now” on Schedules |
+| Payment reminders | Planned | Was Netlify scheduled function; move to cron hitting API |
+| Monthly rollover (overdue) | Planned | Same |
 
-- **Code splitting**: every route is `React.lazy()` loaded.
-- **Manual chunks** in `vite.config.ts`: `react-vendor`, `chart-vendor`, `calendar-vendor`, `supabase-vendor` so the heaviest dependencies are cacheable independently.
-- **Service worker** (vite-plugin-pwa) with NetworkFirst for Supabase API + CacheFirst for static assets.
-- **Realtime** is bounded: only `calendar_events` per household is subscribed to (cheap).
+For production, run a system cron or container scheduler that calls the materialize endpoint (and future job routes) daily.
 
-## Future hooks
+## Testing
 
-The schema and codebase reserve space for:
-- **CSV import** (Actual-inspired) — `external_id` deduplication ready
-- **Bank sync** — placeholder hooks, no integration yet
-- **Multi-currency exchange rates** — schema allows per-row currency
-- **Audit log replay** — every mutation already targets `audit_logs` via service-role triggers (to be added in a future migration)
+- **Vitest** — `tests/unit/` for pure finance logic
+- **Playwright** — `tests/e2e/` for auth shell and navigation
+
+## Performance
+
+- Route-level `React.lazy()` code splitting
+- Manual Vite chunks: `react-vendor`, `chart-vendor`, `calendar-vendor`
+- PWA service worker caches static assets; API uses network-first via normal fetch
+
+## Deployment
+
+See [DEPLOY.md](./DEPLOY.md) and [INSTALL.md](../INSTALL.md).

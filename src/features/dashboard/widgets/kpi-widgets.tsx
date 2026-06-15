@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
 import {
   type LucideIcon,
   AlertTriangle,
@@ -24,11 +23,11 @@ import type { WidgetProps } from './widget-types';
 type Tone = 'default' | 'success' | 'warning' | 'destructive' | 'info';
 
 const TONE_BG: Record<Tone, string> = {
-  default: 'bg-muted/40 text-foreground',
-  success: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400',
-  warning: 'bg-amber-500/15 text-amber-600 dark:text-amber-400',
-  destructive: 'bg-red-500/15 text-red-600 dark:text-red-400',
-  info: 'bg-sky-500/15 text-sky-600 dark:text-sky-400',
+  default: 'bg-secondary text-muted-foreground',
+  success: 'bg-primary/10 text-primary',
+  warning: 'bg-warning/10 text-warning',
+  destructive: 'bg-destructive/10 text-destructive',
+  info: 'bg-primary/10 text-primary',
 };
 
 interface InnerProps {
@@ -59,28 +58,28 @@ function KpiInner({
       editing={editing}
       onRemove={onRemove}
       onActivate={navigateTo ? () => navigate(navigateTo) : undefined}
-      contentClassName="flex flex-col justify-between"
+      contentClassName="flex min-h-0 flex-1 flex-col justify-between py-0.5"
     >
-      <motion.div
-        initial={{ opacity: 0, y: 4 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex h-full flex-col justify-between gap-2"
-      >
-        <div className="flex items-start justify-between gap-2">
-          <p className="break-words text-2xl font-bold leading-tight tracking-tight">
-            {value}
-          </p>
-          <div
-            className={cn(
-              'flex h-9 w-9 shrink-0 items-center justify-center rounded-lg',
-              TONE_BG[tone],
-            )}
-          >
-            <Icon className="h-4 w-4" />
-          </div>
+      <div className="flex h-full min-h-0 flex-col justify-between gap-1">
+        <div
+          className={cn(
+            'flex h-7 w-7 shrink-0 items-center justify-center self-end rounded-md',
+            TONE_BG[tone],
+          )}
+        >
+          <Icon className="h-3.5 w-3.5" />
         </div>
-        {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
-      </motion.div>
+        <p className="text-lg font-bold leading-none tabular-nums tracking-tight">
+          {value}
+        </p>
+        {hint ? (
+          <p className="line-clamp-2 text-[10px] leading-snug text-muted-foreground">
+            {hint}
+          </p>
+        ) : (
+          <span className="block h-[14px]" aria-hidden />
+        )}
+      </div>
     </WidgetShell>
   );
 }
@@ -140,14 +139,28 @@ export function KpiTotalExpenseWidget({ ctx, onRemove }: WidgetProps) {
     return (
       <LoadingShell title={t('dashboard.total_expense')} editing={ctx.editing} />
     );
-  const over = ctx.kpis.totalExpense > ctx.kpis.totalIncome;
+  const over = ctx.kpis.totalExpensePaid > ctx.kpis.totalIncome;
+  const pendingHint =
+    ctx.kpis.totalExpensePending > 0
+      ? t('dashboard.expense_pending_hint', {
+          committed: formatCurrency(ctx.kpis.totalExpenseCommitted, {
+            currency: ctx.currency,
+            compact: true,
+          }),
+          pending: formatCurrency(ctx.kpis.totalExpensePending, {
+            currency: ctx.currency,
+            compact: true,
+          }),
+        })
+      : undefined;
   return (
     <KpiInner
-      title={t('dashboard.total_expense')}
-      value={formatCurrency(ctx.kpis.totalExpense, {
+      title={t('dashboard.total_expense_paid')}
+      value={formatCurrency(ctx.kpis.totalExpensePaid, {
         currency: ctx.currency,
         compact: true,
       })}
+      hint={pendingHint}
       icon={Receipt}
       tone={over ? 'destructive' : 'default'}
       navigateTo={`/expenses?${monthRangeQuery()}`}
@@ -246,11 +259,14 @@ export function KpiMinSavingsWidget({ ctx, onRemove }: WidgetProps) {
 // 7. Actual savings
 // =============================================================================
 export function KpiActualSavingsWidget({ ctx, onRemove }: WidgetProps) {
-  const { t: _t } = useTranslation();
-  if (!ctx.kpis) return <LoadingShell title="Ahorro real" editing={ctx.editing} />;
+  const { t } = useTranslation();
+  if (!ctx.kpis)
+    return (
+      <LoadingShell title={t('dashboard.actual_savings')} editing={ctx.editing} />
+    );
   return (
     <KpiInner
-      title="Ahorro real"
+      title={t('dashboard.actual_savings')}
       value={formatCurrency(ctx.kpis.actualSavings, {
         currency: ctx.currency,
         compact: true,
@@ -384,25 +400,21 @@ export function KpiHeroWidget({ ctx, onRemove }: WidgetProps) {
 
   return (
     <WidgetShell editing={ctx.editing} onRemove={onRemove}>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="flex h-full flex-col justify-between gap-3"
-      >
-        <div className="space-y-2">
-          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+      <div className="flex h-full flex-col justify-between gap-2">
+        <div className="space-y-1">
+          <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
             {t('dashboard.hero_question')}
           </p>
-          <div className="flex flex-wrap items-baseline gap-3">
-            <span className="text-3xl font-bold tracking-tight md:text-4xl">
+          <div className="flex flex-wrap items-baseline gap-2">
+            <span className="text-xl font-bold tracking-tight sm:text-2xl">
               {formatCurrency(minRequiredIncome, { currency: ctx.currency })}
             </span>
             {hasDeficit ? (
-              <span className="rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-700 dark:bg-red-950/40 dark:text-red-300">
+              <span className="rounded-lg bg-destructive/10 px-3 py-1 text-xs font-semibold text-destructive">
                 Déficit: {formatCurrency(deficit, { currency: ctx.currency })}
               </span>
             ) : (
-              <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300">
+              <span className="rounded-lg bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
                 Excedente: {formatCurrency(surplus, { currency: ctx.currency })}
               </span>
             )}
@@ -421,14 +433,10 @@ export function KpiHeroWidget({ ctx, onRemove }: WidgetProps) {
           <Progress
             value={progress}
             className="h-2"
-            indicatorClassName={
-              hasDeficit
-                ? 'bg-gradient-to-r from-red-500 to-amber-500'
-                : 'bg-gradient-to-r from-emerald-500 to-sky-500'
-            }
+            indicatorClassName={hasDeficit ? 'bg-destructive' : 'bg-primary'}
           />
         </div>
-      </motion.div>
+      </div>
     </WidgetShell>
   );
 }
@@ -482,9 +490,7 @@ export function KpiProjectionWidget({ ctx, onRemove }: WidgetProps) {
           <p
             className={cn(
               'text-sm font-bold tabular-nums',
-              ctx.kpis.projectedBalance >= 0
-                ? 'text-emerald-600 dark:text-emerald-400'
-                : 'text-red-600 dark:text-red-400',
+              ctx.kpis.projectedBalance >= 0 ? 'text-primary' : 'text-destructive',
             )}
           >
             {formatCurrency(ctx.kpis.projectedBalance, {

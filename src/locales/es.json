@@ -15,6 +15,7 @@
     "search": "Buscar",
     "filter": "Filtrar",
     "all": "Todos",
+    "member": "Miembro",
     "yes": "Sí",
     "no": "No",
     "back": "Volver",
@@ -33,22 +34,38 @@
   },
   "auth": {
     "login": "Iniciar sesión",
+    "signup": "Crear cuenta",
     "logout": "Cerrar sesión",
-    "magic_link_title": "Entra con un enlace mágico",
-    "magic_link_subtitle": "Te enviamos un enlace seguro a tu correo. Sin contraseñas.",
+    "login_title": "Bienvenido de nuevo",
+    "login_subtitle": "Entra con tu correo y contraseña.",
+    "signup_title": "Crea tu cuenta",
+    "signup_subtitle": "Regístrate para gestionar el presupuesto de tu hogar.",
     "email_label": "Correo electrónico",
     "email_placeholder": "tu@correo.com",
-    "send_magic_link": "Enviar enlace mágico",
-    "check_email_title": "Revisa tu correo",
-    "check_email_subtitle": "Enviamos un enlace a {{email}}. Haz clic en él para entrar.",
-    "resend": "Reenviar enlace",
+    "password_label": "Contraseña",
+    "password_required": "La contraseña es obligatoria",
+    "password_too_short": "Mínimo 8 caracteres",
+    "password_too_long": "Máximo 72 caracteres",
+    "password_mismatch": "Las contraseñas no coinciden",
+    "confirm_password_label": "Confirmar contraseña",
+    "full_name_label": "Tu nombre (opcional)",
+    "full_name_placeholder": "Ej: Javier",
+    "create_account": "Crear cuenta",
+    "check_email_title": "Confirma tu correo",
+    "check_email_subtitle": "Enviamos un enlace de confirmación a {{email}}. Ábrelo para activar tu cuenta.",
+    "resend_confirmation": "Reenviar confirmación",
+    "confirmation_resent": "Correo de confirmación reenviado",
     "resend_in": "Reenviar en {{seconds}}s",
     "back_to_login": "Volver al login",
     "verifying": "Verificando tu sesión…",
-    "callback_error": "No pudimos validar el enlace. Intenta de nuevo.",
+    "callback_error": "No pudimos validar la confirmación. Intenta iniciar sesión de nuevo.",
     "invalid_email": "Correo inválido",
-    "rate_limit_error": "Límite de correos de Supabase alcanzado (~4/hora). Configura SMTP con Resend en el dashboard de Supabase (ver docs/AUTH_SETUP.md) o espera ~1 hora.",
-    "smtp_error": "Supabase no pudo enviar el correo (SMTP). Revisa Authentication → Logs en Supabase y la sección SMTP en docs/AUTH_SETUP.md."
+    "invalid_credentials": "Correo o contraseña incorrectos",
+    "api_unreachable": "No se pudo conectar al servidor. Ejecuta npm run dev:api en otra terminal.",
+    "email_not_confirmed": "Confirma tu correo antes de iniciar sesión",
+    "user_already_exists": "Ya existe una cuenta con ese correo. Inicia sesión.",
+    "rate_limit_error": "Límite de correos alcanzado. Espera unos minutos o configura SMTP en Supabase.",
+    "smtp_error": "No se pudo enviar el correo de confirmación. Revisa SMTP en Supabase (docs/AUTH_SETUP.md)."
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -62,7 +79,11 @@
     "budget": "Presupuesto",
     "members": "Miembros",
     "notifications": "Notificaciones",
-    "settings": "Configuración"
+    "settings": "Configuración",
+    "main": "Principal",
+    "favorites": "Favoritos",
+    "recent": "Reciente",
+    "search_placeholder": "Buscar…"
   },
   "onboarding": {
     "title": "Crea tu primer hogar",
@@ -149,7 +170,36 @@
       "category": "Categoría",
       "status": "Estado",
       "type": "Tipo",
-      "range": "Rango"
+      "range": "Rango",
+      "search": "Buscar eventos…",
+      "clear": "Limpiar filtros"
+    },
+    "nav": {
+      "prev": "Anterior",
+      "next": "Siguiente",
+      "today": "Hoy"
+    },
+    "views": {
+      "label": "Vista del calendario",
+      "month": "Mes",
+      "week": "Semana",
+      "day": "Día",
+      "list": "Agenda"
+    },
+    "legend": "Leyenda",
+    "event_type": {
+      "expense": "Gasto",
+      "income": "Ingreso",
+      "contribution": "Aporte",
+      "goal": "Meta",
+      "reminder": "Recordatorio"
+    }
+  },
+  "categories": {
+    "type": {
+      "expense": "Gasto",
+      "income": "Ingreso",
+      "savings": "Ahorro"
     }
   },
   "expenses": {

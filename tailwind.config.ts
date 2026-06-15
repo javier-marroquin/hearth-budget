@@ -47,7 +47,11 @@ const config: Config = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
-        // Financial semantic colors
+        sidebar: {
+          DEFAULT: 'hsl(var(--sidebar))',
+          foreground: 'hsl(var(--sidebar-foreground))',
+          border: 'hsl(var(--sidebar-border))',
+        },
         success: {
           DEFAULT: 'hsl(var(--success))',
           foreground: 'hsl(var(--success-foreground))',
@@ -60,7 +64,6 @@ const config: Config = {
           DEFAULT: 'hsl(var(--info))',
           foreground: 'hsl(var(--info-foreground))',
         },
-        // Calendar event status colors
         status: {
           pending: 'hsl(var(--status-pending))',
           paid: 'hsl(var(--status-paid))',
@@ -70,23 +73,50 @@ const config: Config = {
           savings: 'hsl(var(--status-savings))',
         },
       },
+      spacing: {
+        '4.5': '1.125rem',
+        '13': '3.25rem',
+        '15': '3.75rem',
+        '18': '4.5rem',
+      },
+      maxWidth: {
+        content: '1400px',
+      },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+        button: '10px',
       },
       fontFamily: {
         sans: [
           'Inter',
+          'Geist',
+          'IBM Plex Sans',
           'ui-sans-serif',
           'system-ui',
           '-apple-system',
           'BlinkMacSystemFont',
           'Segoe UI',
-          'Roboto',
           'sans-serif',
         ],
         mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+      },
+      fontSize: {
+        'body': ['14px', { lineHeight: '1.5', fontWeight: '400' }],
+        'body-sm': ['13px', { lineHeight: '1.5', fontWeight: '400' }],
+        'section': ['18px', { lineHeight: '1.4', fontWeight: '600' }],
+        'subtitle': ['24px', { lineHeight: '1.3', fontWeight: '600' }],
+        'title': ['32px', { lineHeight: '1.2', fontWeight: '700' }],
+      },
+      transitionDuration: {
+        DEFAULT: '150ms',
+        fast: '150ms',
+        normal: '200ms',
+      },
+      transitionTimingFunction: {
+        DEFAULT: 'cubic-bezier(0, 0, 0.2, 1)',
+        out: 'cubic-bezier(0, 0, 0.2, 1)',
       },
       keyframes: {
         'accordion-down': {
@@ -108,7 +138,7 @@ const config: Config = {
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'fade-in': 'fade-in 0.3s ease-out',
+        'fade-in': 'fade-in 0.2s ease-out',
         shimmer: 'shimmer 1.5s infinite',
       },
     },

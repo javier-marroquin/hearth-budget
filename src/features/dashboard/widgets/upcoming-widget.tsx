@@ -44,6 +44,7 @@ export function UpcomingWidget({ ctx, config, onRemove }: UpcomingWidgetProps) {
           householdId={ctx.householdId}
           currency={ctx.currency}
           windowDays={windowDays}
+          variant="sidebar"
         />
       </div>
     </div>

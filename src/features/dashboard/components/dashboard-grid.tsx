@@ -1,50 +1,16 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-// In react-grid-layout 2.x, `ResponsiveGridLayout` auto-measures its
-// container width — the old WidthProvider HOC is gone. Types are from
-// the 1.x line so we cast at the boundary.
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore - 2.x ESM named exports not in @types/react-grid-layout@1
-import { ResponsiveGridLayout as RGLResponsive } from 'react-grid-layout';
+import { Responsive, WidthProvider } from 'react-grid-layout/legacy';
+import type { Layout, ResponsiveLayouts } from 'react-grid-layout/legacy';
 import { useAuthStore } from '@/features/auth/stores/auth.store';
 import { useHouseholdStore } from '@/features/households/stores/household.store';
-import { cn } from '@/lib/utils';
-import { WIDGETS, DEFAULT_LAYOUT } from '../widgets/widget-registry';
 import { loadLayout, saveLayout } from '../services/layout.service';
+import { DEFAULT_LAYOUT } from '../widgets/widget-registry';
+import { cn } from '@/lib/utils';
+import { WIDGETS } from '../widgets/widget-registry';
+import { reflowLayout, stackLayout } from '../lib/layout-utils';
 import type { WidgetContext, LayoutItem } from '../widgets/widget-types';
 
-interface RGLLayoutItem {
-  i: string;
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-  minW?: number;
-  minH?: number;
-  maxW?: number;
-  maxH?: number;
-  static?: boolean;
-}
-type RGLLayouts = Record<string, RGLLayoutItem[]>;
-
-interface RGLResponsiveProps {
-  className?: string;
-  layouts?: RGLLayouts;
-  cols?: Record<string, number>;
-  breakpoints?: Record<string, number>;
-  rowHeight?: number;
-  margin?: [number, number];
-  isDraggable?: boolean;
-  isResizable?: boolean;
-  draggableHandle?: string;
-  compactType?: 'vertical' | 'horizontal' | null;
-  preventCollision?: boolean;
-  onDragStop?: (layout: RGLLayoutItem[]) => void;
-  onResizeStop?: (layout: RGLLayoutItem[]) => void;
-  children?: React.ReactNode;
-}
-
-const ResponsiveGridLayout =
-  RGLResponsive as unknown as React.ComponentType<RGLResponsiveProps>;
+const ResponsiveGridLayout = WidthProvider(Responsive);
 
 interface DashboardGridProps {
   ctx: Omit<WidgetContext, 'editing'>;
@@ -57,6 +23,32 @@ interface DashboardGridProps {
 const COLS = { lg: 12, md: 12, sm: 6, xs: 4, xxs: 2 };
 const BREAKPOINTS = { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 };
 
+function toRglItems(items: LayoutItem[], locked: boolean): Layout {
+  return items.map((it) => {
+    const def = WIDGETS[it.widgetId]!;
+    return {
+      i: it.instanceId,
+      x: it.x,
+      y: it.y,
+      w: it.w,
+      h: it.h,
+      minW: def.minW,
+      minH: def.minH,
+      maxW: def.maxW,
+      maxH: def.maxH,
+      static: locked,
+    };
+  });
+}
+
+function fromRglItems(visibleItems: LayoutItem[], next: Layout): LayoutItem[] {
+  return visibleItems.map((it) => {
+    const fresh = next.find((l) => l.i === it.instanceId);
+    if (!fresh) return it;
+    return { ...it, x: fresh.x, y: fresh.y, w: fresh.w, h: fresh.h };
+  });
+}
+
 export function DashboardGrid({
   ctx,
   editing,
@@ -64,88 +56,83 @@ export function DashboardGrid({
   onLayoutChange,
   onRemoveItem,
 }: DashboardGridProps) {
-  // Strip layout items whose widgetId no longer exists (e.g. registry refactor).
   const visibleItems = useMemo(
     () => layout.filter((it) => Boolean(WIDGETS[it.widgetId])),
     [layout],
   );
 
-  // Build the layouts map for ResponsiveGridLayout. Same layout at every
-  // wide breakpoint; small breakpoints stack to a single column.
-  const layouts: RGLLayouts = useMemo(() => {
-    const lg: RGLLayoutItem[] = visibleItems.map((it) => {
-      const def = WIDGETS[it.widgetId]!;
-      return {
-        i: it.instanceId,
-        x: it.x,
-        y: it.y,
-        w: it.w,
-        h: it.h,
-        minW: def.minW,
-        minH: def.minH,
-        maxW: def.maxW,
-        maxH: def.maxH,
-      };
-    });
-    const buildStack = (cols: number): RGLLayoutItem[] =>
-      visibleItems.map((it, i) => ({
-        i: it.instanceId,
-        x: 0,
-        y: i * 2,
-        w: cols,
-        h: it.h,
-      }));
-    return {
-      lg,
-      md: lg,
-      sm: lg,
-      xs: buildStack(COLS.xs),
-      xxs: buildStack(COLS.xxs),
-    };
-  }, [visibleItems]);
+  const locked = !editing;
 
-  // Apply changes from a drag/resize gesture. We only commit on the *stop*
-  // events (not on every intermediate onLayoutChange) so the dashboard
-  // doesn't churn on first mount or during compacting.
-  const commit = useCallback(
-    (next: RGLLayoutItem[]) => {
-      const updated = visibleItems.map((it) => {
-        const fresh = next.find((l) => l.i === it.instanceId);
-        if (!fresh) return it;
-        return { ...it, x: fresh.x, y: fresh.y, w: fresh.w, h: fresh.h };
-      });
-      // Only emit if positions actually changed.
+  /** Live lg layout — avoids snap-back when parent re-renders mid-drag. */
+  const [lgLayout, setLgLayout] = useState<Layout>(() =>
+    toRglItems(visibleItems, locked),
+  );
+
+  useEffect(() => {
+    setLgLayout(toRglItems(visibleItems, locked));
+  }, [visibleItems, locked]);
+
+  const layouts: ResponsiveLayouts = useMemo(() => {
+    const lg = lgLayout;
+    const md = lgLayout;
+    const sm = toRglItems(reflowLayout(visibleItems, COLS.sm), locked);
+    const xs = toRglItems(stackLayout(visibleItems, COLS.xs), locked);
+    const xxs = toRglItems(stackLayout(visibleItems, COLS.xxs), locked);
+    return { lg, md, sm, xs, xxs };
+  }, [lgLayout, visibleItems, locked]);
+
+  const persistLayout = useCallback(
+    (next: Layout) => {
+      setLgLayout(next);
+      const updated = fromRglItems(visibleItems, next);
       const changed = updated.some((u, i) => {
         const prev = visibleItems[i]!;
-        return prev.x !== u.x || prev.y !== u.y || prev.w !== u.w || prev.h !== u.h;
+        return (
+          prev.x !== u.x ||
+          prev.y !== u.y ||
+          prev.w !== u.w ||
+          prev.h !== u.h
+        );
       });
       if (changed) onLayoutChange(updated);
     },
     [visibleItems, onLayoutChange],
   );
 
+  /** Keep grid positions in sync while dragging (before parent state updates). */
+  const handleLayoutChange = useCallback(
+    (_current: Layout, allLayouts: ResponsiveLayouts) => {
+      if (!editing) return;
+      const next = allLayouts.lg ?? _current;
+      setLgLayout(next);
+    },
+    [editing],
+  );
+
   return (
-    <div className={cn(editing && 'editing-dashboard')}>
+    <div className={cn('dashboard-grid', editing && 'editing-dashboard')}>
       <ResponsiveGridLayout
         className="layout"
         layouts={layouts}
         cols={COLS}
         breakpoints={BREAKPOINTS}
-        rowHeight={56}
+        rowHeight={48}
         margin={[12, 12]}
+        containerPadding={[0, 0]}
         isDraggable={editing}
         isResizable={editing}
         draggableHandle=".widget-drag-handle"
-        compactType="vertical"
+        compactType={editing ? 'vertical' : null}
         preventCollision={false}
-        onDragStop={commit}
-        onResizeStop={commit}
+        onLayoutChange={handleLayoutChange}
+        onDragStop={persistLayout}
+        onResizeStop={persistLayout}
       >
         {visibleItems.map((it) => {
           const def = WIDGETS[it.widgetId]!;
           const Component = def.component;
           return (
-            <div key={it.instanceId}>
+            <div key={it.instanceId} className="h-full min-h-0">
               <Component
                 ctx={{ ...ctx, editing }}
                 config={it.config}
@@ -159,25 +146,15 @@ export function DashboardGrid({
   );
 }
 
-/**
- * Hook that loads + persists the layout for the current user/household.
- *
- * Uses a lazy initializer so the very first render already gets the
- * default layout (no `[]` flash). Persists only on explicit calls to
- * setLayout (i.e. drag/resize stop, add/remove).
- */
 export function useDashboardLayout() {
   const userId = useAuthStore((s) => s.user?.id);
   const householdId = useHouseholdStore((s) => s.activeHousehold?.id);
 
   const [layout, setLayoutState] = useState<LayoutItem[]>(DEFAULT_LAYOUT);
 
-  // When the (userId, householdId) pair changes, reload from storage.
-  // This also runs on first mount once both ids are populated.
   useEffect(() => {
     if (!userId || !householdId) return;
-    const fresh = loadLayout(userId, householdId);
-    setLayoutState(fresh);
+    setLayoutState(loadLayout(userId, householdId));
   }, [userId, householdId]);
 
   const setLayout = useCallback(

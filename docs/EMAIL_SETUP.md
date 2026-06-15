@@ -1,93 +1,84 @@
-# Email setup (Resend)
+# Email setup
 
-PresupuestoHogar uses [Resend](https://resend.com) for **two** independent things:
+Household Budget sends **optional** transactional email for member invitations. Auth uses **email + password** (no magic links).
 
-1. **Supabase Auth Magic Link emails** (login). Configured at the SMTP level in your Supabase project. See [`AUTH_SETUP.md`](./AUTH_SETUP.md).
-2. **Transactional emails from Netlify Functions** (invitations, payment reminders). Uses the Resend REST API.
+## Development (default)
 
-Both share the same Resend account and API key.
+With Docker dev profile, **Mailpit** catches all outbound mail:
 
-## 1. Create the account
+```bash
+docker compose --profile dev up -d db mailpit
+```
 
-1. Sign up at <https://resend.com>.
-2. Verify your email.
+| Service | URL |
+|---------|-----|
+| Mailpit UI | http://localhost:8025 |
+| SMTP | `localhost:1025` |
 
-## 2. Verify a sending domain (production)
-
-For production you need to verify your own domain (e.g. `presupuesto.tudominio.com`). Steps:
-
-1. Resend dashboard → **Domains** → **Add domain**.
-2. Add the DNS records they show (TXT for SPF + 3 CNAME records for DKIM).
-3. Wait for verification (usually < 10 minutes).
-4. Once verified, use `no-reply@yourdomain.com` as the `RESEND_FROM_EMAIL`.
-
-For development you can skip this step and use `onboarding@resend.dev` as the sender — but Resend only allows sending to **your own verified email** in that mode.
-
-## 3. Create an API key
-
-Resend dashboard → **API Keys** → **Create API key**.
-
-- Name: `PresupuestoHogar production` (or `dev`)
-- Permission: **Sending access** (full)
-- Domain: select the verified one (or "All domains" if using sandbox)
-
-Copy the key (`re_...`). It's shown only once.
-
-## 4. Env variables
-
-Add to your `.env.local`:
+In `.env`:
 
 ```env
-RESEND_API_KEY=re_xxxxxxxxxxxxxxxx
-RESEND_FROM_EMAIL=PresupuestoHogar <no-reply@yourdomain.com>
-INVITE_JWT_SECRET=replace-with-openssl-rand-base64-48-output
-INVITE_JWT_EXPIRES_IN=7d
-APP_URL=http://localhost:5173
+SMTP_HOST=localhost
+SMTP_PORT=1025
 ```
 
-Generate a strong JWT secret:
+If SMTP is not configured, invite links are **printed to the API console**:
+
+```
+[invite] user@example.com → http://localhost:5173/invite?token=...
+```
+
+## Production options
+
+### Option A — SMTP (any provider)
+
+Set on the API container / process:
+
+```env
+SMTP_HOST=smtp.yourprovider.com
+SMTP_PORT=587
+# Extend server mail transport if your provider needs USER/PASS/TLS
+```
+
+The Hono server reads `SMTP_HOST` and `SMTP_PORT` from [server/src/config.ts](../server/src/config.ts). Wire credentials in your deployment if you add STARTTLS auth.
+
+### Option B — Resend (recommended for small deployments)
+
+1. Create an account at [resend.com](https://resend.com)
+2. Verify your sending domain (SPF + DKIM DNS records)
+3. Create an API key with **Sending access**
+4. Add env vars to the **API** (never prefix with `VITE_`):
+
+```env
+# When Resend support is wired in the server:
+RESEND_API_KEY=re_xxxxxxxx
+RESEND_FROM_EMAIL=Household Budget <no-reply@yourdomain.com>
+APP_URL=https://budget.example.com
+```
+
+Invite tokens are signed with `AUTH_SECRET` (or optional `INVITE_JWT_SECRET`).
+
+## Testing an invite
+
+1. Sign in as a household **admin**
+2. **Members → Invite** (or API):
 
 ```bash
-openssl rand -base64 48
+curl -b cookies.txt -X POST http://localhost:3000/api/invite-member \
+  -H 'Content-Type: application/json' \
+  -d '{"household_id":"UUID","email":"friend@example.com","role":"familiar"}'
 ```
 
-In Netlify (production), set the same variables in **Site settings → Environment variables**. Make sure they are **not** prefixed with `VITE_` so they stay server-side.
+3. Open the invite URL (email or API log) while signed in as the invitee (or sign up with that email)
 
-## 5. Configure as Supabase Auth SMTP
+## Scheduled emails (reminders)
 
-This is the critical step for Magic Link to scale. See [`AUTH_SETUP.md`](./AUTH_SETUP.md) section 4.
+Payment reminder emails are **not yet** implemented in the self-hosted API. Previously they ran as Netlify scheduled functions. Track progress in GitHub issues or run manual checks via the **Notifications** page until a cron endpoint ships.
 
-## 6. Test the integration
+## Limits (Resend free tier)
 
-After deploying, you can manually trigger the invite Function:
+| | Limit |
+|---|------|
+| Resend | 3,000 emails/month, 100/day |
 
-```bash
-curl -X POST https://YOUR-SITE.netlify.app/api/invite-member \
-  -H "Authorization: Bearer YOUR_SUPABASE_ACCESS_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"household_id":"...","email":"test@example.com","role":"familiar"}'
-```
-
-You should see the invitee receive an email within ~10 seconds.
-
-## Scheduled Functions
-
-The app has scheduled jobs declared via `@netlify/functions` `config.schedule`:
-
-| Function | Cron | What it does |
-|---|---|---|
-| `send-reminders` | `0 8 * * *` (daily 08:00 UTC) | Emails admins about upcoming/overdue payments, creates in-app notifications |
-| `materialize-recurring` | `0 1 * * *` (daily 01:00 UTC) | Generates upcoming `calendar_events` from `recurring_rules` (60-day horizon) |
-| `monthly-rollover` | `30 0 1 * *` (1st of month 00:30 UTC) | Marks pending past-due expenses + contributions as `overdue` |
-
-These run automatically on Netlify once deployed. Verify in **Site settings → Functions** that they appear with a 🕒 icon.
-
-## Limits to know
-
-| Free tier | Limit |
-|---|---|
-| Resend | 3,000 emails / month, 100 / day |
-| Netlify Functions | 125,000 invocations / month, 100 hr compute |
-| Netlify Scheduled | Run frequency: down to every minute |
-
-For a single household using the app, you'll be well within all limits indefinitely.
+A single household stays well within free tiers.

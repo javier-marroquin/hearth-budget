@@ -6,12 +6,7 @@ import { FullScreenLoader } from '@/components/layout/full-screen-loader';
 import { resolveCallbackSession } from '../services/auth.service';
 
 /**
- * Handles the Magic Link redirect from Supabase.
- *
- * The Supabase JS client (with `detectSessionInUrl: true`) consumes the
- * token in the URL hash automatically as soon as it's instantiated. We just
- * wait for the session to be present and then redirect to /onboarding or
- * /dashboard depending on whether the user has any household.
+ * Handles email confirmation redirects from Supabase after sign-up.
  */
 export function AuthCallbackPage() {
   const navigate = useNavigate();

@@ -19,8 +19,8 @@ If your monthly income is $3,000,000 and you've assigned $2,400,000 across all c
 
 ## Differences vs Actual Budget
 
-- We're cloud-first (Supabase Realtime), not local-first.
-- We allow non-envelope mode too — just track income vs expense without categorical allocation.
+- Self-hosted web app (PostgreSQL + API), not a local-first desktop sync model.
+- Envelope mode is optional — you can track income vs expense without category envelopes.
 - Rollover is per-category opt-in, not global.
 
 ## Quick math

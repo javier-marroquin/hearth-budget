@@ -209,8 +209,10 @@ export function SchedulesPage() {
               <CardContent className="flex flex-wrap items-center justify-between gap-3 p-4">
                 <div className="flex items-start gap-3">
                   <div
-                    className={`flex h-10 w-10 items-center justify-center rounded-md text-white ${
-                      tpl.kind === 'income' ? 'bg-emerald-500' : 'bg-amber-500'
+                    className={`flex h-10 w-10 items-center justify-center rounded-lg ${
+                      tpl.kind === 'income'
+                        ? 'bg-primary/10 text-primary'
+                        : 'bg-warning/10 text-warning'
                     }`}
                   >
                     {tpl.kind === 'income' ? (
@@ -300,8 +302,10 @@ export function SchedulesPage() {
               <CardContent className="flex items-center justify-between gap-3 p-4">
                 <div className="flex items-center gap-3">
                   <div
-                    className={`flex h-10 w-10 items-center justify-center rounded-md text-white ${
-                      it.kind === 'contribution' ? 'bg-sky-500' : 'bg-amber-500'
+                    className={`flex h-10 w-10 items-center justify-center rounded-lg ${
+                      it.kind === 'contribution'
+                        ? 'bg-primary/10 text-primary'
+                        : 'bg-warning/10 text-warning'
                     }`}
                   >
                     <CalendarClock className="h-5 w-5" />

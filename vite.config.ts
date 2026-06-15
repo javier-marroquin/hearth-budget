@@ -56,16 +56,6 @@ export default defineConfig(({ mode }) => {
           globPatterns: ['**/*.{js,css,html,svg,png,ico,webp,woff2}'],
           runtimeCaching: [
             {
-              urlPattern: /^https:\/\/.*\.supabase\.co\/rest\/v1\/.*/i,
-              handler: 'NetworkFirst',
-              options: {
-                cacheName: 'supabase-api-cache',
-                expiration: { maxEntries: 50, maxAgeSeconds: 60 * 5 },
-                cacheableResponse: { statuses: [0, 200] },
-                networkTimeoutSeconds: 5,
-              },
-            },
-            {
               urlPattern: /\.(?:png|jpg|jpeg|svg|webp|gif)$/,
               handler: 'CacheFirst',
               options: {
@@ -89,6 +79,12 @@ export default defineConfig(({ mode }) => {
       port: 5173,
       strictPort: false,
       open: false,
+      proxy: {
+        '/api': {
+          target: env.VITE_API_URL ?? 'http://localhost:3000',
+          changeOrigin: true,
+        },
+      },
     },
     build: {
       sourcemap: mode !== 'production',
@@ -106,7 +102,6 @@ export default defineConfig(({ mode }) => {
               '@fullcalendar/list',
               '@fullcalendar/interaction',
             ],
-            'supabase-vendor': ['@supabase/supabase-js'],
           },
         },
       },

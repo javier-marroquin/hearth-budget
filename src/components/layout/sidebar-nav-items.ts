@@ -31,5 +31,10 @@ export const NAV_ITEMS: NavItem[] = [
   { to: '/goals', labelKey: 'nav.goals', icon: Target },
   { to: '/members', labelKey: 'nav.members', icon: Users },
   { to: '/notifications', labelKey: 'nav.notifications', icon: Bell },
-  { to: '/settings', labelKey: 'nav.settings', icon: Settings },
 ];
+
+export const SETTINGS_NAV_ITEM: NavItem = {
+  to: '/settings',
+  labelKey: 'nav.settings',
+  icon: Settings,
+};

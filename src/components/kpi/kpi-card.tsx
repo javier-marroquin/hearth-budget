@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import { type LucideIcon, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -17,16 +16,16 @@ interface KpiCardProps {
 
 const toneClass: Record<NonNullable<KpiCardProps['tone']>, string> = {
   default: 'border-border bg-card',
-  success: 'border-emerald-200/60 bg-emerald-50/40 dark:border-emerald-900/40 dark:bg-emerald-950/20',
-  warning: 'border-amber-200/60 bg-amber-50/40 dark:border-amber-900/40 dark:bg-amber-950/20',
-  destructive: 'border-red-200/60 bg-red-50/40 dark:border-red-900/40 dark:bg-red-950/20',
+  success: 'border-primary/20 bg-primary/5',
+  warning: 'border-warning/30 bg-warning/5',
+  destructive: 'border-destructive/30 bg-destructive/5',
 };
 
 const iconBgTone: Record<NonNullable<KpiCardProps['tone']>, string> = {
-  default: 'bg-muted text-muted-foreground',
-  success: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400',
-  warning: 'bg-amber-500/15 text-amber-600 dark:text-amber-400',
-  destructive: 'bg-red-500/15 text-red-600 dark:text-red-400',
+  default: 'bg-secondary text-muted-foreground',
+  success: 'bg-primary/10 text-primary',
+  warning: 'bg-warning/10 text-warning',
+  destructive: 'bg-destructive/10 text-destructive',
 };
 
 export function KpiCard({
@@ -37,24 +36,13 @@ export function KpiCard({
   icon: Icon,
   tone = 'default',
   size = 'md',
-  delay = 0,
   className,
 }: KpiCardProps) {
   const compact = size === 'sm';
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 6 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay, duration: 0.2 }}
-      className={cn('h-full', className)}
-    >
-      <Card
-        className={cn(
-          'h-full border shadow-sm transition-shadow hover:shadow-md',
-          toneClass[tone],
-        )}
-      >
+    <div className={cn('h-full', className)}>
+      <Card className={cn('h-full border', toneClass[tone])}>
         <CardContent
           className={cn(
             'flex h-full min-h-[88px] flex-col justify-between',
@@ -65,7 +53,7 @@ export function KpiCard({
             <p
               className={cn(
                 'font-medium uppercase tracking-wide text-muted-foreground',
-                compact ? 'text-[10px] leading-tight' : 'text-xs',
+                compact ? 'text-[10px] leading-tight' : 'text-[11px]',
               )}
             >
               {label}
@@ -73,7 +61,7 @@ export function KpiCard({
             {Icon && (
               <div
                 className={cn(
-                  'flex shrink-0 items-center justify-center rounded-md',
+                  'flex shrink-0 items-center justify-center rounded-lg',
                   compact ? 'h-7 w-7' : 'h-8 w-8',
                   iconBgTone[tone],
                 )}
@@ -92,7 +80,7 @@ export function KpiCard({
               {value}
             </p>
             {(hint || trend) && (
-              <div className="mt-1 line-clamp-2 text-[10px] leading-snug text-muted-foreground">
+              <div className="mt-1 line-clamp-2 text-[11px] leading-snug text-muted-foreground">
                 {trend && <TrendIndicator trend={trend} />}
                 {hint && <span>{hint}</span>}
               </div>
@@ -100,7 +88,7 @@ export function KpiCard({
           </div>
         </CardContent>
       </Card>
-    </motion.div>
+    </div>
   );
 }
 
@@ -119,8 +107,8 @@ function TrendIndicator({
     good === null
       ? 'text-muted-foreground'
       : good
-        ? 'text-emerald-600 dark:text-emerald-400'
-        : 'text-red-600 dark:text-red-400';
+        ? 'text-primary'
+        : 'text-destructive';
 
   return (
     <span className={cn('mr-1 inline-flex items-center gap-0.5 font-medium', cls)}>
