@@ -9,7 +9,7 @@ healthRoutes.get('/', async (c) => {
   return c.json(
     {
       ok: db,
-      service: 'household-budget-api',
+      service: 'hearth-budget-api',
       version: '0.1.0',
       db,
     },

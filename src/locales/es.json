@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "PresupuestoHogar",
+    "name": "Hearth",
     "tagline": "Presupuesto colaborativo para tu hogar"
   },
   "common": {
@@ -64,8 +64,8 @@
     "api_unreachable": "No se pudo conectar al servidor. Ejecuta npm run dev:api en otra terminal.",
     "email_not_confirmed": "Confirma tu correo antes de iniciar sesión",
     "user_already_exists": "Ya existe una cuenta con ese correo. Inicia sesión.",
-    "rate_limit_error": "Límite de correos alcanzado. Espera unos minutos o configura SMTP en Supabase.",
-    "smtp_error": "No se pudo enviar el correo de confirmación. Revisa SMTP en Supabase (docs/AUTH_SETUP.md)."
+    "rate_limit_error": "Límite de correos alcanzado. Espera unos minutos o revisa la configuración SMTP del servidor.",
+    "smtp_error": "No se pudo enviar el correo. Revisa SMTP en el API (docs/EMAIL_SETUP.md)."
   },
   "nav": {
     "dashboard": "Dashboard",

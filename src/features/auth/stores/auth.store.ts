@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 /**
- * Minimal auth user shape. We avoid coupling to `@supabase/supabase-js`
+ * Minimal auth user shape (decoupled from any vendor SDK).
  * types here so this file can be imported anywhere.
  */
 export interface AuthUser {

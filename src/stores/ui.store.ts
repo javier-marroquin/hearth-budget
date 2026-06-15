@@ -45,7 +45,7 @@ export const useUiStore = create<UiState>()(
       },
     }),
     {
-      name: 'household-budget:ui',
+      name: 'hearth-budget:ui',
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         sidebarCollapsed: state.sidebarCollapsed,

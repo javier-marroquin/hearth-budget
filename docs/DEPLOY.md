@@ -78,7 +78,7 @@ budget.example.com {
         reverse_proxy localhost:3000
     }
     handle {
-        root * /var/www/household-budget/dist
+        root * /var/www/hearth-budget/dist
         try_files {path} /index.html
         file_server
     }

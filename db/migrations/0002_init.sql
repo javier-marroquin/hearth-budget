@@ -1,6 +1,6 @@
 -- =============================================================================
 -- Schema base: profiles, households, household_members, audit_logs
--- Adapted for self-hosted (profiles → app.users, no Supabase trigger)
+-- Core household schema (profiles linked to app.users)
 -- =============================================================================
 
 DO $$ BEGIN

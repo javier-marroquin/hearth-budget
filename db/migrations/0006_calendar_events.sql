@@ -68,10 +68,3 @@ create policy "CalendarEvents: writable members can update" on public.calendar_e
 drop policy if exists "CalendarEvents: writable members can delete" on public.calendar_events;
 create policy "CalendarEvents: writable members can delete" on public.calendar_events
   for delete using (public.is_writable_member(household_id));
-
--- Realtime (Supabase cloud only — no-op in self-hosted Postgres)
-DO $$ BEGIN
-  ALTER PUBLICATION supabase_realtime ADD TABLE public.calendar_events;
-EXCEPTION
-  WHEN undefined_object THEN NULL;
-END $$;

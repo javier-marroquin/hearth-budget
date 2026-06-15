@@ -1,6 +1,6 @@
 import type { TFunction } from 'i18next';
 
-/** Map Supabase Auth API errors to user-facing copy. */
+/** Map API auth errors to user-facing copy. */
 export function getAuthErrorMessage(error: unknown, t: TFunction): string {
   const message =
     error instanceof Error

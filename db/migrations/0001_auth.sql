@@ -1,5 +1,5 @@
 -- =============================================================================
--- Self-hosted auth: users + sessions (replaces Supabase auth.users)
+-- Self-hosted auth: users + sessions (app.users + app.sessions)
 -- =============================================================================
 
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";

@@ -39,14 +39,8 @@ build
 .env.test.local
 .env.production.local
 
-# Supabase
-.supabase
-supabase/.branches
-supabase/.temp
-
-# Netlify
+# Local tooling caches
 .netlify
-netlify/functions-internal
 
 # Testing
 coverage

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import type { UpcomingItem } from '../services/upcoming.service';
 
 function storageKey(householdId: string) {
-  return `household-budget:upcoming-order:${householdId}`;
+  return `hearth-budget:upcoming-order:${householdId}`;
 }
 
 function loadOrder(householdId: string): string[] {

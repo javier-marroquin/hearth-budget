@@ -14,7 +14,7 @@ Each list page exports a UTF-8 CSV (with BOM for Excel). Columns include human-r
 
 ## Full backup (JSON)
 
-Downloads `household-budget-NAME-YYYY-MM-DD.json` containing household, members, categories, incomes, expenses, splits, contributions, goals, calendar events, and recurring data. Schema version: `schema_version: 1`.
+Downloads `hearth-budget-NAME-YYYY-MM-DD.json` containing household, members, categories, incomes, expenses, splits, contributions, goals, calendar events, and recurring data. Schema version: `schema_version: 1`.
 
 Store monthly backups offline. Restore UI may arrive in a future release.
 

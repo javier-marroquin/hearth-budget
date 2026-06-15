@@ -6,7 +6,7 @@ import path from 'node:path';
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
-  const appName = env.VITE_APP_NAME ?? 'PresupuestoHogar';
+  const appName = env.VITE_APP_NAME ?? 'Hearth';
 
   return {
     plugins: [

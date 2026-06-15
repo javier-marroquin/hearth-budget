@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "HouseholdBudget",
+    "name": "Hearth",
     "tagline": "Collaborative budgeting for your home"
   },
   "common": {
@@ -64,8 +64,8 @@
     "api_unreachable": "Could not reach the server. Run npm run dev:api in another terminal.",
     "email_not_confirmed": "Confirm your email before signing in",
     "user_already_exists": "An account with this email already exists. Sign in instead.",
-    "rate_limit_error": "Email rate limit reached. Wait a few minutes or configure SMTP in Supabase.",
-    "smtp_error": "Could not send confirmation email. Check SMTP in Supabase (docs/AUTH_SETUP.md)."
+    "rate_limit_error": "Email rate limit reached. Wait a few minutes or check server SMTP settings.",
+    "smtp_error": "Could not send email. Check API SMTP configuration (docs/EMAIL_SETUP.md)."
   },
   "nav": {
     "dashboard": "Dashboard",

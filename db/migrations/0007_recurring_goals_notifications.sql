@@ -126,4 +126,4 @@ create policy "Notifications: mark own read" on public.notifications
   for update using (user_id = auth.uid())
   with check (user_id = auth.uid());
 
--- inserts via service role only (Netlify Functions)
+-- System notifications (API / future jobs only)

@@ -19,7 +19,7 @@ import type {
 export interface HouseholdBackup {
   schema_version: 1;
   exported_at: string;
-  app: 'household-budget';
+  app: 'hearth-budget';
   household: HouseholdRow;
   members: HouseholdMemberRow[];
   categories: CategoryRow[];
@@ -42,5 +42,5 @@ export async function exportHouseholdBackup(
 export function backupFilename(householdName: string): string {
   const safe = householdName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-+|-+$/g, '');
   const date = new Date().toISOString().slice(0, 10);
-  return `presupuesto-hogar-${safe}-${date}.json`;
+  return `hearth-budget-${safe}-${date}.json`;
 }

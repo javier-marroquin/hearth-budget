@@ -10,7 +10,7 @@
 import { DEFAULT_LAYOUT } from '../widgets/widget-registry';
 import type { LayoutItem } from '../widgets/widget-types';
 
-const STORAGE_KEY = 'household-budget:dashboard-layout';
+const STORAGE_KEY = 'hearth-budget:dashboard-layout';
 
 /**
  * Bump this when DEFAULT_LAYOUT changes so existing users pick it up.

@@ -3,7 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { config as dotenvConfig } from 'dotenv';
 
-/** Repo root (household-budget/), one level above server/. */
+/** Repo root, one level above server/. */
 export function getRepoRoot(): string {
   const serverDir = path.resolve(
     path.dirname(fileURLToPath(import.meta.url)),

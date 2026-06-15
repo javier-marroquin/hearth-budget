@@ -130,5 +130,5 @@ create policy "AuditLogs: read if member"
   on public.audit_logs for select
   using (household_id is null or public.is_member_of(household_id));
 
--- Writes go through the service role (Netlify Functions / triggers).
+-- Inserts: API only (no direct client inserts).
 -- We deliberately do NOT allow inserts from anon/authenticated.

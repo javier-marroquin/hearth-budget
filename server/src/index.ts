@@ -38,7 +38,7 @@ app.route('/api', recurringRoutes);
 
 app.get('/api', (c) =>
   c.json({
-    name: 'PresupuestoHogar API',
+    name: 'Hearth API',
     docs: 'See INSTALL.md',
     endpoints: ['/api/health', '/api/auth/sign-in', '/api/auth/sign-up', '/api/auth/me'],
   }),

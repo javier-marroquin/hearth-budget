@@ -1,6 +1,6 @@
 # Architecture
 
-High-level overview of **Household Budget** (Presupuesto Hogar).
+High-level overview of **Hearth** (collaborative household budgeting).
 
 ## Big picture
 
@@ -83,7 +83,7 @@ Authorisation is enforced in the API (membership + role checks), not Postgres RL
 
 Ordered SQL migrations applied on API startup (`npm run db:migrate`). Includes users/sessions, households, financial tables, calendar, recurring, notifications.
 
-> Legacy `supabase/migrations/` in the repo is historical reference only. Use `db/migrations/` for self-hosted installs.
+Migrations live in `db/migrations/` and run on API startup.
 
 ## Data flow example — create expense
 
@@ -118,7 +118,7 @@ No WebSocket layer. Calendar drag-and-drop persists via API; other tabs refresh 
 | Job | Status | Notes |
 |-----|--------|-------|
 | Materialize recurring | **Manual + API** | `POST …/recurring-templates/materialize` or UI “Sync now” on Schedules |
-| Payment reminders | Planned | Was Netlify scheduled function; move to cron hitting API |
+| Payment reminders | Planned | Cron endpoint on the API (future) |
 | Monthly rollover (overdue) | Planned | Same |
 
 For production, run a system cron or container scheduler that calls the materialize endpoint (and future job routes) daily.

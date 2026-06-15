@@ -1,7 +1,7 @@
 import type { HouseholdRole } from '@/features/households/stores/household.store';
 
 /**
- * Centralised permission helpers. The real source of truth is Supabase RLS;
+ * Centralised permission helpers. Authorisation is enforced on the API;
  * these are only for UX (hiding buttons, disabling inputs).
  */
 export const Permissions = {

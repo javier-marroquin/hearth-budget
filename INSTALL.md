@@ -1,6 +1,6 @@
 # Installation — self-hosted
 
-Run **Household Budget** with PostgreSQL and the included Hono API. No Supabase or Netlify required.
+Run **Hearth** with PostgreSQL and the included Hono API.
 
 ## Requirements
 

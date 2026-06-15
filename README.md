@@ -4,7 +4,7 @@
 
 Answer one question every month: **how much does your household need to earn to cover living costs, obligations, and at least 10% savings?**
 
-Also known as **Presupuesto Hogar** in the Spanish UI (`es` + `en` via i18next).
+Also known as **Hearth** in the UI (`es` + `en` via i18next).
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 
@@ -40,7 +40,7 @@ Also known as **Presupuesto Hogar** in the Spanish UI (`es` + `en` via i18next).
 | Auth | Email + password, session cookie |
 | Tests | Vitest (unit), Playwright (E2E) |
 
-No Supabase required. Everything runs from this repository.
+Everything runs from this repository (PostgreSQL + Hono API).
 
 ---
 

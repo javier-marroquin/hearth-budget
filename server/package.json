@@ -1,5 +1,5 @@
 {
-  "name": "@household-budget/server",
+  "name": "@hearth-budget/server",
   "version": "0.1.0",
   "private": true,
   "type": "module",

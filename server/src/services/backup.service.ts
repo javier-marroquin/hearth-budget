@@ -37,7 +37,7 @@ export async function exportHouseholdBackup(client: DbClient, householdId: strin
   return {
     schema_version: 1 as const,
     exported_at: new Date().toISOString(),
-    app: 'household-budget',
+    app: 'hearth-budget',
     household: household.rows[0],
     members: members.rows,
     categories: categories.rows,

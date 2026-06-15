@@ -73,7 +73,7 @@ curl -b cookies.txt -X POST http://localhost:3000/api/invite-member \
 
 ## Scheduled emails (reminders)
 
-Payment reminder emails are **not yet** implemented in the self-hosted API. Previously they ran as Netlify scheduled functions. Track progress in GitHub issues or run manual checks via the **Notifications** page until a cron endpoint ships.
+Payment reminder emails are **not yet** implemented in the self-hosted API. Use the **Notifications** page until a cron endpoint ships.
 
 ## Limits (Resend free tier)
 

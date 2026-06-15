@@ -41,7 +41,7 @@ export const useHouseholdStore = create<HouseholdState>()(
       reset: () => set({ activeHousehold: null, membership: null, households: [] }),
     }),
     {
-      name: 'household-budget:household',
+      name: 'hearth-budget:household',
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({ activeHousehold: state.activeHousehold }),
     },

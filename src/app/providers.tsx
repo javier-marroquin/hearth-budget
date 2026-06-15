@@ -41,7 +41,7 @@ export function AppProviders({ children }: AppProvidersProps) {
         defaultTheme="system"
         enableSystem
         disableTransitionOnChange={false}
-        storageKey="household-budget:theme"
+        storageKey="hearth-budget:theme"
       >
         <TooltipProvider delayDuration={200}>
           {children}

@@ -6,7 +6,7 @@ import { FullScreenLoader } from '@/components/layout/full-screen-loader';
 import { resolveCallbackSession } from '../services/auth.service';
 
 /**
- * Handles email confirmation redirects from Supabase after sign-up.
+ * Handles post-login redirects (e.g. invite token in query string).
  */
 export function AuthCallbackPage() {
   const navigate = useNavigate();
