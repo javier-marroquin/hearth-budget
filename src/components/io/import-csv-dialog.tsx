@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import { AlertCircle, FileSpreadsheet, Loader2, Upload } from 'lucide-react';
+import i18n from '@/i18n';
 import { toast } from 'sonner';
 import {
   Dialog,
@@ -67,13 +68,13 @@ export function ImportCsvDialog<T>({
       const text = await file.text();
       const parsed = parseCsv(text);
       if (parsed.rows.length === 0) {
-        toast.error('El archivo no contiene filas de datos');
+        toast.error(i18n.t('toast.csv_empty'));
         return;
       }
       setCsv(parsed);
       setMapping(suggestMapping(parsed.headers, fields));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Error leyendo el archivo');
+      toast.error(err instanceof Error ? err.message : i18n.t('toast.csv_read_error'));
     }
   };
 
@@ -85,9 +86,7 @@ export function ImportCsvDialog<T>({
   const startImport = async () => {
     if (!result) return;
     if (result.errors.length > 0) {
-      toast.error(
-        `Hay ${result.errors.length} errores de validación. Corrige el mapeo.`,
-      );
+      toast.error(i18n.t('toast.import_validation_errors', { count: result.errors.length }));
       return;
     }
     setImporting(true);
@@ -95,13 +94,13 @@ export function ImportCsvDialog<T>({
       const res = await onImport(result.rows);
       toast.success(
         res.failed > 0
-          ? `Importadas ${res.inserted}, fallaron ${res.failed}`
-          : `Importadas ${res.inserted} filas`,
+          ? i18n.t('toast.import_result', { inserted: res.inserted, failed: res.failed })
+          : i18n.t('toast.import_success', { count: res.inserted }),
       );
       reset();
       onOpenChange(false);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Error al importar');
+      toast.error(err instanceof Error ? err.message : i18n.t('toast.import_error'));
     } finally {
       setImporting(false);
     }

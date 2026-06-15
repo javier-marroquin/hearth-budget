@@ -29,7 +29,7 @@ export function AcceptInvitePage() {
 
   useEffect(() => {
     if (!token) {
-      setState({ kind: 'error', message: 'Invitation token missing' });
+      setState({ kind: 'error', message: t('invite.token_missing') });
       return;
     }
     if (!user) {
@@ -48,7 +48,7 @@ export function AcceptInvitePage() {
       } catch (err) {
         setState({
           kind: 'error',
-          message: err instanceof Error ? err.message : 'Unknown error',
+          message: err instanceof Error ? err.message : t('invite.unknown_error'),
         });
       }
     };
@@ -74,7 +74,7 @@ export function AcceptInvitePage() {
               ? '¡Bienvenido!'
               : state.kind === 'error'
                 ? t('common.error')
-                : 'Aceptar invitación'}
+                : t('invite.accept')}
           </CardTitle>
           {state.kind === 'success' && (
             <CardDescription>

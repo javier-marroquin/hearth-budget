@@ -1,12 +1,38 @@
-# Household Budget
+# Hearth
 
 **Self-hosted collaborative household budgeting** — track income, expenses, member contributions, and savings goals in one place.
 
 Answer one question every month: **how much does your household need to earn to cover living costs, obligations, and at least 10% savings?**
 
-Also known as **Hearth** in the UI (`es` + `en` via i18next).
+Bilingual UI (**English** + **Spanish**) via i18next.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+
+---
+
+## Screenshots
+
+<p align="center">
+  <a href="./docs/screenshots/dashboard.png">
+    <img src="./docs/screenshots/dashboard.png" alt="Hearth dashboard — KPIs, income vs expenses chart, upcoming payments, and savings widgets" width="900" />
+  </a>
+  <br />
+  <sub><strong>Dashboard</strong> — customizable KPIs, charts, and a 14-day upcoming timeline (paid, pending, and overdue)</sub>
+</p>
+
+<p align="center">
+  <a href="./docs/screenshots/calendar.png">
+    <img src="./docs/screenshots/calendar.png" alt="Hearth calendar — month view with bills, income, and contributions" width="440" />
+  </a>
+  &nbsp;
+  <a href="./docs/screenshots/goals.png">
+    <img src="./docs/screenshots/goals.png" alt="Hearth savings goals — progress bars and monthly suggestions" width="440" />
+  </a>
+  <br />
+  <sub><strong>Calendar</strong> &nbsp;·&nbsp; <strong>Savings goals</strong></sub>
+</p>
+
+> Demo data: `npm run db:seed:demo` → login `demo@local.dev` / `demo1234` → household **Casa Hearth**
 
 ---
 
@@ -84,6 +110,7 @@ npm run dev              # terminal 2
 
 - Email: `demo@local.dev`
 - Password: `demo1234`
+- Rich sample data (screenshots above): `npm run db:seed:demo`
 
 Full install guide: **[INSTALL.md](./INSTALL.md)**
 

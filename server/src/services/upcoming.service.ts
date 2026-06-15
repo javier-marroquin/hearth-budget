@@ -1,5 +1,5 @@
 import type { DbClient } from '../db/pool.js';
-import { daysUntil, toISODate } from '@/lib/date.js';
+import { daysUntil, toISODate, toISODateString } from '@/lib/date.js';
 
 export type UpcomingKind = 'income' | 'expense' | 'contribution' | 'event' | 'goal';
 
@@ -15,6 +15,7 @@ export interface UpcomingItem {
   daysUntil: number;
   tone: 'income' | 'expense' | 'contribution' | 'event' | 'goal';
   categoryColor?: string | null;
+  categoryId?: string | null;
   userId?: string | null;
   status?: string | null;
 }
@@ -115,7 +116,7 @@ export async function fetchUpcoming(
   }>) {
     if (!m.user_id) continue;
     membersById.set(m.user_id, {
-      name: m.full_name ?? m.email ?? 'Miembro',
+      name: m.full_name ?? m.email ?? '',
     });
   }
 
@@ -135,7 +136,7 @@ export async function fetchUpcoming(
     status: string;
     category_id: string | null;
   }>) {
-    const date = (e.due_date ?? e.date) as string;
+    const date = toISODateString(e.due_date ?? e.date);
     const dUntil = daysUntil(date, today);
     if (dUntil < 0) overdueCount++;
     const cat = e.category_id ? categoriesById.get(e.category_id) : null;
@@ -143,8 +144,9 @@ export async function fetchUpcoming(
       id: `expense:${e.id}`,
       kind: 'expense',
       sourceId: e.id,
-      title: e.description ?? 'Gasto',
-      subtitle: cat?.name ?? null,
+      title: e.description?.trim() ?? '',
+      subtitle: null,
+      categoryId: e.category_id,
       date,
       amount: Number(e.amount),
       currency: e.currency,
@@ -164,16 +166,17 @@ export async function fetchUpcoming(
     expected_date: string;
     status: string;
   }>) {
-    const dUntil = daysUntil(c.expected_date, today);
+    const date = toISODateString(c.expected_date);
+    const dUntil = daysUntil(date, today);
     if (dUntil < 0) overdueCount++;
     const member = c.user_id ? membersById.get(c.user_id) : null;
     items.push({
       id: `contribution:${c.id}`,
       kind: 'contribution',
       sourceId: c.id,
-      title: `Aporte de ${member?.name ?? 'miembro'}`,
+      title: member?.name ?? '',
       subtitle: null,
-      date: c.expected_date,
+      date,
       amount: Number(c.amount),
       currency: c.currency,
       daysUntil: dUntil,
@@ -193,16 +196,17 @@ export async function fetchUpcoming(
     source: string | null;
     category_id: string | null;
   }>) {
-    const dUntil = daysUntil(i.date, today);
+    const date = toISODateString(i.date);
+    const dUntil = daysUntil(date, today);
     const cat = i.category_id ? categoriesById.get(i.category_id) : null;
     const member = i.user_id ? membersById.get(i.user_id) : null;
     items.push({
       id: `income:${i.id}`,
       kind: 'income',
       sourceId: i.id,
-      title: i.source ?? cat?.name ?? `Ingreso de ${member?.name ?? 'miembro'}`,
+      title: i.source?.trim() || cat?.name || member?.name || '',
       subtitle: member?.name ?? null,
-      date: i.date,
+      date,
       amount: Number(i.amount),
       currency: i.currency,
       daysUntil: dUntil,
@@ -223,8 +227,8 @@ export async function fetchUpcoming(
     event_type: string;
     user_id: string | null;
   }>) {
-    const date = ev.start_at;
-    const dUntil = daysUntil(date.slice(0, 10), today);
+    const date = toISODateString(ev.start_at);
+    const dUntil = daysUntil(date, today);
     items.push({
       id: `event:${ev.id}`,
       kind: 'event',
@@ -249,7 +253,8 @@ export async function fetchUpcoming(
     target_date: string | null;
   }>) {
     if (!g.target_date) continue;
-    const dUntil = daysUntil(g.target_date, today);
+    const targetDate = toISODateString(g.target_date);
+    const dUntil = daysUntil(targetDate, today);
     const remaining = Math.max(Number(g.target_amount) - Number(g.current_amount), 0);
     if (remaining <= 0) continue;
     items.push({
@@ -257,8 +262,8 @@ export async function fetchUpcoming(
       kind: 'goal',
       sourceId: g.id,
       title: g.name,
-      subtitle: 'Meta por completar',
-      date: g.target_date,
+      subtitle: null,
+      date: targetDate,
       amount: remaining,
       currency: null,
       daysUntil: dUntil,
@@ -267,8 +272,8 @@ export async function fetchUpcoming(
   }
 
   items.sort((a, b) => {
-    const da = a.date.slice(0, 10);
-    const db = b.date.slice(0, 10);
+    const da = toISODateString(a.date);
+    const db = toISODateString(b.date);
     if (da !== db) return da < db ? -1 : 1;
     return a.kind.localeCompare(b.kind);
   });

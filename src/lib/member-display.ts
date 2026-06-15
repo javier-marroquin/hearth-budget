@@ -1,3 +1,5 @@
+import i18n from '@/i18n';
+
 /** Label for a household member in lists, selects, and charts. */
 export function memberDisplayName(member: {
   profile?: { full_name?: string | null; email?: string | null } | null;
@@ -7,5 +9,5 @@ export function memberDisplayName(member: {
   if (name) return name;
   if (member.profile?.email) return member.profile.email;
   if (member.invited_email) return member.invited_email;
-  return 'Sin nombre';
+  return i18n.t('member_display.unnamed');
 }

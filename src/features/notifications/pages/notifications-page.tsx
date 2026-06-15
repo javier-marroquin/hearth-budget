@@ -28,7 +28,11 @@ export function NotificationsPage() {
     <>
       <PageHeader
         title={t('nav.notifications')}
-        description={unread > 0 ? `${unread} sin leer` : 'Todo al día'}
+        description={
+          unread > 0
+            ? t('notifications.unread_count', { count: unread })
+            : t('notifications.all_caught_up')
+        }
         actions={
           unread > 0 && (
             <Button variant="outline" onClick={() => markAll.mutate()}>
@@ -50,8 +54,8 @@ export function NotificationsPage() {
       {!isLoading && (!notifications || notifications.length === 0) && (
         <EmptyState
           icon={Bell}
-          title="Sin notificaciones"
-          description="Te avisaremos aquí cuando tengas pagos próximos, vencidos o nuevas invitaciones."
+          title={t('empty.notifications_title')}
+          description={t('empty.notifications_description')}
         />
       )}
 

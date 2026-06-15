@@ -85,7 +85,7 @@ export function GoalsPage() {
           canWriteExpenses && (
             <Button onClick={() => setOpen(true)}>
               <Plus className="h-4 w-4" />
-              Nueva meta
+              {t('goals.create')}
             </Button>
           )
         }
@@ -102,8 +102,8 @@ export function GoalsPage() {
       {!isLoading && (!goals || goals.length === 0) && (
         <EmptyState
           icon={Target}
-          title="Sin metas activas"
-          description="Crea metas de ahorro (emergencias, vacaciones, electrodomésticos…) y la app calcula cuánto necesitas ahorrar al mes para lograrlas a tiempo."
+          title={t('empty.goals_title')}
+          description={t('empty.goals_description')}
         />
       )}
 
@@ -139,10 +139,10 @@ export function GoalsPage() {
                         variant={g.status === 'completed' ? 'success' : 'outline'}
                       >
                         {g.status === 'completed'
-                          ? 'Completada'
+                          ? t('status.completed')
                           : g.status === 'paused'
-                            ? 'Pausada'
-                            : 'Activa'}
+                            ? t('status.paused')
+                            : t('status.active')}
                       </Badge>
                     </div>
 
@@ -188,7 +188,7 @@ export function GoalsPage() {
                           variant="ghost"
                           size="icon"
                           onClick={() => setToDelete(g)}
-                          aria-label="Eliminar"
+                          aria-label={t('aria.delete')}
                         >
                           <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>
@@ -205,7 +205,7 @@ export function GoalsPage() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Nueva meta</DialogTitle>
+            <DialogTitle>{t('goals.new_title')}</DialogTitle>
             <DialogDescription>
               La app calcula automáticamente cuánto ahorrar cada mes si pones una fecha objetivo.
             </DialogDescription>
@@ -219,7 +219,7 @@ export function GoalsPage() {
                   <FormItem>
                     <FormLabel>Nombre</FormLabel>
                     <FormControl>
-                      <Input placeholder="Ej: Fondo de emergencias" {...field} />
+                      <Input placeholder={t('goals.name_placeholder')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -277,10 +277,10 @@ export function GoalsPage() {
               />
               <DialogFooter>
                 <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-                  Cancelar
+                  {t('common.cancel')}
                 </Button>
                 <Button type="submit" disabled={create.isPending}>
-                  {create.isPending ? 'Guardando…' : 'Crear meta'}
+                  {create.isPending ? t('goals.saving') : t('goals.create')}
                 </Button>
               </DialogFooter>
             </form>
@@ -291,10 +291,10 @@ export function GoalsPage() {
       <ConfirmDialog
         open={Boolean(toDelete)}
         onOpenChange={(o) => !o && setToDelete(null)}
-        title="Eliminar meta"
-        description="Se eliminará el progreso registrado."
+        title={t('delete.goal_title')}
+        description={t('delete.goal_progress')}
         destructive
-        confirmLabel="Eliminar"
+        confirmLabel={t('common.delete')}
         onConfirm={() => {
           if (toDelete) remove.mutate(toDelete.id);
           setToDelete(null);

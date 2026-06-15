@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import i18n from '@/i18n';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/features/auth/stores/auth.store';
 import type { RecurringTemplateInput } from '@/schemas/recurring.schema';
@@ -39,7 +40,7 @@ export function useMaterializeRecurring(householdId: string | undefined) {
       await qc.invalidateQueries({ queryKey: ['kpis', householdId] });
       await qc.invalidateQueries({ queryKey: ['upcoming', householdId] });
       if (result.created > 0) {
-        toast.success(`${result.created} movimiento(s) generado(s)`);
+        toast.success(i18n.t('toast.recurring_materialized', { count: result.created }));
       }
     },
   });

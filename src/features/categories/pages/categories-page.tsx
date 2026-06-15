@@ -14,6 +14,7 @@ import { useCategories, useDeleteCategory } from '../hooks/use-categories';
 import { CategoryFormDialog } from '../components/category-form-dialog';
 import { usePermissions } from '@/hooks/use-permissions';
 import { formatCurrency } from '@/lib/format';
+import { translateCategoryName } from '@/lib/display-labels';
 import type { CategoryRow, CategoryType } from '@/lib/db/aliases';
 
 export function CategoriesPage() {
@@ -43,7 +44,7 @@ export function CategoriesPage() {
               }}
             >
               <Plus className="h-4 w-4" />
-              Nueva categoría
+              {t('categories.new_title')}
             </Button>
           )
         }
@@ -67,8 +68,8 @@ export function CategoriesPage() {
           {!isLoading && (!categories || categories.length === 0) && (
             <EmptyState
               icon={Tags}
-              title="Sin categorías"
-              description="Los hogares nuevos se crean con un set de categorías por defecto."
+              title={t('empty.categories_title')}
+              description={t('empty.categories_description')}
             />
           )}
 
@@ -86,11 +87,13 @@ export function CategoriesPage() {
                         <Tags className="h-5 w-5" />
                       </span>
                       <div>
-                        <p className="font-semibold">{c.name}</p>
+                        <p className="font-semibold">
+                          {translateCategoryName(c.name, c.is_system, t)}
+                        </p>
                         <p className="text-xs text-muted-foreground">
                           {c.monthly_budget
-                            ? `${formatCurrency(Number(c.monthly_budget), { currency: activeHousehold?.currency })} / mes`
-                            : 'Sin presupuesto'}
+                            ? `${formatCurrency(Number(c.monthly_budget), { currency: activeHousehold?.currency })} / ${t('common.month').toLowerCase()}`
+                            : t('categories.no_budget')}
                         </p>
                       </div>
                     </div>
@@ -105,7 +108,7 @@ export function CategoriesPage() {
                               setEditing(c);
                               setOpen(true);
                             }}
-                            aria-label="Editar"
+                            aria-label={t('aria.edit')}
                           >
                             <Pencil className="h-4 w-4" />
                           </Button>
@@ -114,7 +117,7 @@ export function CategoriesPage() {
                               variant="ghost"
                               size="icon"
                               onClick={() => setToDelete(c)}
-                              aria-label="Eliminar"
+                              aria-label={t('aria.delete')}
                             >
                               <Trash2 className="h-4 w-4 text-destructive" />
                             </Button>
@@ -140,10 +143,10 @@ export function CategoriesPage() {
       <ConfirmDialog
         open={Boolean(toDelete)}
         onOpenChange={(o) => !o && setToDelete(null)}
-        title="Eliminar categoría"
-        description="Las transacciones asociadas quedarán sin categoría."
+        title={t('delete.category_title')}
+        description={t('delete.category_orphan')}
         destructive
-        confirmLabel="Eliminar"
+        confirmLabel={t('common.delete')}
         onConfirm={() => {
           if (toDelete) remove.mutate(toDelete.id);
           setToDelete(null);

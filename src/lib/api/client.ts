@@ -2,6 +2,7 @@
  * HTTP client for the self-hosted API (credentials = session cookie).
  */
 import { env } from '@/lib/env';
+import i18n from '@/i18n';
 
 function apiBase(): string {
   if (import.meta.env.DEV) {
@@ -40,14 +41,24 @@ export async function apiFetch<T>(
     });
   } catch (cause) {
     throw new ApiError(
-      'No se pudo conectar al API. ¿Está corriendo? Ejecuta: npm run dev:api',
+      i18n.t('errors.api_unreachable'),
       0,
       cause,
     );
   }
 
   const text = await res.text();
-  const body = text ? (JSON.parse(text) as unknown) : null;
+  let body: unknown = null;
+  if (text) {
+    try {
+      body = JSON.parse(text) as unknown;
+    } catch {
+      throw new ApiError(
+        text.trim().slice(0, 200) || res.statusText || 'Request failed',
+        res.status,
+      );
+    }
+  }
 
   if (!res.ok) {
     const msg =

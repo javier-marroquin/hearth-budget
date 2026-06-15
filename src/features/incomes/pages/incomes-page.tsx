@@ -25,6 +25,7 @@ import { useHouseholdMembers } from '@/features/households/hooks/use-households'
 import { IncomeFormDialog } from '../components/income-form-dialog';
 import { usePermissions } from '@/hooks/use-permissions';
 import { formatCurrency, formatDate } from '@/lib/format';
+import { translateCategoryName } from '@/lib/display-labels';
 import type { IncomeRow } from '@/lib/db/aliases';
 import type { CsvColumn } from '@/lib/io/csv';
 
@@ -64,21 +65,23 @@ export function IncomesPage() {
   };
   const categoryName = (id: string | null) => {
     if (!id) return '—';
-    return categories?.find((c) => c.id === id)?.name ?? '—';
+    const cat = categories?.find((c) => c.id === id);
+    if (!cat) return '—';
+    return translateCategoryName(cat.name, cat.is_system, t);
   };
 
   const exportColumns = useMemo<CsvColumn<IncomeRow>[]>(
     () => [
-      { key: 'date', header: 'Fecha', get: (r) => r.date },
-      { key: 'member', header: 'Perceptor', get: (r) => memberName(r.user_id) },
-      { key: 'category', header: 'Categoría', get: (r) => categoryName(r.category_id) },
-      { key: 'source', header: 'Fuente', get: (r) => r.source ?? '' },
-      { key: 'amount', header: 'Monto', get: (r) => Number(r.amount) },
-      { key: 'currency', header: 'Moneda', get: (r) => r.currency },
-      { key: 'notes', header: 'Notas', get: (r) => r.notes ?? '' },
+      { key: 'date', header: t('table.date'), get: (r) => r.date },
+      { key: 'member', header: t('table.payee'), get: (r) => memberName(r.user_id) },
+      { key: 'category', header: t('table.category'), get: (r) => categoryName(r.category_id) },
+      { key: 'source', header: t('table.source'), get: (r) => r.source ?? '' },
+      { key: 'amount', header: t('table.amount'), get: (r) => Number(r.amount) },
+      { key: 'currency', header: t('table.currency'), get: (r) => r.currency },
+      { key: 'notes', header: t('table.notes'), get: (r) => r.notes ?? '' },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [members, categories],
+    [members, categories, t],
   );
 
   return (
@@ -148,8 +151,8 @@ export function IncomesPage() {
       {!isLoading && (!incomes || incomes.length === 0) && (
         <EmptyState
           icon={Wallet}
-          title="Sin ingresos registrados"
-          description="Empieza agregando los ingresos del hogar este mes."
+          title={t('empty.incomes_title')}
+          description={t('empty.incomes_description')}
           action={
             canWriteIncomes && (
               <Button
@@ -171,11 +174,11 @@ export function IncomesPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Fecha</TableHead>
-                <TableHead>Perceptor</TableHead>
-                <TableHead>Categoría</TableHead>
-                <TableHead>Fuente</TableHead>
-                <TableHead className="text-right">Monto</TableHead>
+                <TableHead>{t('table.date')}</TableHead>
+                <TableHead>{t('table.payee')}</TableHead>
+                <TableHead>{t('table.category')}</TableHead>
+                <TableHead>{t('table.source')}</TableHead>
+                <TableHead className="text-right">{t('table.amount')}</TableHead>
                 {canWriteIncomes && <TableHead />}
               </TableRow>
             </TableHeader>
@@ -202,7 +205,7 @@ export function IncomesPage() {
                           setEditing(inc);
                           setOpen(true);
                         }}
-                        aria-label="Editar"
+                        aria-label={t('aria.edit')}
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
@@ -210,7 +213,7 @@ export function IncomesPage() {
                         variant="ghost"
                         size="icon"
                         onClick={() => setToDelete(inc)}
-                        aria-label="Eliminar"
+                        aria-label={t('aria.delete')}
                       >
                         <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>
@@ -228,10 +231,10 @@ export function IncomesPage() {
       <ConfirmDialog
         open={Boolean(toDelete)}
         onOpenChange={(o) => !o && setToDelete(null)}
-        title="Eliminar ingreso"
-        description="Esta acción no se puede deshacer."
+        title={t('delete.income_title')}
+        description={t('delete.irreversible')}
         destructive
-        confirmLabel="Eliminar"
+        confirmLabel={t('common.delete')}
         onConfirm={() => {
           if (toDelete) remove.mutate(toDelete.id);
           setToDelete(null);

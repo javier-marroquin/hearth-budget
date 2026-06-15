@@ -141,21 +141,207 @@
       "see_all": "Ver {{count}} días más",
       "collapse": "Mostrar menos",
       "drag_hint": "Arrastra el icono ≡ para reordenar",
-      "reset_order": "Restaurar orden"
+      "reset_order": "Restaurar orden",
+      "today": "Hoy",
+      "tomorrow": "Mañana",
+      "yesterday": "Ayer",
+      "days_ago": "Hace {{count}}d",
+      "in_days_short": "+{{count}}d"
     },
     "more_metrics": "Más indicadores",
     "actual_savings": "Ahorro real",
-    "month_close": "Cierre mensual"
+    "month_close": "Cierre mensual",
+    "no_contributions_this_month": "Sin aportes este mes",
+    "no_income_expense_trend": "Sin ingresos ni gastos en los últimos 12 meses"
   },
   "alerts": {
     "deficit_warning": "Tu ingreso actual está por debajo del mínimo requerido. Te faltan {{amount}}.",
     "savings_warning": "Estás ahorrando menos del 10% recomendado.",
     "overdue_warning": "Tienes {{count}} pagos vencidos."
   },
+  "settings": {
+    "profile_title": "Tu perfil",
+    "profile_description": "Así te verán los demás miembros del hogar.",
+    "display_name": "Nombre",
+    "display_name_placeholder": "Tu nombre",
+    "save_profile": "Guardar nombre",
+    "profile_saved": "Nombre actualizado",
+    "saved": "Configuración guardada",
+    "envelope_title": "Presupuesto por sobres",
+    "envelope_description": "Activa la asignación por categoría (zero-sum). Habilita la vista Presupuesto.",
+    "import_incomes_title": "Importar ingresos",
+    "import_incomes_description": "Mapea las columnas de tu CSV con los campos de la app.",
+    "import_expenses_title": "Importar gastos",
+    "import_expenses_description": "Mapea las columnas de tu CSV con los campos de la app.",
+    "backup_downloaded": "Backup descargado"
+  },
+  "toast": {
+    "income_created": "Ingreso registrado",
+    "income_updated": "Ingreso actualizado",
+    "income_deleted": "Ingreso eliminado",
+    "expense_created": "Gasto registrado",
+    "expense_updated": "Gasto actualizado",
+    "expense_deleted": "Gasto eliminado",
+    "expense_paid": "Marcado como pagado",
+    "contribution_created": "Aporte registrado",
+    "contribution_updated": "Aporte actualizado",
+    "contribution_received": "Aporte marcado como recibido",
+    "contribution_deleted": "Aporte eliminado",
+    "goal_created": "Meta creada",
+    "goal_updated": "Meta actualizada",
+    "goal_balance_updated": "Saldo actualizado",
+    "goal_deleted": "Meta eliminada",
+    "category_created": "Categoría creada",
+    "category_updated": "Categoría actualizada",
+    "category_deleted": "Categoría eliminada",
+    "event_created": "Evento creado",
+    "event_deleted": "Evento eliminado",
+    "household_created": "Hogar creado correctamente",
+    "invite_sent": "Invitación enviada",
+    "dashboard_restored": "Dashboard restaurado",
+    "widget_added": "Widget agregado",
+    "csv_empty": "El archivo no contiene filas de datos",
+    "csv_read_error": "Error leyendo el archivo",
+    "import_error": "Error al importar",
+    "export_error": "Error al exportar",
+    "recurring_materialized": "{{count}} movimiento(s) generado(s)",
+    "csv_downloaded": "Descargado: {{filename}}",
+    "import_validation_errors": "Hay {{count}} errores de validación. Corrige el mapeo.",
+    "import_result": "Importadas {{inserted}}, fallaron {{failed}}",
+    "import_success": "Importadas {{count}} filas"
+  },
+  "empty": {
+    "expenses_title": "Sin gastos registrados",
+    "expenses_description": "Empieza registrando los gastos del hogar este mes.",
+    "incomes_title": "Sin ingresos registrados",
+    "incomes_description": "Empieza agregando los ingresos del hogar este mes.",
+    "contributions_title": "Sin aportes registrados",
+    "contributions_description": "Registra los aportes que cada miembro hace al presupuesto del hogar.",
+    "goals_title": "Sin metas activas",
+    "goals_description": "Crea metas de ahorro (emergencias, vacaciones, electrodomésticos…) y la app calcula cuánto necesitas ahorrar al mes.",
+    "categories_title": "Sin categorías",
+    "categories_description": "Los hogares nuevos se crean con un set de categorías por defecto.",
+    "notifications_title": "Sin notificaciones",
+    "notifications_description": "Te avisaremos aquí cuando tengas pagos próximos, vencidos o nuevas invitaciones.",
+    "members_title": "Sin miembros aún",
+    "budget_categories_title": "Sin categorías con presupuesto",
+    "budget_categories_description": "Edita una categoría de gasto y asígnale un monto mensual para verla aquí."
+  },
+  "delete": {
+    "expense_title": "Eliminar gasto",
+    "income_title": "Eliminar ingreso",
+    "contribution_title": "Eliminar aporte",
+    "goal_title": "Eliminar meta",
+    "category_title": "Eliminar categoría",
+    "irreversible": "Esta acción no se puede deshacer.",
+    "goal_progress": "Se eliminará el progreso registrado.",
+    "category_orphan": "Las transacciones asociadas quedarán sin categoría."
+  },
+  "budget": {
+    "envelope_inactive": "Modo Envelope inactivo",
+    "description": "Asigna cada peso a una categoría (zero-sum). El total asignado no debería superar tus ingresos.",
+    "month_income": "Ingreso del mes",
+    "allocated": "Asignado",
+    "unallocated": "Sin asignar",
+    "enable_hint": "Activa modo Envelope",
+    "every_dollar": "Cada peso necesita un trabajo"
+  },
+  "goals": {
+    "unnamed": "Meta de ahorro",
+    "to_complete": "Meta por completar",
+    "create": "Crear meta",
+    "saving": "Guardando…",
+    "new_title": "Nueva meta",
+    "edit_title": "Editar meta",
+    "name_placeholder": "Ej: Fondo de emergencias"
+  },
+  "contributions": {
+    "title": "Aportes",
+    "new": "Nuevo aporte",
+    "from_member": "Aporte de {{name}}",
+    "member_contribution": "Aporte de miembro",
+    "new_title": "Nuevo aporte",
+    "edit_title": "Editar aporte"
+  },
+  "expenses": {
+    "title": "Gastos",
+    "new": "Nuevo gasto",
+    "unnamed": "Gasto",
+    "new_title": "Nuevo gasto",
+    "edit_title": "Editar gasto",
+    "description_placeholder": "Ej: Arriendo, supermercado, servicios…",
+    "mark_paid": "Marcar pagado",
+    "due_date": "Fecha límite",
+    "type": {
+      "fixed": "Fijo",
+      "variable": "Variable",
+      "debt": "Deuda",
+      "one_time": "Único"
+    },
+    "split": {
+      "equal": "Partes iguales",
+      "percentage": "Por porcentaje",
+      "income_based": "Por ingreso",
+      "custom": "Personalizado"
+    }
+  },
+  "incomes": {
+    "title": "Ingresos",
+    "new": "Nuevo ingreso",
+    "unnamed": "Ingreso",
+    "new_title": "Nuevo ingreso",
+    "edit_title": "Editar ingreso",
+    "source_placeholder": "Ej: Empresa X, freelance, propinas…"
+  },
+  "categories": {
+    "type": {
+      "expense": "Gasto",
+      "income": "Ingreso",
+      "savings": "Ahorro"
+    },
+    "none": "Sin categoría",
+    "no_budget": "Sin presupuesto",
+    "new_title": "Nueva categoría",
+    "edit_title": "Editar categoría",
+    "name_placeholder": "Ej: Mascotas",
+    "system": {
+      "housing": "Vivienda",
+      "food": "Alimentación",
+      "transport": "Transporte",
+      "health": "Salud",
+      "education": "Educación",
+      "entertainment": "Entretenimiento",
+      "utilities": "Servicios",
+      "other_expense": "Otros",
+      "salary": "Salario",
+      "freelance": "Freelance",
+      "investments": "Inversiones",
+      "other_income": "Otros ingresos",
+      "general_savings": "Ahorro general",
+      "emergency": "Emergencias"
+    }
+  },
+  "notifications": {
+    "all_caught_up": "Todo al día",
+    "unread_count": "{{count}} sin leer"
+  },
+  "members": {
+    "invite_email_placeholder": "amiga@correo.com",
+    "send_invite": "Enviar invitación",
+    "sending": "Enviando…"
+  },
+  "invite": {
+    "accept": "Aceptar invitación",
+    "token_missing": "Falta el token de invitación",
+    "unknown_error": "Error desconocido"
+  },
   "calendar": {
     "new_event": "Nuevo evento",
     "edit_event": "Editar evento",
     "delete_event": "Eliminar evento",
+    "unnamed_event": "Evento",
+    "title_placeholder": "Arriendo, mesada, etc.",
+    "unassigned": "(Sin asignar)",
     "status": {
       "pending": "Pendiente",
       "paid": "Pagado",
@@ -195,36 +381,148 @@
       "reminder": "Recordatorio"
     }
   },
-  "categories": {
-    "type": {
-      "expense": "Gasto",
-      "income": "Ingreso",
-      "savings": "Ahorro"
-    }
+  "charts": {
+    "income": "Ingresos",
+    "expenses": "Gastos",
+    "this_month": "Este mes"
   },
-  "expenses": {
-    "title": "Gastos",
-    "new": "Nuevo gasto",
-    "type": {
-      "fixed": "Fijo",
-      "variable": "Variable",
-      "debt": "Deuda",
-      "one_time": "Único"
+  "widgets": {
+    "add_title": "Agregar widget",
+    "add_description": "Selecciona un widget para añadirlo a tu dashboard. Después arrástralo a donde lo quieras.",
+    "search_placeholder": "Buscar widget…",
+    "all_added": "Ya agregaste todos los widgets disponibles.",
+    "no_results": "Sin resultados para tu búsqueda.",
+    "categories": {
+      "kpi": "KPIs",
+      "chart": "Gráficos",
+      "list": "Listas",
+      "envelope": "Envelope",
+      "projection": "Proyección"
     },
-    "split": {
-      "equal": "Partes iguales",
-      "percentage": "Por porcentaje",
-      "income_based": "Por ingreso",
-      "custom": "Personalizado"
+    "move": "Mover widget",
+    "remove": "Quitar widget",
+    "kpi_hero": {
+      "label": "KPI Hero — Ingreso mínimo",
+      "description": "Tarjeta destacada que responde la pregunta principal del hogar."
+    },
+    "kpi_total_income": {
+      "label": "Ingreso total",
+      "description": "Suma de ingresos del mes. Click → ver ingresos."
+    },
+    "kpi_total_expense": {
+      "label": "Gasto total",
+      "description": "Suma de gastos del mes. Click → ver gastos."
+    },
+    "kpi_balance": {
+      "label": "Balance disponible",
+      "description": "Ingreso − Gasto."
+    },
+    "kpi_savings_rate": {
+      "label": "% de ahorro",
+      "description": "Porcentaje del ingreso que se está ahorrando."
+    },
+    "kpi_overdue": {
+      "label": "Pagos vencidos",
+      "description": "Cantidad de gastos vencidos. Click → filtro overdue."
+    },
+    "kpi_min_savings": {
+      "label": "Ahorro mínimo (10%)",
+      "description": "Monto mínimo recomendado a ahorrar."
+    },
+    "kpi_actual_savings": {
+      "label": "Ahorro real",
+      "description": "Lo que realmente se está ahorrando."
+    },
+    "kpi_contributions_received": {
+      "label": "Aportes recibidos",
+      "description": "Total de aportes ya recibidos este mes."
+    },
+    "kpi_contributions_pending": {
+      "label": "Aportes pendientes",
+      "description": "Total de aportes esperados pero no recibidos."
+    },
+    "kpi_compliance": {
+      "label": "Cumplimiento presupuesto",
+      "description": "% gastado vs presupuestado (modo Envelope)."
+    },
+    "kpi_unallocated": {
+      "label": "Sin asignar (envelope)",
+      "description": "Ingreso − presupuestos asignados."
+    },
+    "kpi_projection": {
+      "label": "Proyección cierre mensual",
+      "description": "Ingreso/gasto/balance proyectados."
+    },
+    "chart_income_vs_expense": {
+      "label": "Ingresos vs Gastos (12 meses)",
+      "description": "Gráfico lineal con tendencia mensual."
+    },
+    "chart_category_doughnut": {
+      "label": "Gastos por categoría",
+      "description": "Distribución doughnut. Click → ver gastos."
+    },
+    "chart_contributions_by_member": {
+      "label": "Aportes por miembro",
+      "description": "Barras horizontales recibido/pendiente."
+    },
+    "chart_fixed_vs_variable": {
+      "label": "Fijos vs Variables",
+      "description": "Stacked bar del mes."
+    },
+    "upcoming_timeline": {
+      "label": "Próximos eventos",
+      "description": "Timeline de pagos, ingresos y eventos próximos."
     }
   },
-  "incomes": {
-    "title": "Ingresos",
-    "new": "Nuevo ingreso"
+  "aria": {
+    "open_menu": "Abrir menú",
+    "language": "Idioma",
+    "theme": "Tema",
+    "notifications": "Notificaciones",
+    "collapse_sidebar": "Colapsar sidebar",
+    "expand_sidebar": "Expandir sidebar",
+    "favorite_add": "Agregar a favoritos",
+    "favorite_remove": "Quitar de favoritos",
+    "global_search": "Buscar (⌘K)",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "mark_received": "Marcar recibido",
+    "mark_paid": "Marcar pagado"
   },
-  "contributions": {
-    "title": "Aportes",
-    "new": "Nuevo aporte"
+  "status": {
+    "pending": "Pendiente",
+    "paid": "Pagado",
+    "overdue": "Vencido",
+    "received": "Recibido",
+    "active": "Activa",
+    "completed": "Completada",
+    "paused": "Pausada"
+  },
+  "member_display": {
+    "unnamed": "Sin nombre"
+  },
+  "export": {
+    "csv": "Exportar CSV"
+  },
+  "errors": {
+    "api_unreachable": "No se pudo conectar al API. ¿Está corriendo? Ejecuta: npm run dev:api"
+  },
+  "table": {
+    "date": "Fecha",
+    "due_date": "Fecha límite",
+    "expected_date": "Fecha esperada",
+    "received_date": "Fecha recibido",
+    "description": "Descripción",
+    "category": "Categoría",
+    "type": "Tipo",
+    "status": "Estado",
+    "amount": "Monto",
+    "currency": "Moneda",
+    "notes": "Notas",
+    "member": "Miembro",
+    "payee": "Perceptor",
+    "contributor": "Aportante",
+    "source": "Fuente"
   },
   "recurring": {
     "page_description": "Ingresos y gastos fijos que se repiten solos hasta que los pauses.",
@@ -276,13 +574,5 @@
     "pending_empty_description": "Los gastos con fecha límite y aportes esperados aparecen aquí.",
     "overdue": "Vencido",
     "in_days": "En {{days}} días"
-  },
-  "settings": {
-    "profile_title": "Tu perfil",
-    "profile_description": "Así te verán los demás miembros del hogar.",
-    "display_name": "Nombre",
-    "display_name_placeholder": "Tu nombre",
-    "save_profile": "Guardar nombre",
-    "profile_saved": "Nombre actualizado"
   }
 }

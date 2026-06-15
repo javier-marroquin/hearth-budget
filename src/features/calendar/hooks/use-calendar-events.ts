@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import i18n from '@/i18n';
 import {
   createCalendarEvent,
   deleteCalendarEvent,
@@ -30,7 +31,7 @@ export function useCreateCalendarEvent(householdId: string) {
       await qc.invalidateQueries({ queryKey: ['calendar', householdId] });
       await qc.invalidateQueries({ queryKey: ['kpis', householdId] });
       await qc.invalidateQueries({ queryKey: ['upcoming', householdId] });
-      toast.success('Evento creado');
+      toast.success(i18n.t('toast.event_created'));
     },
     onError: (err: Error) => toast.error(err.message),
   });
@@ -86,7 +87,7 @@ export function useDeleteCalendarEvent(householdId: string) {
       await qc.invalidateQueries({ queryKey: ['calendar', householdId] });
       await qc.invalidateQueries({ queryKey: ['kpis', householdId] });
       await qc.invalidateQueries({ queryKey: ['upcoming', householdId] });
-      toast.success('Evento eliminado');
+      toast.success(i18n.t('toast.event_deleted'));
     },
     onError: (err: Error) => toast.error(err.message),
   });

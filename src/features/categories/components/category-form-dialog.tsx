@@ -108,7 +108,9 @@ export function CategoryFormDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{category ? 'Editar categoría' : 'Nueva categoría'}</DialogTitle>
+          <DialogTitle>
+            {category ? t('categories.edit_title') : t('categories.new_title')}
+          </DialogTitle>
           <DialogDescription>
             Si activas el modo Envelope (en Configuración), el presupuesto mensual se usa para calcular cumplimiento.
           </DialogDescription>
@@ -123,7 +125,7 @@ export function CategoryFormDialog({
                 <FormItem>
                   <FormLabel>Nombre</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ej: Mascotas" autoFocus {...field} />
+                    <Input placeholder={t('categories.name_placeholder')} autoFocus {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -233,10 +235,10 @@ export function CategoryFormDialog({
                 variant="outline"
                 onClick={() => onOpenChange(false)}
               >
-                Cancelar
+                {t('common.cancel')}
               </Button>
               <Button type="submit" disabled={submitting}>
-                {submitting ? 'Guardando…' : 'Guardar'}
+                {submitting ? t('common.loading') : t('common.save')}
               </Button>
             </DialogFooter>
           </form>

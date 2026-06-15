@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Download, Loader2, Upload } from 'lucide-react';
@@ -25,6 +26,7 @@ import {
 import { csvBlob, downloadBlob } from '@/lib/io/csv';
 import { backupFilename, exportHouseholdBackup } from '@/lib/io/backup';
 import type { ExpenseType, SplitMethod } from '@/lib/db/aliases';
+import i18n from '@/i18n';
 
 interface ImportedIncome {
   user_id: string | null;
@@ -48,6 +50,7 @@ interface ImportedExpense {
 }
 
 export function ImportExportSection() {
+  const { t } = useTranslation();
   const activeHousehold = useHouseholdStore((s) => s.activeHousehold);
   const user = useAuthStore((s) => s.user);
   const { data: members } = useHouseholdMembers(activeHousehold?.id);
@@ -69,7 +72,7 @@ export function ImportExportSection() {
       downloadBlob(blob, backupFilename(activeHousehold.name));
       return data;
     },
-    onSuccess: () => toast.success('Backup descargado'),
+    onSuccess: () => toast.success(i18n.t('settings.backup_downloaded')),
     onError: (err: Error) => toast.error(err.message),
   });
 
@@ -327,8 +330,8 @@ export function ImportExportSection() {
       <ImportCsvDialog<ImportedIncome>
         open={importIncomesOpen}
         onOpenChange={setImportIncomesOpen}
-        title="Importar ingresos"
-        description="Mapea las columnas de tu CSV con los campos de la app."
+        title={t('settings.import_incomes_title')}
+        description={t('settings.import_incomes_description')}
         fields={incomeFields}
         onImport={(rows) => importIncomesMutation.mutateAsync(rows)}
       />
@@ -336,8 +339,8 @@ export function ImportExportSection() {
       <ImportCsvDialog<ImportedExpense>
         open={importExpensesOpen}
         onOpenChange={setImportExpensesOpen}
-        title="Importar gastos"
-        description="Mapea las columnas de tu CSV con los campos de la app."
+        title={t('settings.import_expenses_title')}
+        description={t('settings.import_expenses_description')}
         fields={expenseFields}
         onImport={(rows) => importExpensesMutation.mutateAsync(rows)}
       />

@@ -39,8 +39,8 @@ export interface WidgetProps {
 export interface WidgetDef {
   id: string;
   category: WidgetCategory;
-  label: string;
-  description: string;
+  labelKey: string;
+  descriptionKey: string;
   /** Default cell size in the 12-col grid. */
   defaultW: number;
   defaultH: number;

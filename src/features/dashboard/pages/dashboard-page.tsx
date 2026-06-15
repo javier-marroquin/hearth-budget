@@ -8,6 +8,7 @@ import {
   RotateCcw,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import i18n from '@/i18n';
 import { PageHeader } from '@/components/layout/page-header';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -19,6 +20,7 @@ import { DashboardGrid, useDashboardLayout } from '../components/dashboard-grid'
 import { WidgetPalette } from '../components/widget-palette';
 import { DEFAULT_LAYOUT } from '../widgets/widget-registry';
 import { resetLayout } from '../services/layout.service';
+import { memberDisplayName } from '@/lib/display-labels';
 
 export function DashboardPage() {
   const { t } = useTranslation();
@@ -39,10 +41,13 @@ export function DashboardPage() {
     const map = new Map<string, string>();
     members?.forEach((m) => {
       if (!m.user_id) return;
-      map.set(m.user_id, m.profile?.full_name ?? m.profile?.email ?? 'Miembro');
+      map.set(
+        m.user_id,
+        memberDisplayName(m.profile?.full_name ?? m.profile?.email, t),
+      );
     });
     return map;
-  }, [members]);
+  }, [members, t]);
 
   const ctx = useMemo(
     () => ({
@@ -64,7 +69,7 @@ export function DashboardPage() {
     if (!confirm('¿Restaurar el dashboard a su diseño por defecto?')) return;
     resetLayout(userId, householdId);
     setLayout(DEFAULT_LAYOUT);
-    toast.success('Dashboard restaurado');
+    toast.success(i18n.t('toast.dashboard_restored'));
   };
 
   if (!householdId) return null;
@@ -152,7 +157,7 @@ export function DashboardPage() {
         onAdd={(item) => {
           setLayout((prev) => [...prev, item]);
           setPaletteOpen(false);
-          toast.success('Widget agregado');
+          toast.success(i18n.t('toast.widget_added'));
         }}
       />
     </>

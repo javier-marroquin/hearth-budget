@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogContent,
@@ -40,6 +41,7 @@ export function IncomeFormDialog({
   onOpenChange,
   income,
 }: IncomeFormDialogProps) {
+  const { t } = useTranslation();
   const activeHousehold = useHouseholdStore((s) => s.activeHousehold);
   const create = useCreateIncome(activeHousehold?.id ?? '');
   const update = useUpdateIncome(activeHousehold?.id ?? '');
@@ -96,7 +98,9 @@ export function IncomeFormDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{income ? 'Editar ingreso' : 'Nuevo ingreso'}</DialogTitle>
+          <DialogTitle>
+            {income ? t('incomes.edit_title') : t('incomes.new_title')}
+          </DialogTitle>
           <DialogDescription>
             Registra un ingreso percibido por un miembro del hogar.
           </DialogDescription>
@@ -173,7 +177,7 @@ export function IncomeFormDialog({
                   <FormLabel>Fuente</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Ej: Empresa X, freelance, propinas…"
+                      placeholder={t('incomes.source_placeholder')}
                       value={field.value ?? ''}
                       onChange={(e) => field.onChange(e.target.value)}
                     />
@@ -207,10 +211,10 @@ export function IncomeFormDialog({
                 variant="outline"
                 onClick={() => onOpenChange(false)}
               >
-                Cancelar
+                {t('common.cancel')}
               </Button>
               <Button type="submit" disabled={submitting}>
-                {submitting ? 'Guardando…' : 'Guardar'}
+                {submitting ? t('common.loading') : t('common.save')}
               </Button>
             </DialogFooter>
           </form>

@@ -52,7 +52,7 @@ export function SettingsPage() {
         });
       }
       await qc.invalidateQueries({ queryKey: ['households'] });
-      toast.success('Configuración guardada');
+      toast.success(t('settings.saved'));
     },
     onError: (err: Error) => toast.error(err.message),
   });
@@ -146,9 +146,9 @@ export function SettingsPage() {
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between rounded-xl border border-border bg-secondary px-4 py-3">
               <div className="space-y-0.5">
-                <Label>Modo Envelope</Label>
+                <Label>{t('settings.envelope_title')}</Label>
                 <p className="text-xs text-muted-foreground">
-                  Activa la asignación por categoría (zero-sum). Habilita la vista &quot;Presupuesto&quot;.
+                  {t('settings.envelope_description')}
                 </p>
               </div>
               <Switch

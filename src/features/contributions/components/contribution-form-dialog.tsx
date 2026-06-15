@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogContent,
@@ -45,6 +46,7 @@ export function ContributionFormDialog({
   onOpenChange,
   contribution,
 }: ContributionFormDialogProps) {
+  const { t } = useTranslation();
   const activeHousehold = useHouseholdStore((s) => s.activeHousehold);
   const create = useCreateContribution(activeHousehold?.id ?? '');
   const update = useUpdateContribution(activeHousehold?.id ?? '');
@@ -99,7 +101,7 @@ export function ContributionFormDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {contribution ? 'Editar aporte' : 'Nuevo aporte'}
+            {contribution ? t('contributions.edit_title') : t('contributions.new_title')}
           </DialogTitle>
           <DialogDescription>
             Aporte mensual que un miembro hace al hogar (cuota, mesada, gasto compartido).
@@ -193,10 +195,10 @@ export function ContributionFormDialog({
                 variant="outline"
                 onClick={() => onOpenChange(false)}
               >
-                Cancelar
+                {t('common.cancel')}
               </Button>
               <Button type="submit" disabled={submitting}>
-                {submitting ? 'Guardando…' : 'Guardar'}
+                {submitting ? t('common.loading') : t('common.save')}
               </Button>
             </DialogFooter>
           </form>

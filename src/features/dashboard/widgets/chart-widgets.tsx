@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { memberDisplayName } from '@/lib/display-labels';
 import { Skeleton } from '@/components/ui/skeleton';
 import { IncomeVsExpenseLine } from '@/components/charts/income-vs-expense-line';
 import { CategoryDoughnut } from '@/components/charts/category-doughnut';
@@ -21,14 +22,20 @@ export function ChartIncomeVsExpenseWidget({ ctx, onRemove }: WidgetProps) {
 
     >
       {ctx.kpis ? (
-        <div className="h-full min-h-0">
-          <FillHeight>
-            <IncomeVsExpenseLine
-              data={ctx.kpis.monthlyTrend}
-              currency={ctx.currency}
-            />
-          </FillHeight>
-        </div>
+        ctx.kpis.monthlyTrend.some((m) => m.income > 0 || m.expense > 0) ? (
+          <div className="h-full min-h-0">
+            <FillHeight>
+              <IncomeVsExpenseLine
+                data={ctx.kpis.monthlyTrend}
+                currency={ctx.currency}
+              />
+            </FillHeight>
+          </div>
+        ) : (
+          <p className="grid h-full min-h-[140px] place-items-center text-center text-xs text-muted-foreground">
+            {t('dashboard.no_income_expense_trend')}
+          </p>
+        )
       ) : (
         <Skeleton className="h-full w-full" />
       )}
@@ -89,7 +96,7 @@ export function ChartContributionsByMemberWidget({ ctx, onRemove }: WidgetProps)
           <FillHeight>
             <ContributionsBar
               data={ctx.kpis.contributionsByMember.map((c) => ({
-                name: ctx.memberLookup.get(c.userId) ?? 'Miembro',
+                name: memberDisplayName(ctx.memberLookup.get(c.userId), t),
                 amount: c.amount,
                 pending: c.pending,
               }))}
@@ -98,7 +105,7 @@ export function ChartContributionsByMemberWidget({ ctx, onRemove }: WidgetProps)
           </FillHeight>
         ) : (
           <p className="grid h-full place-items-center text-center text-xs text-muted-foreground">
-            Sin aportes este mes
+            {t('dashboard.no_contributions_this_month')}
           </p>
         )
       ) : (

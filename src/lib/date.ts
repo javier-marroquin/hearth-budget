@@ -20,9 +20,32 @@ export function getMonthBounds(date: Date = new Date()): { start: Date; end: Dat
   return { start: startOfMonth(date), end: endOfMonth(date) };
 }
 
-/** ISO yyyy-MM-dd. */
+/** ISO yyyy-MM-dd (local calendar date, not UTC). */
 export function toISODate(date: Date): string {
-  return date.toISOString().slice(0, 10);
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+/** ISO yyyy-MM for month bucketing (local calendar). */
+export function toMonthIso(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  return `${y}-${m}`;
+}
+
+/** Normalize Postgres date/timestamp values to yyyy-MM-dd. */
+export function toISODateString(value: Date | string | null | undefined): string {
+  if (value == null) return '';
+  if (typeof value === 'string') return value.slice(0, 10);
+  if (value instanceof Date) {
+    const y = value.getFullYear();
+    const m = String(value.getMonth() + 1).padStart(2, '0');
+    const d = String(value.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+  return String(value).slice(0, 10);
 }
 
 /** Parse "yyyy-MM-dd" or full ISO to Date. */

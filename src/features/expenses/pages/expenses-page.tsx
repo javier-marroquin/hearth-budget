@@ -28,6 +28,7 @@ import { useCategories } from '@/features/categories/hooks/use-categories';
 import { ExpenseFormDialog } from '../components/expense-form-dialog';
 import { usePermissions } from '@/hooks/use-permissions';
 import { formatCurrency, formatDate } from '@/lib/format';
+import { translateCategoryName } from '@/lib/display-labels';
 import type { ExpenseRow, ExpenseType, PaymentStatus } from '@/lib/db/aliases';
 import type { CsvColumn } from '@/lib/io/csv';
 
@@ -85,23 +86,25 @@ export function ExpensesPage() {
 
   const categoryName = (id: string | null) => {
     if (!id) return '—';
-    return categories?.find((c) => c.id === id)?.name ?? '—';
+    const cat = categories?.find((c) => c.id === id);
+    if (!cat) return '—';
+    return translateCategoryName(cat.name, cat.is_system, t);
   };
 
   const exportColumns = useMemo<CsvColumn<ExpenseRow>[]>(
     () => [
-      { key: 'date', header: 'Fecha', get: (r) => r.date },
-      { key: 'due_date', header: 'Fecha límite', get: (r) => r.due_date ?? '' },
-      { key: 'description', header: 'Descripción', get: (r) => r.description ?? '' },
-      { key: 'category', header: 'Categoría', get: (r) => categoryName(r.category_id) },
-      { key: 'type', header: 'Tipo', get: (r) => r.type },
-      { key: 'status', header: 'Estado', get: (r) => r.status },
-      { key: 'amount', header: 'Monto', get: (r) => Number(r.amount) },
-      { key: 'currency', header: 'Moneda', get: (r) => r.currency },
-      { key: 'notes', header: 'Notas', get: (r) => r.notes ?? '' },
+      { key: 'date', header: t('table.date'), get: (r) => r.date },
+      { key: 'due_date', header: t('table.due_date'), get: (r) => r.due_date ?? '' },
+      { key: 'description', header: t('table.description'), get: (r) => r.description ?? '' },
+      { key: 'category', header: t('table.category'), get: (r) => categoryName(r.category_id) },
+      { key: 'type', header: t('table.type'), get: (r) => r.type },
+      { key: 'status', header: t('table.status'), get: (r) => r.status },
+      { key: 'amount', header: t('table.amount'), get: (r) => Number(r.amount) },
+      { key: 'currency', header: t('table.currency'), get: (r) => r.currency },
+      { key: 'notes', header: t('table.notes'), get: (r) => r.notes ?? '' },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [categories],
+    [categories, t],
   );
 
   return (
@@ -135,7 +138,7 @@ export function ExpensesPage() {
           <span className="font-medium text-muted-foreground">Filtros activos:</span>
           {urlFilters.status && (
             <Badge variant="outline">
-              Estado: {t(`calendar.status.${urlFilters.status}`)}
+              Estado: {t(`status.${urlFilters.status}`)}
             </Badge>
           )}
           {urlFilters.type && (
@@ -146,8 +149,13 @@ export function ExpensesPage() {
           {urlFilters.categoryId && (
             <Badge variant="outline">
               Categoría:{' '}
-              {categories?.find((c) => c.id === urlFilters.categoryId)?.name ??
-                urlFilters.categoryId}
+              {categories?.find((c) => c.id === urlFilters.categoryId)
+                ? translateCategoryName(
+                    categories.find((c) => c.id === urlFilters.categoryId)!.name,
+                    categories.find((c) => c.id === urlFilters.categoryId)!.is_system,
+                    t,
+                  )
+                : urlFilters.categoryId}
             </Badge>
           )}
           {(urlFilters.from || urlFilters.to) && (
@@ -178,8 +186,8 @@ export function ExpensesPage() {
       {!isLoading && (!expenses || expenses.length === 0) && (
         <EmptyState
           icon={Receipt}
-          title="Sin gastos registrados"
-          description="Empieza registrando los gastos del hogar este mes."
+          title={t('empty.expenses_title')}
+          description={t('empty.expenses_description')}
           action={
             canWriteExpenses && (
               <Button
@@ -201,12 +209,12 @@ export function ExpensesPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Fecha</TableHead>
-                <TableHead>Descripción</TableHead>
-                <TableHead>Categoría</TableHead>
-                <TableHead>Tipo</TableHead>
-                <TableHead>Estado</TableHead>
-                <TableHead className="text-right">Monto</TableHead>
+                <TableHead>{t('table.date')}</TableHead>
+                <TableHead>{t('table.description')}</TableHead>
+                <TableHead>{t('table.category')}</TableHead>
+                <TableHead>{t('table.type')}</TableHead>
+                <TableHead>{t('table.status')}</TableHead>
+                <TableHead className="text-right">{t('table.amount')}</TableHead>
                 {canWriteExpenses && <TableHead />}
               </TableRow>
             </TableHeader>
@@ -223,7 +231,7 @@ export function ExpensesPage() {
                   </TableCell>
                   <TableCell>
                     <Badge variant={statusVariant[e.status]}>
-                      {t(`calendar.status.${e.status}`)}
+                      {t(`status.${e.status}`)}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right font-semibold">
@@ -236,7 +244,7 @@ export function ExpensesPage() {
                           variant="ghost"
                           size="icon"
                           onClick={() => markPaid.mutate(e.id)}
-                          aria-label="Marcar pagado"
+                          aria-label={t('aria.mark_paid')}
                         >
                           <CircleCheck className="h-4 w-4 text-success" />
                         </Button>
@@ -248,7 +256,7 @@ export function ExpensesPage() {
                           setEditing(e);
                           setOpen(true);
                         }}
-                        aria-label="Editar"
+                        aria-label={t('aria.edit')}
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
@@ -256,7 +264,7 @@ export function ExpensesPage() {
                         variant="ghost"
                         size="icon"
                         onClick={() => setToDelete(e)}
-                        aria-label="Eliminar"
+                        aria-label={t('aria.delete')}
                       >
                         <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>
@@ -274,10 +282,10 @@ export function ExpensesPage() {
       <ConfirmDialog
         open={Boolean(toDelete)}
         onOpenChange={(o) => !o && setToDelete(null)}
-        title="Eliminar gasto"
-        description="Esta acción no se puede deshacer."
+        title={t('delete.expense_title')}
+        description={t('delete.irreversible')}
         destructive
-        confirmLabel="Eliminar"
+        confirmLabel={t('common.delete')}
         onConfirm={() => {
           if (toDelete) remove.mutate(toDelete.id);
           setToDelete(null);

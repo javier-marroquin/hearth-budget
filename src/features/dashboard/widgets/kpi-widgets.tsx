@@ -349,7 +349,7 @@ export function KpiComplianceWidget({ ctx, onRemove }: WidgetProps) {
     <KpiInner
       title={t('dashboard.compliance')}
       value={pct === 0 ? '—' : formatPercent(pct)}
-      hint={pct === 0 ? 'Activa modo Envelope' : ''}
+      hint={pct === 0 ? t('budget.enable_hint') : ''}
       icon={TrendingUp}
       tone={pct > 1 ? 'destructive' : 'default'}
       navigateTo={`/budget`}
@@ -373,7 +373,7 @@ export function KpiUnallocatedWidget({ ctx, onRemove }: WidgetProps) {
         currency: ctx.currency,
         compact: true,
       })}
-      hint="Cada peso necesita un trabajo"
+      hint={t('budget.every_dollar')}
       icon={PiggyBank}
       tone={ctx.envelopeMode && ctx.kpis.unallocated > 0 ? 'info' : 'default'}
       navigateTo={`/budget`}
@@ -390,7 +390,7 @@ export function KpiHeroWidget({ ctx, onRemove }: WidgetProps) {
   const { t } = useTranslation();
   if (!ctx.kpis)
     return (
-      <LoadingShell title="Hero" editing={ctx.editing} onRemove={onRemove} />
+      <LoadingShell title={t('dashboard.minimum_income')} editing={ctx.editing} onRemove={onRemove} />
     );
   const { totalIncome, minRequiredIncome, deficit, surplus, hasDeficit } = ctx.kpis;
   const progress =

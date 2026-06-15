@@ -23,6 +23,7 @@ export interface UpcomingItem {
   daysUntil: number;
   tone: 'income' | 'expense' | 'contribution' | 'event' | 'goal';
   categoryColor?: string | null;
+  categoryId?: string | null;
   userId?: string | null;
   status?: string | null;
 }

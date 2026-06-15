@@ -49,7 +49,7 @@ export function MembersPage() {
       )}
 
       {!isLoading && (!members || members.length === 0) && (
-        <EmptyState icon={Users} title="Sin miembros aún" />
+        <EmptyState icon={Users} title={t('empty.members_title')} />
       )}
 
       {!isLoading && members && members.length > 0 && (
@@ -81,7 +81,7 @@ export function MembersPage() {
                     <div className="flex items-center gap-2">
                       <Badge variant="outline">{t(`roles.${m.role}`)}</Badge>
                       {m.status === 'invited' && (
-                        <Badge variant="warning">Pendiente</Badge>
+                        <Badge variant="warning">{t('status.pending')}</Badge>
                       )}
                     </div>
                 </CardContent>

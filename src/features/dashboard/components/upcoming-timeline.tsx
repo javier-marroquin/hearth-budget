@@ -19,7 +19,9 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { EmptyState } from '@/components/layout/empty-state';
 import { formatCurrency, formatDate } from '@/lib/format';
+import { resolveUpcomingSubtitle, resolveUpcomingTitle } from '@/lib/display-labels';
 import { cn } from '@/lib/utils';
+import type { TFunction } from 'i18next';
 import { useUpcoming } from '../hooks/use-upcoming';
 import { useUpcomingOrder } from '../hooks/use-upcoming-order';
 import type { UpcomingItem, UpcomingKind } from '../services/upcoming.service';
@@ -228,6 +230,8 @@ export function UpcomingTimeline({
                 <UpcomingRow
                   key={item.id}
                   item={item}
+                  displayTitle={resolveUpcomingTitle(item, t)}
+                  displaySubtitle={resolveUpcomingSubtitle(item, t)}
                   fallbackCurrency={currency}
                   compact={sidebar}
                   locale={i18n.language}
@@ -272,6 +276,8 @@ export function UpcomingTimeline({
 
 function UpcomingRow({
   item,
+  displayTitle,
+  displaySubtitle,
   fallbackCurrency,
   compact,
   locale,
@@ -285,6 +291,8 @@ function UpcomingRow({
   onDrop,
 }: {
   item: UpcomingItem;
+  displayTitle: string;
+  displaySubtitle: string | null;
   fallbackCurrency?: string;
   compact?: boolean;
   locale: string;
@@ -354,7 +362,7 @@ function UpcomingRow({
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1">
-            <span className="truncate text-xs font-medium">{item.title}</span>
+            <span className="truncate text-xs font-medium">{displayTitle}</span>
             {isOverdue && (
               <Badge variant="destructive" className="h-3.5 px-1 text-[9px]">
                 {t('calendar.status.overdue')}
@@ -363,7 +371,7 @@ function UpcomingRow({
           </div>
           <p className="truncate text-[10px] text-muted-foreground">
             {formatDate(item.date, compact ? 'd MMM' : 'PP', locale)}
-            {item.subtitle ? ` · ${item.subtitle}` : ''}
+            {displaySubtitle ? ` · ${displaySubtitle}` : ''}
           </p>
         </div>
         <div className="shrink-0 text-right">
@@ -384,7 +392,7 @@ function UpcomingRow({
             </p>
           )}
           <p className="text-[10px] text-muted-foreground">
-            {relativeDayLabel(item.daysUntil, locale)}
+            {relativeDayLabel(item.daysUntil, t)}
           </p>
         </div>
         <ChevronRight className="hidden h-3.5 w-3.5 shrink-0 text-muted-foreground group-hover:block" />
@@ -418,11 +426,10 @@ function SummaryChip({
   );
 }
 
-function relativeDayLabel(d: number, locale: string): string {
-  const en = locale.startsWith('en');
-  if (d === 0) return en ? 'Today' : 'Hoy';
-  if (d === 1) return en ? 'Tomorrow' : 'Mañana';
-  if (d === -1) return en ? 'Yesterday' : 'Ayer';
-  if (d < 0) return en ? `${Math.abs(d)}d ago` : `-${Math.abs(d)}d`;
-  return en ? `+${d}d` : `+${d}d`;
+function relativeDayLabel(d: number, t: TFunction): string {
+  if (d === 0) return t('dashboard.upcoming.today');
+  if (d === 1) return t('dashboard.upcoming.tomorrow');
+  if (d === -1) return t('dashboard.upcoming.yesterday');
+  if (d < 0) return t('dashboard.upcoming.days_ago', { count: Math.abs(d) });
+  return t('dashboard.upcoming.in_days_short', { count: d });
 }

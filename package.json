@@ -14,6 +14,7 @@
     "db:setup-local": "bash scripts/setup-local-db.sh",
     "db:migrate": "npm run db:migrate --workspace=server",
     "db:seed": "npm run db:seed --workspace=server",
+    "db:seed:demo": "npm run db:seed:demo --workspace=server",
     "install:self-hosted": "bash scripts/install.sh",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",

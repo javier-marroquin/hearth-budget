@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import i18n from '@/i18n';
 import {
   createContribution,
   deleteContribution,
@@ -42,7 +43,7 @@ export function useCreateContribution(householdId: string) {
       await qc.invalidateQueries({ queryKey: ['contributions', householdId] });
       await qc.invalidateQueries({ queryKey: ['kpis', householdId] });
       await qc.invalidateQueries({ queryKey: ['upcoming', householdId] });
-      toast.success('Aporte registrado');
+      toast.success(i18n.t('toast.contribution_created'));
     },
     onError: (err: Error) => toast.error(err.message),
   });
@@ -57,7 +58,7 @@ export function useUpdateContribution(householdId: string) {
       await qc.invalidateQueries({ queryKey: ['contributions', householdId] });
       await qc.invalidateQueries({ queryKey: ['kpis', householdId] });
       await qc.invalidateQueries({ queryKey: ['upcoming', householdId] });
-      toast.success('Aporte actualizado');
+      toast.success(i18n.t('toast.contribution_updated'));
     },
     onError: (err: Error) => toast.error(err.message),
   });
@@ -71,7 +72,7 @@ export function useMarkContributionReceived(householdId: string) {
       await qc.invalidateQueries({ queryKey: ['contributions', householdId] });
       await qc.invalidateQueries({ queryKey: ['kpis', householdId] });
       await qc.invalidateQueries({ queryKey: ['upcoming', householdId] });
-      toast.success('Aporte marcado como recibido');
+      toast.success(i18n.t('toast.contribution_received'));
     },
     onError: (err: Error) => toast.error(err.message),
   });
@@ -85,7 +86,7 @@ export function useDeleteContribution(householdId: string) {
       await qc.invalidateQueries({ queryKey: ['contributions', householdId] });
       await qc.invalidateQueries({ queryKey: ['kpis', householdId] });
       await qc.invalidateQueries({ queryKey: ['upcoming', householdId] });
-      toast.success('Aporte eliminado');
+      toast.success(i18n.t('toast.contribution_deleted'));
     },
     onError: (err: Error) => toast.error(err.message),
   });

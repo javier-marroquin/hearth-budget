@@ -1,4 +1,5 @@
 import { type ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { GripVertical, X } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -36,6 +37,7 @@ export function WidgetShell({
   onActivate,
   children,
 }: WidgetShellProps) {
+  const { t } = useTranslation();
   const clickable = Boolean(onActivate) && !editing;
 
   const hasHeader = Boolean(title || editing);
@@ -55,7 +57,7 @@ export function WidgetShell({
             {editing && (
               <span
                 className="widget-drag-handle cursor-move rounded p-1 text-muted-foreground hover:bg-accent"
-                aria-label="Mover widget"
+                aria-label={t('widgets.move')}
                 onClick={(e) => e.stopPropagation()}
               >
                 <GripVertical className="h-3.5 w-3.5" />
@@ -85,7 +87,7 @@ export function WidgetShell({
                   e.stopPropagation();
                   onRemove();
                 }}
-                aria-label="Quitar widget"
+                aria-label={t('widgets.remove')}
               >
                 <X className="h-3.5 w-3.5" />
               </Button>

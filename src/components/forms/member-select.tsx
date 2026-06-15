@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import {
   Select,
   SelectContent,
@@ -18,8 +19,9 @@ interface MemberSelectProps {
 export function MemberSelect({
   value,
   onChange,
-  placeholder = 'Miembro',
+  placeholder,
 }: MemberSelectProps) {
+  const { t } = useTranslation();
   const activeHousehold = useHouseholdStore((s) => s.activeHousehold);
   const { data: members } = useHouseholdMembers(activeHousehold?.id);
 
@@ -28,7 +30,7 @@ export function MemberSelect({
   return (
     <Select value={value ?? ''} onValueChange={onChange}>
       <SelectTrigger>
-        <SelectValue placeholder={placeholder} />
+        <SelectValue placeholder={placeholder ?? t('common.member')} />
       </SelectTrigger>
       <SelectContent>
         {active?.map((m) => (

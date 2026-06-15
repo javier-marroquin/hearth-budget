@@ -23,21 +23,13 @@ interface WidgetPaletteProps {
   onAdd: (item: LayoutItem) => void;
 }
 
-const CATEGORY_LABELS: Record<string, string> = {
-  kpi: 'KPIs',
-  chart: 'Gráficos',
-  list: 'Listas',
-  envelope: 'Envelope',
-  projection: 'Proyección',
-};
-
 export function WidgetPalette({
   open,
   onOpenChange,
   existing,
   onAdd,
 }: WidgetPaletteProps) {
-  const { t: _t } = useTranslation();
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
 
   const placedWidgetIds = useMemo(
@@ -48,13 +40,14 @@ export function WidgetPalette({
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return Object.values(WIDGETS).filter((w) => {
-      if (q && !w.label.toLowerCase().includes(q) && !w.description.toLowerCase().includes(q))
+      const label = t(w.labelKey);
+      const description = t(w.descriptionKey);
+      if (q && !label.toLowerCase().includes(q) && !description.toLowerCase().includes(q))
         return false;
-      // Hide single-instance widgets that are already placed
       if (!w.multiple && placedWidgetIds.has(w.id)) return false;
       return true;
     });
-  }, [search, placedWidgetIds]);
+  }, [search, placedWidgetIds, t]);
 
   const grouped = useMemo(() => {
     const map = new Map<string, typeof filtered>();
@@ -71,7 +64,6 @@ export function WidgetPalette({
     onAdd({
       instanceId: `${widgetId}-${shortId(6)}`,
       widgetId,
-      // Place at the bottom — react-grid-layout will compact upward
       x: 0,
       y: Number.POSITIVE_INFINITY,
       w: def.defaultW,
@@ -83,16 +75,14 @@ export function WidgetPalette({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] w-[95vw] max-w-3xl overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Agregar widget</DialogTitle>
-          <DialogDescription>
-            Selecciona un widget para añadirlo a tu dashboard. Después arrástralo a donde lo quieras.
-          </DialogDescription>
+          <DialogTitle>{t('widgets.add_title')}</DialogTitle>
+          <DialogDescription>{t('widgets.add_description')}</DialogDescription>
         </DialogHeader>
 
         <div className="relative mb-3">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Buscar widget…"
+            placeholder={t('widgets.search_placeholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
@@ -103,8 +93,8 @@ export function WidgetPalette({
         {grouped.length === 0 && (
           <p className="py-8 text-center text-sm text-muted-foreground">
             {placedWidgetIds.size === Object.keys(WIDGETS).length
-              ? 'Ya agregaste todos los widgets disponibles.'
-              : 'Sin resultados para tu búsqueda.'}
+              ? t('widgets.all_added')
+              : t('widgets.no_results')}
           </p>
         )}
 
@@ -112,7 +102,7 @@ export function WidgetPalette({
           <div key={cat} className="space-y-2">
             <div className="flex items-center gap-2 pt-2">
               <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                {CATEGORY_LABELS[cat] ?? cat}
+                {t(`widgets.categories.${cat}`)}
               </span>
               <div className="h-px flex-1 bg-border" />
               <Badge variant="outline" className="text-[10px]">
@@ -124,8 +114,8 @@ export function WidgetPalette({
                 <Card key={w.id} className="card-hover">
                   <CardContent className="flex items-start justify-between gap-3 p-3">
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-medium">{w.label}</p>
-                      <p className="text-xs text-muted-foreground">{w.description}</p>
+                      <p className="truncate text-sm font-medium">{t(w.labelKey)}</p>
+                      <p className="text-xs text-muted-foreground">{t(w.descriptionKey)}</p>
                       <p className="mt-1 text-[10px] text-muted-foreground">
                         {w.defaultW}×{w.defaultH}
                       </p>

@@ -47,7 +47,7 @@ export function GlobalSearch({ collapsed = false }: GlobalSearchProps) {
         type="button"
         className="nav-item mx-2 w-[calc(100%-16px)] justify-center"
         onClick={() => setSidebarCollapsed(false)}
-        title="Buscar (⌘K)"
+        title={t('aria.global_search')}
       >
         <Search className="h-4 w-4" />
       </button>

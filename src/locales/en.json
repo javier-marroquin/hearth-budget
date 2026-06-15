@@ -141,21 +141,207 @@
       "see_all": "See {{count}} more days",
       "collapse": "Show less",
       "drag_hint": "Drag the ≡ handle to reorder",
-      "reset_order": "Reset order"
+      "reset_order": "Reset order",
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "yesterday": "Yesterday",
+      "days_ago": "{{count}}d ago",
+      "in_days_short": "+{{count}}d"
     },
     "more_metrics": "More metrics",
     "actual_savings": "Actual savings",
-    "month_close": "Month-end"
+    "month_close": "Month-end",
+    "no_contributions_this_month": "No contributions this month",
+    "no_income_expense_trend": "No income or expense data for the last 12 months"
   },
   "alerts": {
     "deficit_warning": "Your current income is below the required minimum. You're short {{amount}}.",
     "savings_warning": "You're saving less than the recommended 10%.",
     "overdue_warning": "You have {{count}} overdue payments."
   },
+  "settings": {
+    "profile_title": "Your profile",
+    "profile_description": "How other household members will see you.",
+    "display_name": "Name",
+    "display_name_placeholder": "Your name",
+    "save_profile": "Save name",
+    "profile_saved": "Name updated",
+    "saved": "Settings saved",
+    "envelope_title": "Envelope budgeting",
+    "envelope_description": "Enable zero-sum category allocation. Shows the Budget view.",
+    "import_incomes_title": "Import income",
+    "import_incomes_description": "Map CSV columns to app fields.",
+    "import_expenses_title": "Import expenses",
+    "import_expenses_description": "Map CSV columns to app fields.",
+    "backup_downloaded": "Backup downloaded"
+  },
+  "toast": {
+    "income_created": "Income recorded",
+    "income_updated": "Income updated",
+    "income_deleted": "Income deleted",
+    "expense_created": "Expense recorded",
+    "expense_updated": "Expense updated",
+    "expense_deleted": "Expense deleted",
+    "expense_paid": "Marked as paid",
+    "contribution_created": "Contribution recorded",
+    "contribution_updated": "Contribution updated",
+    "contribution_received": "Contribution marked received",
+    "contribution_deleted": "Contribution deleted",
+    "goal_created": "Goal created",
+    "goal_updated": "Goal updated",
+    "goal_balance_updated": "Balance updated",
+    "goal_deleted": "Goal deleted",
+    "category_created": "Category created",
+    "category_updated": "Category updated",
+    "category_deleted": "Category deleted",
+    "event_created": "Event created",
+    "event_deleted": "Event deleted",
+    "household_created": "Household created",
+    "invite_sent": "Invitation sent",
+    "dashboard_restored": "Dashboard restored",
+    "widget_added": "Widget added",
+    "csv_empty": "The file has no data rows",
+    "csv_read_error": "Error reading file",
+    "import_error": "Import failed",
+    "export_error": "Export failed",
+    "recurring_materialized": "{{count}} entry/entries generated",
+    "csv_downloaded": "Downloaded: {{filename}}",
+    "import_validation_errors": "{{count}} validation error(s). Fix the mapping.",
+    "import_result": "Imported {{inserted}}, {{failed}} failed",
+    "import_success": "Imported {{count}} rows"
+  },
+  "empty": {
+    "expenses_title": "No expenses yet",
+    "expenses_description": "Start by recording this month's household expenses.",
+    "incomes_title": "No income yet",
+    "incomes_description": "Start by adding this month's household income.",
+    "contributions_title": "No contributions yet",
+    "contributions_description": "Record each member's contributions to the household budget.",
+    "goals_title": "No active goals",
+    "goals_description": "Create savings goals (emergency fund, vacation, appliances…) and the app calculates how much to save each month.",
+    "categories_title": "No categories",
+    "categories_description": "New households start with a default category set.",
+    "notifications_title": "No notifications",
+    "notifications_description": "We'll notify you about upcoming payments, overdue items, and new invitations.",
+    "members_title": "No members yet",
+    "budget_categories_title": "No budgeted categories",
+    "budget_categories_description": "Edit an expense category and set a monthly amount to see it here."
+  },
+  "delete": {
+    "expense_title": "Delete expense",
+    "income_title": "Delete income",
+    "contribution_title": "Delete contribution",
+    "goal_title": "Delete goal",
+    "category_title": "Delete category",
+    "irreversible": "This action cannot be undone.",
+    "goal_progress": "Recorded progress will be removed.",
+    "category_orphan": "Linked transactions will lose their category."
+  },
+  "budget": {
+    "envelope_inactive": "Envelope mode is off",
+    "description": "Assign every dollar to a category (zero-sum). Total assigned should not exceed income.",
+    "month_income": "Monthly income",
+    "allocated": "Allocated",
+    "unallocated": "Unallocated",
+    "enable_hint": "Enable envelope mode",
+    "every_dollar": "Every dollar needs a job"
+  },
+  "goals": {
+    "unnamed": "Savings goal",
+    "to_complete": "Goal to complete",
+    "create": "Create goal",
+    "saving": "Saving…",
+    "new_title": "New goal",
+    "edit_title": "Edit goal",
+    "name_placeholder": "e.g. Emergency fund"
+  },
+  "contributions": {
+    "title": "Contributions",
+    "new": "New contribution",
+    "from_member": "Contribution from {{name}}",
+    "member_contribution": "Member contribution",
+    "new_title": "New contribution",
+    "edit_title": "Edit contribution"
+  },
+  "expenses": {
+    "title": "Expenses",
+    "new": "New expense",
+    "unnamed": "Expense",
+    "new_title": "New expense",
+    "edit_title": "Edit expense",
+    "description_placeholder": "e.g. Rent, groceries, utilities…",
+    "mark_paid": "Mark paid",
+    "due_date": "Due date",
+    "type": {
+      "fixed": "Fixed",
+      "variable": "Variable",
+      "debt": "Debt",
+      "one_time": "One-time"
+    },
+    "split": {
+      "equal": "Equal parts",
+      "percentage": "By percentage",
+      "income_based": "By income",
+      "custom": "Custom"
+    }
+  },
+  "incomes": {
+    "title": "Income",
+    "new": "New income",
+    "unnamed": "Income",
+    "new_title": "New income",
+    "edit_title": "Edit income",
+    "source_placeholder": "e.g. Company X, freelance, tips…"
+  },
+  "categories": {
+    "type": {
+      "expense": "Expense",
+      "income": "Income",
+      "savings": "Savings"
+    },
+    "none": "No category",
+    "no_budget": "No budget",
+    "new_title": "New category",
+    "edit_title": "Edit category",
+    "name_placeholder": "e.g. Pets",
+    "system": {
+      "housing": "Housing",
+      "food": "Food",
+      "transport": "Transport",
+      "health": "Health",
+      "education": "Education",
+      "entertainment": "Entertainment",
+      "utilities": "Utilities",
+      "other_expense": "Other",
+      "salary": "Salary",
+      "freelance": "Freelance",
+      "investments": "Investments",
+      "other_income": "Other income",
+      "general_savings": "General savings",
+      "emergency": "Emergency fund"
+    }
+  },
+  "notifications": {
+    "all_caught_up": "All caught up",
+    "unread_count": "{{count}} unread"
+  },
+  "members": {
+    "invite_email_placeholder": "friend@email.com",
+    "send_invite": "Send invitation",
+    "sending": "Sending…"
+  },
+  "invite": {
+    "accept": "Accept invitation",
+    "token_missing": "Invitation token missing",
+    "unknown_error": "Unknown error"
+  },
   "calendar": {
     "new_event": "New event",
     "edit_event": "Edit event",
     "delete_event": "Delete event",
+    "unnamed_event": "Event",
+    "title_placeholder": "Rent, allowance, etc.",
+    "unassigned": "(Unassigned)",
     "status": {
       "pending": "Pending",
       "paid": "Paid",
@@ -195,36 +381,148 @@
       "reminder": "Reminder"
     }
   },
-  "categories": {
-    "type": {
-      "expense": "Expense",
-      "income": "Income",
-      "savings": "Savings"
-    }
+  "charts": {
+    "income": "Income",
+    "expenses": "Expenses",
+    "this_month": "This month"
   },
-  "expenses": {
-    "title": "Expenses",
-    "new": "New expense",
-    "type": {
-      "fixed": "Fixed",
-      "variable": "Variable",
-      "debt": "Debt",
-      "one_time": "One-time"
+  "widgets": {
+    "add_title": "Add widget",
+    "add_description": "Pick a widget to add to your dashboard. Then drag it where you want.",
+    "search_placeholder": "Search widgets…",
+    "all_added": "You already added all available widgets.",
+    "no_results": "No results for your search.",
+    "categories": {
+      "kpi": "KPIs",
+      "chart": "Charts",
+      "list": "Lists",
+      "envelope": "Envelope",
+      "projection": "Projection"
     },
-    "split": {
-      "equal": "Equal parts",
-      "percentage": "By percentage",
-      "income_based": "By income",
-      "custom": "Custom"
+    "move": "Move widget",
+    "remove": "Remove widget",
+    "kpi_hero": {
+      "label": "KPI Hero — minimum income",
+      "description": "Featured card answering the household's main question."
+    },
+    "kpi_total_income": {
+      "label": "Total income",
+      "description": "Sum of this month's income. Click → view income."
+    },
+    "kpi_total_expense": {
+      "label": "Total expense",
+      "description": "Sum of this month's expenses. Click → view expenses."
+    },
+    "kpi_balance": {
+      "label": "Available balance",
+      "description": "Income − expense."
+    },
+    "kpi_savings_rate": {
+      "label": "Savings %",
+      "description": "Percentage of income being saved."
+    },
+    "kpi_overdue": {
+      "label": "Overdue payments",
+      "description": "Count of overdue expenses. Click → overdue filter."
+    },
+    "kpi_min_savings": {
+      "label": "Minimum savings (10%)",
+      "description": "Recommended minimum amount to save."
+    },
+    "kpi_actual_savings": {
+      "label": "Actual savings",
+      "description": "What you're actually saving."
+    },
+    "kpi_contributions_received": {
+      "label": "Contributions received",
+      "description": "Total contributions received this month."
+    },
+    "kpi_contributions_pending": {
+      "label": "Pending contributions",
+      "description": "Expected contributions not yet received."
+    },
+    "kpi_compliance": {
+      "label": "Budget compliance",
+      "description": "% spent vs budgeted (Envelope mode)."
+    },
+    "kpi_unallocated": {
+      "label": "Unallocated (envelope)",
+      "description": "Income − assigned budgets."
+    },
+    "kpi_projection": {
+      "label": "Month-end projection",
+      "description": "Projected income/expense/balance."
+    },
+    "chart_income_vs_expense": {
+      "label": "Income vs Expenses (12 months)",
+      "description": "Line chart with monthly trend."
+    },
+    "chart_category_doughnut": {
+      "label": "Expenses by category",
+      "description": "Doughnut breakdown. Click → view expenses."
+    },
+    "chart_contributions_by_member": {
+      "label": "Contributions by member",
+      "description": "Horizontal bars: received/pending."
+    },
+    "chart_fixed_vs_variable": {
+      "label": "Fixed vs Variable",
+      "description": "Stacked bar for the month."
+    },
+    "upcoming_timeline": {
+      "label": "Upcoming events",
+      "description": "Timeline of upcoming payments, income, and events."
     }
   },
-  "incomes": {
-    "title": "Income",
-    "new": "New income"
+  "aria": {
+    "open_menu": "Open menu",
+    "language": "Language",
+    "theme": "Theme",
+    "notifications": "Notifications",
+    "collapse_sidebar": "Collapse sidebar",
+    "expand_sidebar": "Expand sidebar",
+    "favorite_add": "Add to favorites",
+    "favorite_remove": "Remove from favorites",
+    "global_search": "Search (⌘K)",
+    "edit": "Edit",
+    "delete": "Delete",
+    "mark_received": "Mark received",
+    "mark_paid": "Mark paid"
   },
-  "contributions": {
-    "title": "Contributions",
-    "new": "New contribution"
+  "status": {
+    "pending": "Pending",
+    "paid": "Paid",
+    "overdue": "Overdue",
+    "received": "Received",
+    "active": "Active",
+    "completed": "Completed",
+    "paused": "Paused"
+  },
+  "member_display": {
+    "unnamed": "Unnamed"
+  },
+  "export": {
+    "csv": "Export CSV"
+  },
+  "errors": {
+    "api_unreachable": "Could not reach the API. Is it running? Run: npm run dev:api"
+  },
+  "table": {
+    "date": "Date",
+    "due_date": "Due date",
+    "expected_date": "Expected date",
+    "received_date": "Received date",
+    "description": "Description",
+    "category": "Category",
+    "type": "Type",
+    "status": "Status",
+    "amount": "Amount",
+    "currency": "Currency",
+    "notes": "Notes",
+    "member": "Member",
+    "payee": "Payee",
+    "contributor": "Contributor",
+    "source": "Source"
   },
   "recurring": {
     "page_description": "Fixed income and expenses that repeat automatically until you pause them.",
@@ -276,13 +574,5 @@
     "pending_empty_description": "Expenses with due dates and expected contributions show up here.",
     "overdue": "Overdue",
     "in_days": "In {{days}} days"
-  },
-  "settings": {
-    "profile_title": "Your profile",
-    "profile_description": "How other household members will see you.",
-    "display_name": "Name",
-    "display_name_placeholder": "Your name",
-    "save_profile": "Save name",
-    "profile_saved": "Name updated"
   }
 }

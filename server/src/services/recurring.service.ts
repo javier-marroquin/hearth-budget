@@ -208,7 +208,7 @@ export async function createRecurringTemplate(
     insertSql += `, user_id, source) VALUES ($1, $2, true, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`;
     params.push(input.user_id, input.source?.trim() || input.label);
   } else {
-    insertSql += `, expense_type, split_method, user_id, source) VALUES ($1, $2, true, $3, $4, $5, $6, $7, $8, $9, $10, $11, NULL, NULL) RETURNING *`;
+    insertSql += `, expense_type, split_method, user_id, source) VALUES ($1, $2, true, $3, $4, $5, $6, $7, $8, $9, $10, NULL, NULL) RETURNING *`;
     params.push(input.expense_type ?? 'fixed', input.split_method ?? 'equal');
   }
 
@@ -256,7 +256,7 @@ export async function updateRecurringTemplate(
   await client.query(
     `UPDATE public.recurring_rules
      SET frequency = $1, interval = $2, start_date = $3, end_date = $4,
-         day_of_month = $5, day_of_week = $6, updated_at = now()
+         day_of_month = $5, day_of_week = $6
      WHERE id = $7`,
     [
       rulePayload.frequency,

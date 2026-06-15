@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import i18n from '@/i18n';
 import { useAuthStore } from '@/features/auth/stores/auth.store';
 import {
   addToGoal,
@@ -33,7 +34,7 @@ export function useCreateGoal(householdId: string) {
     },
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ['goals', householdId] });
-      toast.success('Meta creada');
+      toast.success(i18n.t('toast.goal_created'));
     },
     onError: (err: Error) => toast.error(err.message),
   });
@@ -51,7 +52,7 @@ export function useUpdateGoal(householdId: string) {
     }) => updateGoal(id, patch),
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ['goals', householdId] });
-      toast.success('Meta actualizada');
+      toast.success(i18n.t('toast.goal_updated'));
     },
     onError: (err: Error) => toast.error(err.message),
   });
@@ -63,7 +64,7 @@ export function useAddToGoal(householdId: string) {
     mutationFn: ({ id, delta }: { id: string; delta: number }) => addToGoal(id, delta),
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ['goals', householdId] });
-      toast.success('Saldo actualizado');
+      toast.success(i18n.t('toast.goal_balance_updated'));
     },
     onError: (err: Error) => toast.error(err.message),
   });
@@ -75,7 +76,7 @@ export function useDeleteGoal(householdId: string) {
     mutationFn: deleteGoal,
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ['goals', householdId] });
-      toast.success('Meta eliminada');
+      toast.success(i18n.t('toast.goal_deleted'));
     },
     onError: (err: Error) => toast.error(err.message),
   });

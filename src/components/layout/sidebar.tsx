@@ -74,7 +74,7 @@ export function Sidebar() {
             size="icon"
             onClick={toggleSidebar}
             className="h-8 w-8 shrink-0 text-muted-foreground"
-            aria-label="Colapsar sidebar"
+            aria-label={t('aria.collapse_sidebar')}
           >
             <PanelLeftClose className="h-4 w-4" />
           </Button>
@@ -88,7 +88,7 @@ export function Sidebar() {
             size="icon"
             onClick={toggleSidebar}
             className="h-8 w-8 text-muted-foreground"
-            aria-label="Expandir sidebar"
+            aria-label={t('aria.expand_sidebar')}
           >
             <PanelLeft className="h-4 w-4" />
           </Button>

@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import i18n from '@/i18n';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/features/auth/stores/auth.store';
 import { useHouseholdStore } from '../stores/household.store';
@@ -85,7 +86,7 @@ export function useCreateHousehold() {
         setUser({ ...user, full_name: fullName });
       }
       await queryClient.invalidateQueries({ queryKey: ['households'] });
-      toast.success('Hogar creado correctamente');
+      toast.success(i18n.t('toast.household_created'));
       navigate('/dashboard', { replace: true });
     },
     onError: (err: Error) => {

@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import i18n from '@/i18n';
 import {
   createIncome,
   deleteIncome,
@@ -41,7 +42,7 @@ export function useCreateIncome(householdId: string) {
       await qc.invalidateQueries({ queryKey: ['incomes', householdId] });
       await qc.invalidateQueries({ queryKey: ['kpis', householdId] });
       await qc.invalidateQueries({ queryKey: ['upcoming', householdId] });
-      toast.success('Ingreso registrado');
+      toast.success(i18n.t('toast.income_created'));
     },
     onError: (err: Error) => toast.error(err.message),
   });
@@ -56,7 +57,7 @@ export function useUpdateIncome(householdId: string) {
       await qc.invalidateQueries({ queryKey: ['incomes', householdId] });
       await qc.invalidateQueries({ queryKey: ['kpis', householdId] });
       await qc.invalidateQueries({ queryKey: ['upcoming', householdId] });
-      toast.success('Ingreso actualizado');
+      toast.success(i18n.t('toast.income_updated'));
     },
     onError: (err: Error) => toast.error(err.message),
   });
@@ -70,7 +71,7 @@ export function useDeleteIncome(householdId: string) {
       await qc.invalidateQueries({ queryKey: ['incomes', householdId] });
       await qc.invalidateQueries({ queryKey: ['kpis', householdId] });
       await qc.invalidateQueries({ queryKey: ['upcoming', householdId] });
-      toast.success('Ingreso eliminado');
+      toast.success(i18n.t('toast.income_deleted'));
     },
     onError: (err: Error) => toast.error(err.message),
   });

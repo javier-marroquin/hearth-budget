@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Line } from 'react-chartjs-2';
 import type { ChartOptions } from 'chart.js';
 import { format, parse } from 'date-fns';
-import { es } from 'date-fns/locale';
+import { enUS, es } from 'date-fns/locale';
 import { ensureChartJsRegistered, cssColor } from './chart-defaults';
 import { formatCurrency } from '@/lib/format';
 
@@ -12,17 +13,20 @@ interface Props {
 }
 
 export function IncomeVsExpenseLine({ data, currency }: Props) {
+  const { t, i18n } = useTranslation();
   ensureChartJsRegistered();
+
+  const dateLocale = i18n.language.startsWith('en') ? enUS : es;
 
   const chartData = useMemo(() => {
     const labels = data.map((d) =>
-      format(parse(d.monthIso, 'yyyy-MM', new Date()), 'MMM', { locale: es }),
+      format(parse(d.monthIso, 'yyyy-MM', new Date()), 'MMM', { locale: dateLocale }),
     );
     return {
       labels,
       datasets: [
         {
-          label: 'Ingresos',
+          label: t('charts.income'),
           data: data.map((d) => d.income),
           borderColor: cssColor('--success'),
           backgroundColor: cssColor('--success', 0.15),
@@ -32,7 +36,7 @@ export function IncomeVsExpenseLine({ data, currency }: Props) {
           pointRadius: 3,
         },
         {
-          label: 'Gastos',
+          label: t('charts.expenses'),
           data: data.map((d) => d.expense),
           borderColor: cssColor('--destructive'),
           backgroundColor: cssColor('--destructive', 0.15),
@@ -43,7 +47,7 @@ export function IncomeVsExpenseLine({ data, currency }: Props) {
         },
       ],
     };
-  }, [data]);
+  }, [data, t, dateLocale]);
 
   const options: ChartOptions<'line'> = {
     responsive: true,
@@ -68,7 +72,7 @@ export function IncomeVsExpenseLine({ data, currency }: Props) {
   };
 
   return (
-    <div className="h-72">
+    <div className="h-full min-h-[140px] w-full">
       <Line data={chartData} options={options} />
     </div>
   );

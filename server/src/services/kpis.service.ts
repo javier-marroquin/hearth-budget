@@ -1,5 +1,11 @@
 import type { DbClient } from '../db/pool.js';
-import { getMonthBounds, getMonthRange, toISODate } from '@/lib/date.js';
+import {
+  getMonthBounds,
+  getMonthRange,
+  toISODate,
+  toISODateString,
+  toMonthIso,
+} from '@/lib/date.js';
 import { calculateBreakdown } from '@/lib/finance/calculations.js';
 import type {
   CategoryRow,
@@ -51,7 +57,7 @@ export async function fetchHouseholdKpis(
   const endIso = toISODate(end);
   const todayIso = toISODate(ref);
   const upcomingHorizon = toISODate(new Date(ref.getTime() + 7 * 24 * 60 * 60 * 1000));
-  const trendStart = toISODate(getMonthRange(11)[0]!);
+  const trendStart = toISODate(getMonthRange(11, 0, ref)[0]!);
 
   const [
     incomesMonth,
@@ -170,6 +176,7 @@ export async function fetchHouseholdKpis(
   const monthlyTrend = buildMonthlyTrend(
     incomesTrend.rows as Pick<IncomeRow, 'amount' | 'date'>[],
     expensesTrendRows.filter((e) => e.status === 'paid'),
+    ref,
   );
 
   const projection = projectMonth(
@@ -274,23 +281,24 @@ function computeCompliance(
 }
 
 function buildMonthlyTrend(
-  incomes: Array<{ amount: number | string; date: string }>,
-  expenses: Array<{ amount: number | string; date: string }>,
+  incomes: Array<{ amount: number | string; date: Date | string }>,
+  expenses: Array<{ amount: number | string; date: Date | string }>,
+  reference: Date,
 ): Array<{ monthIso: string; income: number; expense: number }> {
-  const months = getMonthRange(11);
+  const months = getMonthRange(11, 0, reference);
   const init = new Map(
-    months.map((m) => [
-      m.toISOString().slice(0, 7),
-      { monthIso: m.toISOString().slice(0, 7), income: 0, expense: 0 },
-    ]),
+    months.map((m) => {
+      const key = toMonthIso(m);
+      return [key, { monthIso: key, income: 0, expense: 0 }];
+    }),
   );
   for (const i of incomes) {
-    const key = i.date.slice(0, 7);
+    const key = toISODateString(i.date).slice(0, 7);
     const row = init.get(key);
     if (row) row.income += Number(i.amount);
   }
   for (const e of expenses) {
-    const key = e.date.slice(0, 7);
+    const key = toISODateString(e.date).slice(0, 7);
     const row = init.get(key);
     if (row) row.expense += Number(e.amount);
   }

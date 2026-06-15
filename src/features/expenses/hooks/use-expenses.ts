@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import i18n from '@/i18n';
 import {
   createExpense,
   deleteExpense,
@@ -58,7 +59,7 @@ export function useCreateExpense(householdId: string) {
       await qc.invalidateQueries({ queryKey: ['expenses', householdId] });
       await qc.invalidateQueries({ queryKey: ['kpis', householdId] });
       await qc.invalidateQueries({ queryKey: ['upcoming', householdId] });
-      toast.success('Gasto registrado');
+      toast.success(i18n.t('toast.expense_created'));
     },
     onError: (err: Error) => toast.error(err.message),
   });
@@ -73,7 +74,7 @@ export function useUpdateExpense(householdId: string) {
       await qc.invalidateQueries({ queryKey: ['expenses', householdId] });
       await qc.invalidateQueries({ queryKey: ['kpis', householdId] });
       await qc.invalidateQueries({ queryKey: ['upcoming', householdId] });
-      toast.success('Gasto actualizado');
+      toast.success(i18n.t('toast.expense_updated'));
     },
     onError: (err: Error) => toast.error(err.message),
   });
@@ -87,7 +88,7 @@ export function useDeleteExpense(householdId: string) {
       await qc.invalidateQueries({ queryKey: ['expenses', householdId] });
       await qc.invalidateQueries({ queryKey: ['kpis', householdId] });
       await qc.invalidateQueries({ queryKey: ['upcoming', householdId] });
-      toast.success('Gasto eliminado');
+      toast.success(i18n.t('toast.expense_deleted'));
     },
     onError: (err: Error) => toast.error(err.message),
   });
@@ -105,7 +106,7 @@ export function useMarkExpensePaid(householdId: string) {
       await qc.invalidateQueries({ queryKey: ['expenses', householdId] });
       await qc.invalidateQueries({ queryKey: ['kpis', householdId] });
       await qc.invalidateQueries({ queryKey: ['upcoming', householdId] });
-      toast.success('Marcado como pagado');
+      toast.success(i18n.t('toast.expense_paid'));
     },
     onError: (err: Error) => toast.error(err.message),
   });

@@ -41,7 +41,7 @@ export function Topbar() {
           size="icon"
           className="md:hidden"
           onClick={() => setMobileMenuOpen(true)}
-          aria-label="Abrir menú"
+          aria-label={t('aria.open_menu')}
         >
           <Menu className="h-5 w-5" />
         </Button>
@@ -51,7 +51,7 @@ export function Topbar() {
       <div className="flex items-center gap-1">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon-sm" aria-label="Idioma">
+            <Button variant="ghost" size="icon-sm" aria-label={t('aria.language')}>
               <Languages className="h-4 w-4 text-muted-foreground" />
             </Button>
           </DropdownMenuTrigger>
@@ -69,7 +69,7 @@ export function Topbar() {
           variant="ghost"
           size="icon-sm"
           onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          aria-label="Tema"
+          aria-label={t('aria.theme')}
         >
           {theme === 'dark' ? (
             <Sun className="h-4 w-4 text-muted-foreground" />
@@ -82,7 +82,7 @@ export function Topbar() {
           variant="ghost"
           size="icon-sm"
           className="relative"
-          aria-label="Notificaciones"
+          aria-label={t('aria.notifications')}
           onClick={() => navigate('/notifications')}
         >
           <Bell className="h-4 w-4 text-muted-foreground" />

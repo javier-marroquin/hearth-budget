@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import i18n from '@/i18n';
 import {
   createCategory,
   deleteCategory,
@@ -28,7 +29,7 @@ export function useCreateCategory(householdId: string) {
     mutationFn: (input: CategoryInput) => createCategory(householdId, input),
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ['categories', householdId] });
-      toast.success('Categoría creada');
+      toast.success(i18n.t('toast.category_created'));
     },
     onError: (err: Error) => toast.error(err.message),
   });
@@ -41,7 +42,7 @@ export function useUpdateCategory(householdId: string) {
       updateCategory(id, patch),
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ['categories', householdId] });
-      toast.success('Categoría actualizada');
+      toast.success(i18n.t('toast.category_updated'));
     },
     onError: (err: Error) => toast.error(err.message),
   });
@@ -53,7 +54,7 @@ export function useDeleteCategory(householdId: string) {
     mutationFn: deleteCategory,
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ['categories', householdId] });
-      toast.success('Categoría eliminada');
+      toast.success(i18n.t('toast.category_deleted'));
     },
     onError: (err: Error) => toast.error(err.message),
   });

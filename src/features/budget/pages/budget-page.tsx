@@ -61,18 +61,13 @@ export function BudgetPage() {
   if (!envelopeOn) {
     return (
       <>
-        <PageHeader title={t('nav.budget')} description="Modo Envelope inactivo" />
+        <PageHeader title={t('nav.budget')} description={t('budget.envelope_inactive')} />
         <Card className="border-border bg-secondary">
           <CardContent className="flex items-start gap-4 p-6">
             <PiggyBank className="h-6 w-6 shrink-0 text-muted-foreground" />
             <div className="space-y-2">
-              <p className="font-semibold">Activa el modo Envelope</p>
-              <p className="text-sm text-muted-foreground">
-                Asigna un presupuesto mensual a cada categoría y la app calcula el cumplimiento, el porcentaje gastado y muestra cuánto te queda en cada "sobre". Inspirado en el método de Actual Budget.
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Ve a Configuración → modo Envelope para activarlo.
-              </p>
+              <p className="font-semibold">{t('budget.enable_hint')}</p>
+              <p className="text-sm text-muted-foreground">{t('budget.description')}</p>
             </div>
           </CardContent>
         </Card>
@@ -84,7 +79,7 @@ export function BudgetPage() {
     <>
       <PageHeader
         title={t('nav.budget')}
-        description="Asigna cada peso a una categoría (zero-sum). El total asignado no debería superar tus ingresos."
+        description={t('budget.description')}
       />
 
       {loading && (
@@ -99,15 +94,15 @@ export function BudgetPage() {
         <>
           <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
             <StatCard
-              label="Ingreso del mes"
+              label={t('budget.month_income')}
               value={formatCurrency(summary.totalIncome, { currency })}
             />
             <StatCard
-              label="Asignado"
+              label={t('budget.allocated')}
               value={formatCurrency(summary.totalAllocated, { currency })}
             />
             <StatCard
-              label="Sin asignar"
+              label={t('budget.unallocated')}
               value={formatCurrency(summary.unallocated, { currency })}
               highlight={summary.unallocated > 0 ? 'warning' : 'success'}
             />
@@ -116,8 +111,8 @@ export function BudgetPage() {
           {summary.buckets.length === 0 ? (
             <EmptyState
               icon={PiggyBank}
-              title="Sin categorías con presupuesto"
-              description="Edita una categoría de gasto y asígnale un monto mensual para verla aquí."
+              title={t('empty.budget_categories_title')}
+              description={t('empty.budget_categories_description')}
             />
           ) : (
             <div className="space-y-3">

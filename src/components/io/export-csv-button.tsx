@@ -1,6 +1,7 @@
 import { Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { downloadCsv, type CsvColumn } from '@/lib/io/csv';
+import i18n from '@/i18n';
 import { toast } from 'sonner';
 
 interface ExportCsvButtonProps<T> {
@@ -16,7 +17,7 @@ export function ExportCsvButton<T>({
   filename,
   rows,
   columns,
-  label = 'Exportar CSV',
+  label = i18n.t('export.csv'),
   disabled,
 }: ExportCsvButtonProps<T>) {
   return (
@@ -27,9 +28,9 @@ export function ExportCsvButton<T>({
       onClick={() => {
         try {
           downloadCsv(filename, rows, columns);
-          toast.success(`Descargado: ${filename}`);
+          toast.success(i18n.t('toast.csv_downloaded', { filename }));
         } catch (err) {
-          toast.error(err instanceof Error ? err.message : 'Error al exportar');
+          toast.error(err instanceof Error ? err.message : i18n.t('toast.export_error'));
         }
       }}
     >

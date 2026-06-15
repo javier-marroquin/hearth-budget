@@ -88,7 +88,7 @@ export function SchedulesPage() {
       list.push({
         id: e.id,
         kind: 'expense',
-        title: e.description ?? 'Gasto',
+        title: e.description ?? t('expenses.unnamed'),
         date: dueDate,
         amount: Number(e.amount),
         overdue: isOverdue(dueDate),
@@ -100,7 +100,7 @@ export function SchedulesPage() {
       list.push({
         id: c.id,
         kind: 'contribution',
-        title: 'Aporte de miembro',
+        title: t('contributions.member_contribution'),
         date: c.expected_date,
         amount: Number(c.amount),
         overdue: isOverdue(c.expected_date),
@@ -110,7 +110,7 @@ export function SchedulesPage() {
     });
 
     return list.sort((a, b) => a.date.localeCompare(b.date));
-  }, [expenses, contributions]);
+  }, [expenses, contributions, t]);
 
   const loadingPending = lExp || lCon;
 

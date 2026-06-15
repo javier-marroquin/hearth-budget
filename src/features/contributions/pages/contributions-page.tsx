@@ -37,12 +37,6 @@ const statusVariant: Record<ContributionStatus, 'success' | 'warning' | 'destruc
   overdue: 'destructive',
 };
 
-const statusLabel: Record<ContributionStatus, string> = {
-  received: 'Recibido',
-  pending: 'Pendiente',
-  overdue: 'Vencido',
-};
-
 export function ContributionsPage() {
   const { t, i18n } = useTranslation();
   const activeHousehold = useHouseholdStore((s) => s.activeHousehold);
@@ -83,16 +77,16 @@ export function ContributionsPage() {
 
   const exportColumns = useMemo<CsvColumn<ContributionRow>[]>(
     () => [
-      { key: 'expected_date', header: 'Fecha esperada', get: (r) => r.expected_date },
-      { key: 'received_date', header: 'Fecha recibido', get: (r) => r.received_date ?? '' },
-      { key: 'member', header: 'Aportante', get: (r) => memberName(r.user_id) },
-      { key: 'status', header: 'Estado', get: (r) => r.status },
-      { key: 'amount', header: 'Monto', get: (r) => Number(r.amount) },
-      { key: 'currency', header: 'Moneda', get: (r) => r.currency },
-      { key: 'notes', header: 'Notas', get: (r) => r.notes ?? '' },
+      { key: 'expected_date', header: t('table.expected_date'), get: (r) => r.expected_date },
+      { key: 'received_date', header: t('table.received_date'), get: (r) => r.received_date ?? '' },
+      { key: 'member', header: t('table.contributor'), get: (r) => memberName(r.user_id) },
+      { key: 'status', header: t('table.status'), get: (r) => r.status },
+      { key: 'amount', header: t('table.amount'), get: (r) => Number(r.amount) },
+      { key: 'currency', header: t('table.currency'), get: (r) => r.currency },
+      { key: 'notes', header: t('table.notes'), get: (r) => r.notes ?? '' },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [members],
+    [members, t],
   );
 
   return (
@@ -125,7 +119,7 @@ export function ContributionsPage() {
         <div className="mb-3 flex flex-wrap items-center gap-2 rounded-lg border border-border bg-secondary p-3 text-[13px]">
           <span className="font-medium text-muted-foreground">Filtros activos:</span>
           {urlFilters.status && (
-            <Badge variant="outline">Estado: {statusLabel[urlFilters.status]}</Badge>
+            <Badge variant="outline">{t('table.status')}: {t(`status.${urlFilters.status}`)}</Badge>
           )}
           {urlFilters.userId && (
             <Badge variant="outline">Miembro: {memberName(urlFilters.userId)}</Badge>
@@ -158,8 +152,8 @@ export function ContributionsPage() {
       {!isLoading && (!contributions || contributions.length === 0) && (
         <EmptyState
           icon={HandCoins}
-          title="Sin aportes registrados"
-          description="Registra los aportes que cada miembro hace al presupuesto del hogar."
+          title={t('empty.contributions_title')}
+          description={t('empty.contributions_description')}
         />
       )}
 
@@ -168,11 +162,11 @@ export function ContributionsPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Fecha esperada</TableHead>
-                <TableHead>Aportante</TableHead>
-                <TableHead>Estado</TableHead>
-                <TableHead>Recibido</TableHead>
-                <TableHead className="text-right">Monto</TableHead>
+                <TableHead>{t('table.expected_date')}</TableHead>
+                <TableHead>{t('table.contributor')}</TableHead>
+                <TableHead>{t('table.status')}</TableHead>
+                <TableHead>{t('table.received_date')}</TableHead>
+                <TableHead className="text-right">{t('table.amount')}</TableHead>
                 {canWriteIncomes && <TableHead />}
               </TableRow>
             </TableHeader>
@@ -185,7 +179,7 @@ export function ContributionsPage() {
                   <TableCell className="font-medium">{memberName(c.user_id)}</TableCell>
                   <TableCell>
                     <Badge variant={statusVariant[c.status]}>
-                      {statusLabel[c.status]}
+                      {t(`status.${c.status}`)}
                     </Badge>
                   </TableCell>
                   <TableCell>
@@ -201,7 +195,7 @@ export function ContributionsPage() {
                           variant="ghost"
                           size="icon"
                           onClick={() => markReceived.mutate(c.id)}
-                          aria-label="Marcar recibido"
+                          aria-label={t('aria.mark_received')}
                         >
                           <CircleCheck className="h-4 w-4 text-success" />
                         </Button>
@@ -213,7 +207,7 @@ export function ContributionsPage() {
                           setEditing(c);
                           setOpen(true);
                         }}
-                        aria-label="Editar"
+                        aria-label={t('aria.edit')}
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
@@ -221,7 +215,7 @@ export function ContributionsPage() {
                         variant="ghost"
                         size="icon"
                         onClick={() => setToDelete(c)}
-                        aria-label="Eliminar"
+                        aria-label={t('aria.delete')}
                       >
                         <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>
@@ -243,10 +237,10 @@ export function ContributionsPage() {
       <ConfirmDialog
         open={Boolean(toDelete)}
         onOpenChange={(o) => !o && setToDelete(null)}
-        title="Eliminar aporte"
-        description="Esta acción no se puede deshacer."
+        title={t('delete.contribution_title')}
+        description={t('delete.irreversible')}
         destructive
-        confirmLabel="Eliminar"
+        confirmLabel={t('common.delete')}
         onConfirm={() => {
           if (toDelete) remove.mutate(toDelete.id);
           setToDelete(null);

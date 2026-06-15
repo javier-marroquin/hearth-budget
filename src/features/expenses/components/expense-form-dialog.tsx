@@ -147,7 +147,9 @@ export function ExpenseFormDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-xl">
         <DialogHeader>
-          <DialogTitle>{expense ? 'Editar gasto' : 'Nuevo gasto'}</DialogTitle>
+          <DialogTitle>
+            {expense ? t('expenses.edit_title') : t('expenses.new_title')}
+          </DialogTitle>
           <DialogDescription>
             Registra un gasto del hogar. Los gastos pueden dividirse entre miembros.
           </DialogDescription>
@@ -163,7 +165,7 @@ export function ExpenseFormDialog({
                   <FormLabel>Descripción</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Ej: Arriendo, supermercado, servicios…"
+                      placeholder={t('expenses.description_placeholder')}
                       value={field.value ?? ''}
                       onChange={(e) => field.onChange(e.target.value)}
                       autoFocus
@@ -335,10 +337,10 @@ export function ExpenseFormDialog({
                 variant="outline"
                 onClick={() => onOpenChange(false)}
               >
-                Cancelar
+                {t('common.cancel')}
               </Button>
               <Button type="submit" disabled={submitting}>
-                {submitting ? 'Guardando…' : 'Guardar'}
+                {submitting ? t('common.loading') : t('common.save')}
               </Button>
             </DialogFooter>
           </form>

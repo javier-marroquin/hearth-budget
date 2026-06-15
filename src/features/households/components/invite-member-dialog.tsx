@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import i18n from '@/i18n';
 import {
   Dialog,
   DialogContent,
@@ -71,7 +72,7 @@ export function InviteMemberDialog({ open, onOpenChange }: InviteMemberDialogPro
           queryKey: ['households', activeHousehold.id, 'members'],
         });
       }
-      toast.success('Invitación enviada');
+      toast.success(i18n.t('toast.invite_sent'));
       form.reset();
       onOpenChange(false);
     },
@@ -102,7 +103,7 @@ export function InviteMemberDialog({ open, onOpenChange }: InviteMemberDialogPro
                   <FormControl>
                     <Input
                       autoComplete="email"
-                      placeholder="amiga@correo.com"
+                      placeholder={t('members.invite_email_placeholder')}
                       autoFocus
                       {...field}
                     />
@@ -144,10 +145,10 @@ export function InviteMemberDialog({ open, onOpenChange }: InviteMemberDialogPro
                 variant="outline"
                 onClick={() => onOpenChange(false)}
               >
-                Cancelar
+                {t('common.cancel')}
               </Button>
               <Button type="submit" disabled={invite.isPending}>
-                {invite.isPending ? 'Enviando…' : 'Enviar invitación'}
+                {invite.isPending ? t('members.sending') : t('members.send_invite')}
               </Button>
             </DialogFooter>
           </form>

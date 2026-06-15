@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Bar } from 'react-chartjs-2';
 import type { ChartOptions } from 'chart.js';
 import { ensureChartJsRegistered, cssColor } from './chart-defaults';
@@ -9,37 +11,41 @@ interface Props {
 }
 
 export function FixedVsVariableStacked({ data, currency }: Props) {
+  const { t } = useTranslation();
   ensureChartJsRegistered();
 
-  const chartData = {
-    labels: ['Este mes'],
-    datasets: [
-      {
-        label: 'Fijos',
-        data: [data.fixed],
-        backgroundColor: cssColor('--chart-1', 0.85),
-        borderRadius: 4,
-      },
-      {
-        label: 'Variables',
-        data: [data.variable],
-        backgroundColor: cssColor('--chart-3', 0.85),
-        borderRadius: 4,
-      },
-      {
-        label: 'Deudas',
-        data: [data.debt],
-        backgroundColor: cssColor('--destructive', 0.85),
-        borderRadius: 4,
-      },
-      {
-        label: 'Únicos',
-        data: [data.one_time],
-        backgroundColor: cssColor('--chart-4', 0.85),
-        borderRadius: 4,
-      },
-    ],
-  };
+  const chartData = useMemo(
+    () => ({
+      labels: [t('charts.this_month')],
+      datasets: [
+        {
+          label: t('expenses.type.fixed'),
+          data: [data.fixed],
+          backgroundColor: cssColor('--chart-1', 0.85),
+          borderRadius: 4,
+        },
+        {
+          label: t('expenses.type.variable'),
+          data: [data.variable],
+          backgroundColor: cssColor('--chart-3', 0.85),
+          borderRadius: 4,
+        },
+        {
+          label: t('expenses.type.debt'),
+          data: [data.debt],
+          backgroundColor: cssColor('--destructive', 0.85),
+          borderRadius: 4,
+        },
+        {
+          label: t('expenses.type.one_time'),
+          data: [data.one_time],
+          backgroundColor: cssColor('--chart-4', 0.85),
+          borderRadius: 4,
+        },
+      ],
+    }),
+    [data, t],
+  );
 
   const options: ChartOptions<'bar'> = {
     responsive: true,

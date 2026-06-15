@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { GripVertical, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { UpcomingTimeline } from '../components/upcoming-timeline';
@@ -12,6 +13,7 @@ interface UpcomingWidgetProps extends WidgetProps {
  * just the edit-mode overlay.
  */
 export function UpcomingWidget({ ctx, config, onRemove }: UpcomingWidgetProps) {
+  const { t } = useTranslation();
   const windowDays = (config?.windowDays as number) ?? 14;
   return (
     <div className="relative h-full overflow-hidden">
@@ -19,7 +21,7 @@ export function UpcomingWidget({ ctx, config, onRemove }: UpcomingWidgetProps) {
         <>
           <span
             className="widget-drag-handle absolute left-2 top-2 z-10 cursor-move rounded bg-background/80 p-1 text-muted-foreground backdrop-blur"
-            aria-label="Mover widget"
+            aria-label={t('widgets.move')}
           >
             <GripVertical className="h-4 w-4" />
           </span>
@@ -32,7 +34,7 @@ export function UpcomingWidget({ ctx, config, onRemove }: UpcomingWidgetProps) {
                 e.stopPropagation();
                 onRemove();
               }}
-              aria-label="Quitar widget"
+              aria-label={t('widgets.remove')}
             >
               <X className="h-3.5 w-3.5" />
             </Button>
