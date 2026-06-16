@@ -1,6 +1,6 @@
 # Architecture
 
-High-level overview of **Hearth** (collaborative household budgeting).
+High-level overview of **Open Hearth Budget** (collaborative household budgeting).
 
 ## Big picture
 

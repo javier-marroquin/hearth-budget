@@ -1,6 +1,6 @@
 # Production deployment (self-hosted)
 
-Household Budget is designed to run on **your own infrastructure**: PostgreSQL + Hono API + static frontend.
+Open Hearth Budget is designed to run on **your own infrastructure**: PostgreSQL + Hono API + static frontend.
 
 ## Overview
 
@@ -46,7 +46,7 @@ SEED_DEMO_USER=false
 # Frontend build-time (Vite)
 VITE_API_URL=https://budget.example.com
 VITE_APP_URL=https://budget.example.com
-VITE_APP_NAME=Household Budget
+VITE_APP_NAME=Open Hearth Budget
 ```
 
 Generate secrets:

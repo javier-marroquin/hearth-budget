@@ -1,6 +1,6 @@
 # Email setup
 
-Household Budget sends **optional** transactional email for member invitations. Auth uses **email + password** (no magic links).
+Open Hearth Budget sends **optional** transactional email for member invitations. Auth uses **email + password** (no magic links).
 
 ## Development (default)
 
@@ -52,7 +52,7 @@ The Hono server reads `SMTP_HOST` and `SMTP_PORT` from [server/src/config.ts](..
 ```env
 # When Resend support is wired in the server:
 RESEND_API_KEY=re_xxxxxxxx
-RESEND_FROM_EMAIL=Household Budget <no-reply@yourdomain.com>
+RESEND_FROM_EMAIL=Open Hearth Budget <no-reply@yourdomain.com>
 APP_URL=https://budget.example.com
 ```
 

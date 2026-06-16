@@ -1,6 +1,6 @@
 # Import / export
 
-Household Budget supports three ways to move data:
+Open Hearth Budget supports three ways to move data:
 
 | Format | Use case | Where |
 |--------|----------|--------|

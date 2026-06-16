@@ -22,7 +22,7 @@ function read(key: string, fallback?: string): string {
 
 export const env: PublicEnv = {
   API_URL: read('VITE_API_URL', 'http://localhost:3000'),
-  APP_NAME: read('VITE_APP_NAME', 'Hearth'),
+  APP_NAME: read('VITE_APP_NAME', 'Open Hearth Budget'),
   APP_URL: read('VITE_APP_URL', 'http://localhost:5173'),
   DEFAULT_LOCALE: (read('VITE_DEFAULT_LOCALE', 'es') as 'es' | 'en') ?? 'es',
   DEFAULT_CURRENCY: read('VITE_DEFAULT_CURRENCY', 'COP'),

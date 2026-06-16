@@ -44,7 +44,7 @@ app.onError((err, c) => {
 
 app.get('/api', (c) =>
   c.json({
-    name: 'Hearth API',
+    name: 'Open Hearth Budget API',
     docs: 'See INSTALL.md',
     endpoints: ['/api/health', '/api/auth/sign-in', '/api/auth/sign-up', '/api/auth/me'],
   }),

@@ -1,6 +1,6 @@
 # Installation — self-hosted
 
-Run **Hearth** with PostgreSQL and the included Hono API.
+Run **Open Hearth Budget** with PostgreSQL and the included Hono API.
 
 ## Requirements
 

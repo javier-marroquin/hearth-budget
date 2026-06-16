@@ -6,7 +6,7 @@
   "workspaces": [
     "server"
   ],
-  "description": "Aplicativo de presupuesto colaborativo para hogares — multiusuario, multi-idioma, PWA.",
+  "description": "Open Hearth Budget — presupuesto colaborativo self-hosted para hogares.",
   "scripts": {
     "dev": "vite",
     "dev:api": "npm run dev --workspace=server",

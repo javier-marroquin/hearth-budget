@@ -1,4 +1,4 @@
-# Hearth
+# Open Hearth Budget
 
 **Self-hosted collaborative household budgeting** — track income, expenses, member contributions, and savings goals in one place.
 
@@ -14,7 +14,7 @@ Bilingual UI (**English** + **Spanish**) via i18next.
 
 <p align="center">
   <a href="./docs/screenshots/dashboard.png">
-    <img src="./docs/screenshots/dashboard.png" alt="Hearth dashboard — KPIs, income vs expenses chart, upcoming payments, and savings widgets" width="900" />
+    <img src="./docs/screenshots/dashboard.png" alt="Open Hearth Budget dashboard — KPIs, income vs expenses chart, upcoming payments, and savings widgets" width="900" />
   </a>
   <br />
   <sub><strong>Dashboard</strong> — customizable KPIs, charts, and a 14-day upcoming timeline (paid, pending, and overdue)</sub>
@@ -22,11 +22,11 @@ Bilingual UI (**English** + **Spanish**) via i18next.
 
 <p align="center">
   <a href="./docs/screenshots/calendar.png">
-    <img src="./docs/screenshots/calendar.png" alt="Hearth calendar — month view with bills, income, and contributions" width="440" />
+    <img src="./docs/screenshots/calendar.png" alt="Open Hearth Budget calendar — month view with bills, income, and contributions" width="440" />
   </a>
   &nbsp;
   <a href="./docs/screenshots/goals.png">
-    <img src="./docs/screenshots/goals.png" alt="Hearth savings goals — progress bars and monthly suggestions" width="440" />
+    <img src="./docs/screenshots/goals.png" alt="Open Hearth Budget savings goals — progress bars and monthly suggestions" width="440" />
   </a>
   <br />
   <sub><strong>Calendar</strong> &nbsp;·&nbsp; <strong>Savings goals</strong></sub>

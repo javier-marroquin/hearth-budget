@@ -1,5 +1,5 @@
 /**
- * Date helpers tailored for Hearth budget calculations.
+ * Date helpers tailored for Open Hearth Budget calculations.
  * All dates are handled in the household's timezone via date-fns-tz.
  */
 

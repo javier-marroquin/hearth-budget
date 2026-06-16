@@ -6,7 +6,7 @@ import path from 'node:path';
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
-  const appName = env.VITE_APP_NAME ?? 'Hearth';
+  const appName = env.VITE_APP_NAME ?? 'Open Hearth Budget';
 
   return {
     plugins: [
@@ -23,7 +23,7 @@ export default defineConfig(({ mode }) => {
         ],
         manifest: {
           name: appName,
-          short_name: appName,
+          short_name: 'Open Hearth',
           description:
             'Aplicativo de presupuesto colaborativo para hogares: ingresos, gastos, aportes y metas en un solo lugar.',
           theme_color: '#0f172a',
