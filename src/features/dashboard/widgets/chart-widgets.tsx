@@ -66,8 +66,8 @@ export function ChartCategoryDoughnutWidget({ ctx, onRemove }: WidgetProps) {
             />
           </FillHeight>
         ) : (
-          <p className="grid h-full place-items-center text-center text-xs text-muted-foreground">
-            Sin gastos este mes
+          <p className="grid h-full min-h-[140px] place-items-center text-center text-xs text-muted-foreground">
+            {t('dashboard.no_expenses_this_month')}
           </p>
         )
       ) : (

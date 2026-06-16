@@ -224,7 +224,7 @@ export function KpiOverdueWidget({ ctx, onRemove }: WidgetProps) {
     <KpiInner
       title={t('dashboard.overdue_payments')}
       value={String(ctx.kpis.overduePaymentsCount)}
-      hint={`${ctx.kpis.upcomingPaymentsCount} próximos`}
+      hint={t('dashboard.kpi_upcoming_hint', { count: ctx.kpis.upcomingPaymentsCount })}
       icon={AlertTriangle}
       tone={ctx.kpis.overduePaymentsCount > 0 ? 'destructive' : 'default'}
       navigateTo={`/expenses?status=overdue`}

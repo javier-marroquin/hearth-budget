@@ -66,7 +66,7 @@ export function DashboardPage() {
 
   const onResetLayout = () => {
     if (!userId || !householdId) return;
-    if (!confirm('¿Restaurar el dashboard a su diseño por defecto?')) return;
+    if (!confirm(t('dashboard.restore_confirm'))) return;
     resetLayout(userId, householdId);
     setLayout(DEFAULT_LAYOUT);
     toast.success(i18n.t('toast.dashboard_restored'));
@@ -87,21 +87,21 @@ export function DashboardPage() {
                 onClick={() => setPaletteOpen(true)}
               >
                 <Plus className="h-4 w-4" />
-                Agregar widget
+                {t('dashboard.add_widget')}
               </Button>
               <Button variant="outline" size="sm" onClick={onResetLayout}>
                 <RotateCcw className="h-4 w-4" />
-                Restaurar
+                {t('dashboard.restore')}
               </Button>
               <Button size="sm" onClick={() => setEditing(false)}>
                 <Check className="h-4 w-4" />
-                Listo
+                {t('dashboard.done')}
               </Button>
             </>
           ) : (
             <Button variant="outline" size="sm" onClick={() => setEditing(true)}>
               <LayoutDashboard className="h-4 w-4" />
-              Personalizar
+              {t('dashboard.customize')}
             </Button>
           )
         }
@@ -135,10 +135,8 @@ export function DashboardPage() {
 
       {editing && (
         <div className="mb-3 rounded-md border border-dashed bg-muted/30 p-3 text-xs text-muted-foreground">
-          <strong className="text-foreground">Modo edición:</strong> arrastra
-          cada widget por el icono ≡ (como en la pantalla de inicio del
-          celular), redimensiona desde la esquina inferior derecha y usa ×
-          para quitar. El orden se guarda al soltar.
+          <strong className="text-foreground">{t('dashboard.edit_mode_title')}:</strong>{' '}
+          {t('dashboard.edit_mode_hint')}
         </div>
       )}
 

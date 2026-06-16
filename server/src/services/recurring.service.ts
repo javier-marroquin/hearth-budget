@@ -204,7 +204,7 @@ export async function createRecurringTemplate(
      (household_id, kind, active, label, amount, currency, category_id, recurring_rule_id, created_by`;
 
   if (input.kind === 'income') {
-    if (!input.user_id) throw new Error('Selecciona quién recibe el ingreso');
+    if (!input.user_id) throw new Error('Select who receives the income');
     insertSql += `, user_id, source) VALUES ($1, $2, true, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`;
     params.push(input.user_id, input.source?.trim() || input.label);
   } else {
@@ -281,7 +281,7 @@ export async function updateRecurringTemplate(
      SET label = $1, amount = $2, category_id = $3, active = $4, updated_at = now()`;
 
   if (input.kind === 'income') {
-    if (!input.user_id) throw new Error('Selecciona quién recibe el ingreso');
+    if (!input.user_id) throw new Error('Select who receives the income');
     updateSql += `, user_id = $5, source = $6 WHERE id = $7 RETURNING *`;
     params.splice(4, 0, input.user_id, input.source?.trim() || input.label);
   } else {
@@ -421,7 +421,7 @@ async function materializeOneTemplate(
             dateIso,
             template.category_id,
             template.source ?? template.label,
-            'Generado automáticamente',
+            'Auto-generated',
             createdBy,
             template.recurring_rule_id,
             template.id,
@@ -446,7 +446,7 @@ async function materializeOneTemplate(
           status: 'pending',
           split_method: template.split_method ?? 'equal',
           description: template.label,
-          notes: 'Generado automáticamente',
+          notes: 'Auto-generated',
           split: {
             method: template.split_method ?? 'equal',
             participants,

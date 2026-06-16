@@ -165,9 +165,7 @@ export function EventFormDialog({
           <DialogTitle>
             {event ? t('calendar.edit_event') : t('calendar.new_event')}
           </DialogTitle>
-          <DialogDescription>
-            Pago, ingreso, aporte, recordatorio o meta del hogar.
-          </DialogDescription>
+          <DialogDescription>{t('calendar.form_description')}</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
@@ -177,9 +175,9 @@ export function EventFormDialog({
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Título</FormLabel>
+                  <FormLabel>{t('calendar.title')}</FormLabel>
                   <FormControl>
-                    <Input autoFocus placeholder="Arriendo, mesada, etc." {...field} />
+                    <Input autoFocus placeholder={t('calendar.title_placeholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -192,7 +190,7 @@ export function EventFormDialog({
                 name="event_type"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Tipo</FormLabel>
+                    <FormLabel>{t('calendar.type_label')}</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
@@ -217,7 +215,7 @@ export function EventFormDialog({
                 name="status"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Estado</FormLabel>
+                    <FormLabel>{t('calendar.status_label')}</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
@@ -243,7 +241,7 @@ export function EventFormDialog({
               name="all_day"
               render={({ field }) => (
                 <FormItem className="flex items-center justify-between rounded-xl border border-border bg-secondary px-4 py-3">
-                  <FormLabel>Todo el día</FormLabel>
+                  <FormLabel>{t('calendar.all_day')}</FormLabel>
                   <FormControl>
                     <Switch checked={field.value} onCheckedChange={field.onChange} />
                   </FormControl>
@@ -257,7 +255,7 @@ export function EventFormDialog({
                 name="start_at"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Inicio</FormLabel>
+                    <FormLabel>{t('calendar.start')}</FormLabel>
                     <FormControl>
                       <Input
                         type={allDay ? 'date' : 'datetime-local'}
@@ -273,7 +271,7 @@ export function EventFormDialog({
                 name="end_at"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Fin (opcional)</FormLabel>
+                    <FormLabel>{t('calendar.end_optional')}</FormLabel>
                     <FormControl>
                       <Input
                         type={allDay ? 'date' : 'datetime-local'}
@@ -293,7 +291,7 @@ export function EventFormDialog({
                 name="amount"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Monto (opcional)</FormLabel>
+                    <FormLabel>{t('calendar.amount_optional')}</FormLabel>
                     <FormControl>
                       <MoneyInput
                         value={field.value ?? undefined}
@@ -309,12 +307,12 @@ export function EventFormDialog({
                 name="user_id"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Responsable</FormLabel>
+                    <FormLabel>{t('calendar.assignee')}</FormLabel>
                     <FormControl>
                       <MemberSelect
                         value={field.value ?? undefined}
                         onChange={field.onChange}
-                        placeholder="(Sin asignar)"
+                        placeholder={t('calendar.unassigned')}
                       />
                     </FormControl>
                     <FormMessage />
@@ -328,7 +326,7 @@ export function EventFormDialog({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Descripción</FormLabel>
+                  <FormLabel>{t('calendar.description')}</FormLabel>
                   <FormControl>
                     <Textarea
                       rows={3}
@@ -350,7 +348,7 @@ export function EventFormDialog({
                   disabled={remove.isPending}
                 >
                   <Trash2 className="h-4 w-4" />
-                  Eliminar
+                  {t('calendar.delete_event')}
                 </Button>
               )}
               <div className="flex gap-2">
@@ -359,10 +357,10 @@ export function EventFormDialog({
                   variant="outline"
                   onClick={() => onOpenChange(false)}
                 >
-                  Cancelar
+                  {t('common.cancel')}
                 </Button>
                 <Button type="submit" disabled={submitting}>
-                  {submitting ? 'Guardando…' : 'Guardar'}
+                  {submitting ? t('calendar.saving') : t('common.save')}
                 </Button>
               </div>
             </DialogFooter>

@@ -95,15 +95,14 @@ export function SettingsPage() {
           </CardContent>
         </Card>
 
-        {/* Appearance */}
         <Card>
           <CardHeader>
-            <CardTitle>Apariencia</CardTitle>
-            <CardDescription>Idioma y tema visual.</CardDescription>
+            <CardTitle>{t('settings.appearance_title')}</CardTitle>
+            <CardDescription>{t('settings.appearance_description')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label>Idioma</Label>
+              <Label>{t('settings.language')}</Label>
               <Select
                 value={i18n.language.split('-')[0]}
                 onValueChange={(v) => void i18n.changeLanguage(v)}
@@ -112,32 +111,31 @@ export function SettingsPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="es">Español</SelectItem>
-                  <SelectItem value="en">English</SelectItem>
+                  <SelectItem value="en">{t('settings.language_en')}</SelectItem>
+                  <SelectItem value="es">{t('settings.language_es')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2">
-              <Label>Tema</Label>
+              <Label>{t('settings.theme')}</Label>
               <Select value={theme} onValueChange={setTheme}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="light">Claro</SelectItem>
-                  <SelectItem value="dark">Oscuro</SelectItem>
-                  <SelectItem value="system">Sistema</SelectItem>
+                  <SelectItem value="light">{t('settings.theme_light')}</SelectItem>
+                  <SelectItem value="dark">{t('settings.theme_dark')}</SelectItem>
+                  <SelectItem value="system">{t('settings.theme_system')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </CardContent>
         </Card>
 
-        {/* Household */}
         <Card>
           <CardHeader>
-            <CardTitle>Hogar</CardTitle>
+            <CardTitle>{t('settings.household_title')}</CardTitle>
             <CardDescription>
               {activeHousehold?.name} · {activeHousehold?.currency} ·{' '}
               {activeHousehold?.timezone}

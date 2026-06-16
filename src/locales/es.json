@@ -152,7 +152,16 @@
     "actual_savings": "Ahorro real",
     "month_close": "Cierre mensual",
     "no_contributions_this_month": "Sin aportes este mes",
-    "no_income_expense_trend": "Sin ingresos ni gastos en los últimos 12 meses"
+    "no_income_expense_trend": "Sin ingresos ni gastos en los últimos 12 meses",
+    "no_expenses_this_month": "Sin gastos este mes",
+    "kpi_upcoming_hint": "{{count}} próximos",
+    "customize": "Personalizar",
+    "add_widget": "Agregar widget",
+    "restore": "Restaurar",
+    "done": "Listo",
+    "restore_confirm": "¿Restaurar el dashboard a su diseño por defecto?",
+    "edit_mode_hint": "Modo edición: arrastra cada widget por el icono ≡, redimensiona desde la esquina inferior derecha y usa × para quitar. El orden se guarda al soltar.",
+    "edit_mode_title": "Modo edición"
   },
   "alerts": {
     "deficit_warning": "Tu ingreso actual está por debajo del mínimo requerido. Te faltan {{amount}}.",
@@ -173,7 +182,42 @@
     "import_incomes_description": "Mapea las columnas de tu CSV con los campos de la app.",
     "import_expenses_title": "Importar gastos",
     "import_expenses_description": "Mapea las columnas de tu CSV con los campos de la app.",
-    "backup_downloaded": "Backup descargado"
+    "backup_downloaded": "Backup descargado",
+    "appearance_title": "Apariencia",
+    "appearance_description": "Idioma y tema visual.",
+    "language": "Idioma",
+    "language_en": "English",
+    "language_es": "Español",
+    "theme": "Tema",
+    "theme_light": "Claro",
+    "theme_dark": "Oscuro",
+    "theme_system": "Sistema",
+    "household_title": "Hogar",
+    "import_export_title": "Importar / Exportar",
+    "import_export_description": "Respaldos completos del hogar y carga masiva desde CSV.",
+    "backup_json_title": "Backup completo (JSON)",
+    "backup_json_description": "Descarga un archivo con todo el hogar: ingresos, gastos, aportes, metas, categorías y eventos.",
+    "download_backup": "Descargar backup",
+    "import_incomes_title": "Importar ingresos desde CSV",
+    "import_incomes_hint": "El nombre o email del perceptor debe coincidir exactamente con un miembro activo.",
+    "import_expenses_title": "Importar gastos desde CSV",
+    "import_expenses_hint": "Los repartos se crean a partes iguales entre miembros activos.",
+    "csv_template": "Plantilla CSV",
+    "import_incomes_button": "Importar ingresos",
+    "import_expenses_button": "Importar gastos",
+    "import_fields": {
+      "date": "Fecha",
+      "amount": "Monto",
+      "currency": "Moneda",
+      "payee": "Perceptor (nombre o email)",
+      "category": "Categoría",
+      "source": "Fuente",
+      "notes": "Notas",
+      "due_date": "Fecha límite",
+      "description": "Descripción",
+      "type": "Tipo (fixed/variable/debt/one_time)"
+    },
+    "import_payee_unresolved": "No se pudo resolver el perceptor"
   },
   "toast": {
     "income_created": "Ingreso registrado",
@@ -253,7 +297,19 @@
     "saving": "Guardando…",
     "new_title": "Nueva meta",
     "edit_title": "Editar meta",
-    "name_placeholder": "Ej: Fondo de emergencias"
+    "name_placeholder": "Ej: Fondo de emergencias",
+    "add_balance": "Agregar saldo",
+    "add_balance_prompt": "¿Cuánto agregar a la meta?",
+    "new_description": "La app calcula automáticamente cuánto ahorrar cada mes si pones una fecha objetivo.",
+    "suggested_monthly": "Sugerido: {{amount}} / mes",
+    "target_date": "Fecha objetivo",
+    "target_date_optional": "Fecha objetivo (opcional)",
+    "target_date_hint": "Si la dejas en blanco, no calculamos sugerencia mensual.",
+    "target_amount": "Monto objetivo",
+    "name_label": "Nombre",
+    "notes": "Notas",
+    "percent_complete": "{{percent}}% completado",
+    "target_date_label": "Fecha objetivo: {{date}}"
   },
   "contributions": {
     "title": "Aportes",
@@ -271,6 +327,7 @@
     "edit_title": "Editar gasto",
     "description_placeholder": "Ej: Arriendo, supermercado, servicios…",
     "mark_paid": "Marcar pagado",
+    "split_preview": "Previsualización del reparto",
     "due_date": "Fecha límite",
     "type": {
       "fixed": "Fijo",
@@ -304,6 +361,14 @@
     "new_title": "Nueva categoría",
     "edit_title": "Editar categoría",
     "name_placeholder": "Ej: Mascotas",
+    "form_description": "Si activas el modo Envelope (en Configuración), el presupuesto mensual se usa para calcular cumplimiento.",
+    "name": "Nombre",
+    "type_label": "Tipo",
+    "color": "Color",
+    "monthly_budget": "Presupuesto mensual (opcional)",
+    "monthly_budget_hint": "Cuando se activa el modo Envelope, se compara con el gasto real.",
+    "rollover": "Arrastrar saldo (rollover)",
+    "rollover_hint": "Si sobra o falta presupuesto, se arrastra al siguiente mes.",
     "system": {
       "housing": "Vivienda",
       "food": "Alimentación",
@@ -332,6 +397,8 @@
   },
   "invite": {
     "accept": "Aceptar invitación",
+    "welcome": "¡Bienvenido!",
+    "joined_household": "Te uniste al hogar {{name}}. Redirigiendo…",
     "token_missing": "Falta el token de invitación",
     "unknown_error": "Error desconocido"
   },
@@ -341,6 +408,17 @@
     "delete_event": "Eliminar evento",
     "unnamed_event": "Evento",
     "title_placeholder": "Arriendo, mesada, etc.",
+    "form_description": "Pago, ingreso, aporte, recordatorio o meta del hogar.",
+    "title": "Título",
+    "type_label": "Tipo",
+    "status_label": "Estado",
+    "all_day": "Todo el día",
+    "start": "Inicio",
+    "end_optional": "Fin (opcional)",
+    "amount_optional": "Monto (opcional)",
+    "assignee": "Responsable",
+    "description": "Descripción",
+    "saving": "Guardando…",
     "unassigned": "(Sin asignar)",
     "status": {
       "pending": "Pendiente",
@@ -522,7 +600,11 @@
     "member": "Miembro",
     "payee": "Perceptor",
     "contributor": "Aportante",
-    "source": "Fuente"
+    "source": "Fuente",
+    "filters": {
+      "active": "Filtros activos:",
+      "clear": "Limpiar"
+    }
   },
   "recurring": {
     "page_description": "Ingresos y gastos fijos que se repiten solos hasta que los pauses.",

@@ -71,14 +71,14 @@ export function AcceptInvitePage() {
           )}
           <CardTitle>
             {state.kind === 'success'
-              ? '¡Bienvenido!'
+              ? t('invite.welcome')
               : state.kind === 'error'
                 ? t('common.error')
                 : t('invite.accept')}
           </CardTitle>
           {state.kind === 'success' && (
             <CardDescription>
-              Te uniste al hogar {state.householdName}. Redirigiendo…
+              {t('invite.joined_household', { name: state.householdName })}
             </CardDescription>
           )}
           {state.kind === 'error' && (

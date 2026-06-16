@@ -82,7 +82,7 @@ export function applyMapping<T>(
           errors.push({
             rowIndex,
             field: f.key,
-            message: `Valor vacío en columna requerida`,
+            message: `Empty value in required column`,
           });
         }
         out[f.key] = null;
@@ -110,7 +110,7 @@ export function parseNumber(raw: string): number {
   // Strip currency symbols, spaces, etc. Keep only digits, comma, dot, minus.
   const cleaned = raw.replace(/[^0-9,.\-]/g, '');
   if (!cleaned || !/\d/.test(cleaned)) {
-    throw new Error(`No es un número válido: ${raw}`);
+    throw new Error(`Not a valid number: ${raw}`);
   }
 
   const lastDot = cleaned.lastIndexOf('.');
@@ -144,7 +144,7 @@ export function parseNumber(raw: string): number {
   }
 
   const n = Number(normalised);
-  if (!Number.isFinite(n)) throw new Error(`No es un número válido: ${raw}`);
+  if (!Number.isFinite(n)) throw new Error(`Not a valid number: ${raw}`);
   return n;
 }
 

@@ -131,7 +131,7 @@ export function GoalsPage() {
                         <h3 className="font-semibold">{g.name}</h3>
                         {g.target_date && (
                           <p className="text-xs text-muted-foreground">
-                            Fecha objetivo: {formatDate(g.target_date)}
+                            {t('goals.target_date_label', { date: formatDate(g.target_date) })}
                           </p>
                         )}
                       </div>
@@ -157,7 +157,7 @@ export function GoalsPage() {
                       </div>
                       <Progress value={ratio} indicatorClassName="bg-primary" />
                       <p className="text-xs text-muted-foreground">
-                        {ratio.toFixed(0)}% completado
+                        {t('goals.percent_complete', { percent: ratio.toFixed(0) })}
                       </p>
                     </div>
 
@@ -165,7 +165,9 @@ export function GoalsPage() {
                       <div className="flex items-center gap-2 rounded-lg bg-secondary p-2 text-[13px]">
                         <TrendingUp className="h-3.5 w-3.5 text-primary" />
                         <span className="text-muted-foreground">
-                          Sugerido: {formatCurrency(monthly, { currency })} / mes
+                          {t('goals.suggested_monthly', {
+                            amount: formatCurrency(monthly, { currency }),
+                          })}
                         </span>
                       </div>
                     )}
@@ -177,12 +179,12 @@ export function GoalsPage() {
                           size="sm"
                           className="flex-1"
                           onClick={() => {
-                            const v = prompt('¿Cuánto agregar a la meta?', '0');
+                            const v = prompt(t('goals.add_balance_prompt'), '0');
                             const n = Number(v);
                             if (n > 0) addTo.mutate({ id: g.id, delta: n });
                           }}
                         >
-                          Agregar saldo
+                          {t('goals.add_balance')}
                         </Button>
                         <Button
                           variant="ghost"
@@ -206,9 +208,7 @@ export function GoalsPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{t('goals.new_title')}</DialogTitle>
-            <DialogDescription>
-              La app calcula automáticamente cuánto ahorrar cada mes si pones una fecha objetivo.
-            </DialogDescription>
+            <DialogDescription>{t('goals.new_description')}</DialogDescription>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -217,7 +217,7 @@ export function GoalsPage() {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Nombre</FormLabel>
+                    <FormLabel>{t('goals.name_label')}</FormLabel>
                     <FormControl>
                       <Input placeholder={t('goals.name_placeholder')} {...field} />
                     </FormControl>
@@ -230,7 +230,7 @@ export function GoalsPage() {
                 name="target_amount"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Monto objetivo</FormLabel>
+                    <FormLabel>{t('goals.target_amount')}</FormLabel>
                     <FormControl>
                       <MoneyInput value={field.value} onChange={field.onChange} />
                     </FormControl>
@@ -243,7 +243,7 @@ export function GoalsPage() {
                 name="target_date"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Fecha objetivo (opcional)</FormLabel>
+                    <FormLabel>{t('goals.target_date_optional')}</FormLabel>
                     <FormControl>
                       <Input
                         type="date"
@@ -251,9 +251,7 @@ export function GoalsPage() {
                         onChange={(e) => field.onChange(e.target.value || null)}
                       />
                     </FormControl>
-                    <FormDescription>
-                      Si la dejas en blanco, no calculamos sugerencia mensual.
-                    </FormDescription>
+                    <FormDescription>{t('goals.target_date_hint')}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -263,7 +261,7 @@ export function GoalsPage() {
                 name="notes"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Notas</FormLabel>
+                    <FormLabel>{t('goals.notes')}</FormLabel>
                     <FormControl>
                       <Textarea
                         rows={3}

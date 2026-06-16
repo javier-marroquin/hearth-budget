@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Download, Loader2, Upload } from 'lucide-react';
 import { toast } from 'sonner';
@@ -97,32 +97,53 @@ export function ImportExportSection() {
   };
 
   // --- Income import -------------------------------------------------------
-  const incomeFields: FieldDefinition[] = [
-    { key: 'date', label: 'Fecha', required: true, aliases: ['fecha'], parse: parseDate },
-    {
-      key: 'amount',
-      label: 'Monto',
-      required: true,
-      aliases: ['amount', 'valor', 'cantidad'],
-      parse: parseNumber,
-    },
-    { key: 'currency', label: 'Moneda', aliases: ['currency', 'moneda'] },
-    {
-      key: 'user_id',
-      label: 'Perceptor (nombre o email)',
-      required: true,
-      aliases: ['perceptor', 'miembro', 'member', 'persona'],
-      parse: (v) => resolveUserId(v),
-    },
-    {
-      key: 'category_id',
-      label: 'Categoría',
-      aliases: ['category', 'categoria'],
-      parse: (v) => resolveCategoryId(v, 'income'),
-    },
-    { key: 'source', label: 'Fuente', aliases: ['fuente', 'source'] },
-    { key: 'notes', label: 'Notas', aliases: ['notas', 'notes', 'comentarios'] },
-  ];
+  const incomeFields: FieldDefinition[] = useMemo(
+    () => [
+      {
+        key: 'date',
+        label: t('settings.import_fields.date'),
+        required: true,
+        aliases: ['fecha', 'date'],
+        parse: parseDate,
+      },
+      {
+        key: 'amount',
+        label: t('settings.import_fields.amount'),
+        required: true,
+        aliases: ['amount', 'valor', 'cantidad', 'monto'],
+        parse: parseNumber,
+      },
+      {
+        key: 'currency',
+        label: t('settings.import_fields.currency'),
+        aliases: ['currency', 'moneda'],
+      },
+      {
+        key: 'user_id',
+        label: t('settings.import_fields.payee'),
+        required: true,
+        aliases: ['perceptor', 'miembro', 'member', 'persona', 'payee'],
+        parse: (v) => resolveUserId(v),
+      },
+      {
+        key: 'category_id',
+        label: t('settings.import_fields.category'),
+        aliases: ['category', 'categoria'],
+        parse: (v) => resolveCategoryId(v, 'income'),
+      },
+      {
+        key: 'source',
+        label: t('settings.import_fields.source'),
+        aliases: ['fuente', 'source'],
+      },
+      {
+        key: 'notes',
+        label: t('settings.import_fields.notes'),
+        aliases: ['notas', 'notes', 'comentarios'],
+      },
+    ],
+    [t, members, incomeCategories, expenseCategories],
+  );
 
   const importIncomesMutation = useMutation({
     mutationFn: async (rows: ImportedIncome[]) => {
@@ -131,7 +152,7 @@ export function ImportExportSection() {
       let failed = 0;
       for (const row of rows) {
         try {
-          if (!row.user_id) throw new Error('Perceptor no resuelto');
+          if (!row.user_id) throw new Error(t('settings.import_payee_unresolved'));
           await createIncome({
             household_id: activeHousehold.id,
             created_by: user.id,
@@ -160,45 +181,62 @@ export function ImportExportSection() {
   });
 
   // --- Expense import ------------------------------------------------------
-  const expenseFields: FieldDefinition[] = [
-    { key: 'date', label: 'Fecha', required: true, aliases: ['fecha'], parse: parseDate },
-    {
-      key: 'amount',
-      label: 'Monto',
-      required: true,
-      aliases: ['amount', 'valor', 'cantidad'],
-      parse: parseNumber,
-    },
-    { key: 'currency', label: 'Moneda', aliases: ['currency', 'moneda'] },
-    {
-      key: 'due_date',
-      label: 'Fecha límite',
-      aliases: ['vencimiento', 'due_date', 'fecha_limite'],
-      parse: parseDate,
-    },
-    {
-      key: 'description',
-      label: 'Descripción',
-      aliases: ['descripcion', 'description', 'concepto'],
-    },
-    {
-      key: 'category_id',
-      label: 'Categoría',
-      aliases: ['category', 'categoria'],
-      parse: (v) => resolveCategoryId(v, 'expense'),
-    },
-    {
-      key: 'type',
-      label: 'Tipo (fixed/variable/debt/one_time)',
-      aliases: ['tipo', 'type'],
-      parse: (v) => {
-        const lc = v.toLowerCase().trim() as ExpenseType;
-        const valid: ExpenseType[] = ['fixed', 'variable', 'debt', 'one_time'];
-        return valid.includes(lc) ? lc : 'variable';
+  const expenseFields: FieldDefinition[] = useMemo(
+    () => [
+      {
+        key: 'date',
+        label: t('settings.import_fields.date'),
+        required: true,
+        aliases: ['fecha', 'date'],
+        parse: parseDate,
       },
-    },
-    { key: 'notes', label: 'Notas', aliases: ['notas', 'notes'] },
-  ];
+      {
+        key: 'amount',
+        label: t('settings.import_fields.amount'),
+        required: true,
+        aliases: ['amount', 'valor', 'cantidad', 'monto'],
+        parse: parseNumber,
+      },
+      {
+        key: 'currency',
+        label: t('settings.import_fields.currency'),
+        aliases: ['currency', 'moneda'],
+      },
+      {
+        key: 'due_date',
+        label: t('settings.import_fields.due_date'),
+        aliases: ['vencimiento', 'due_date', 'fecha_limite'],
+        parse: parseDate,
+      },
+      {
+        key: 'description',
+        label: t('settings.import_fields.description'),
+        aliases: ['descripcion', 'description', 'concepto'],
+      },
+      {
+        key: 'category_id',
+        label: t('settings.import_fields.category'),
+        aliases: ['category', 'categoria'],
+        parse: (v) => resolveCategoryId(v, 'expense'),
+      },
+      {
+        key: 'type',
+        label: t('settings.import_fields.type'),
+        aliases: ['tipo', 'type'],
+        parse: (v) => {
+          const lc = v.toLowerCase().trim() as ExpenseType;
+          const valid: ExpenseType[] = ['fixed', 'variable', 'debt', 'one_time'];
+          return valid.includes(lc) ? lc : 'variable';
+        },
+      },
+      {
+        key: 'notes',
+        label: t('settings.import_fields.notes'),
+        aliases: ['notas', 'notes'],
+      },
+    ],
+    [t, members, incomeCategories, expenseCategories],
+  );
 
   const importExpensesMutation = useMutation({
     mutationFn: async (rows: ImportedExpense[]) => {
@@ -243,30 +281,25 @@ export function ImportExportSection() {
   const downloadTemplate = (kind: 'incomes' | 'expenses') => {
     const headers =
       kind === 'incomes'
-        ? 'Fecha,Monto,Moneda,Perceptor,Categoría,Fuente,Notas'
-        : 'Fecha,Monto,Moneda,Fecha límite,Descripción,Categoría,Tipo,Notas';
+        ? 'Date,Amount,Currency,Payee,Category,Source,Notes'
+        : 'Date,Amount,Currency,Due date,Description,Category,Type,Notes';
     const sample =
       kind === 'incomes'
-        ? '2026-05-15,3500000,COP,javier@correo.com,Salario,Empresa X,Pago mensual'
-        : '2026-05-15,180000,COP,2026-05-20,Internet,Servicios,fixed,Plan hogar';
-    downloadBlob(csvBlob(`${headers}\r\n${sample}\r\n`), `plantilla-${kind}.csv`);
+        ? '2026-05-15,3500,USD,demo@local.dev,Salary,Company X,Monthly pay'
+        : '2026-05-15,180,USD,2026-05-20,Internet,Utilities,fixed,Home plan';
+    downloadBlob(csvBlob(`${headers}\r\n${sample}\r\n`), `template-${kind}.csv`);
   };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Importar / Exportar</CardTitle>
-        <CardDescription>
-          Respaldos completos del hogar y carga masiva desde CSV.
-        </CardDescription>
+        <CardTitle>{t('settings.import_export_title')}</CardTitle>
+        <CardDescription>{t('settings.import_export_description')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Backup */}
         <div className="space-y-2">
-          <p className="text-sm font-medium">Backup completo (JSON)</p>
-          <p className="text-xs text-muted-foreground">
-            Descarga un archivo con todo el hogar: ingresos, gastos, aportes, metas, categorías y eventos.
-          </p>
+          <p className="text-sm font-medium">{t('settings.backup_json_title')}</p>
+          <p className="text-xs text-muted-foreground">{t('settings.backup_json_description')}</p>
           <Button
             variant="outline"
             size="sm"
@@ -278,16 +311,13 @@ export function ImportExportSection() {
             ) : (
               <Download className="h-4 w-4" />
             )}
-            Descargar backup
+            {t('settings.download_backup')}
           </Button>
         </div>
 
-        {/* Import incomes */}
         <div className="space-y-2 border-t pt-4">
-          <p className="text-sm font-medium">Importar ingresos desde CSV</p>
-          <p className="text-xs text-muted-foreground">
-            El nombre o email del perceptor debe coincidir exactamente con un miembro activo.
-          </p>
+          <p className="text-sm font-medium">{t('settings.import_incomes_title')}</p>
+          <p className="text-xs text-muted-foreground">{t('settings.import_incomes_hint')}</p>
           <div className="flex flex-wrap gap-2">
             <Button
               size="sm"
@@ -295,21 +325,18 @@ export function ImportExportSection() {
               onClick={() => downloadTemplate('incomes')}
             >
               <Download className="h-4 w-4" />
-              Plantilla CSV
+              {t('settings.csv_template')}
             </Button>
             <Button size="sm" onClick={() => setImportIncomesOpen(true)}>
               <Upload className="h-4 w-4" />
-              Importar ingresos
+              {t('settings.import_incomes_button')}
             </Button>
           </div>
         </div>
 
-        {/* Import expenses */}
         <div className="space-y-2 border-t pt-4">
-          <p className="text-sm font-medium">Importar gastos desde CSV</p>
-          <p className="text-xs text-muted-foreground">
-            La división se calcula automáticamente entre todos los miembros activos (parts iguales).
-          </p>
+          <p className="text-sm font-medium">{t('settings.import_expenses_title')}</p>
+          <p className="text-xs text-muted-foreground">{t('settings.import_expenses_hint')}</p>
           <div className="flex flex-wrap gap-2">
             <Button
               size="sm"
@@ -317,11 +344,11 @@ export function ImportExportSection() {
               onClick={() => downloadTemplate('expenses')}
             >
               <Download className="h-4 w-4" />
-              Plantilla CSV
+              {t('settings.csv_template')}
             </Button>
             <Button size="sm" onClick={() => setImportExpensesOpen(true)}>
               <Upload className="h-4 w-4" />
-              Importar gastos
+              {t('settings.import_expenses_button')}
             </Button>
           </div>
         </div>

@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const recurringFrequencyEnum = z.enum(['weekly', 'biweekly', 'monthly']);
 export const recurringKindEnum = z.enum(['income', 'expense']);
 
-const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, { message: 'Fecha inválida (YYYY-MM-DD)' });
+const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, { message: 'Invalid date (YYYY-MM-DD)' });
 
 export const recurringTemplateSchema = z
   .object({

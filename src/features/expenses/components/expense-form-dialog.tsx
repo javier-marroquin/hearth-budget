@@ -294,7 +294,7 @@ export function ExpenseFormDialog({
 
             {previewSplits.length > 0 && watchAmount > 0 && (
               <div className="rounded-md border bg-muted/30 p-3 text-xs">
-                <p className="mb-2 font-medium">Previsualización del reparto</p>
+                <p className="mb-2 font-medium">{t('expenses.split_preview')}</p>
                 <ul className="space-y-1">
                   {previewSplits.map((s) => {
                     const m = activeMembers.find((mm) => mm.user_id === s.userId);

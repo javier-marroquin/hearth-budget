@@ -135,20 +135,20 @@ export function ExpensesPage() {
 
       {hasUrlFilters && (
         <div className="mb-3 flex flex-wrap items-center gap-2 rounded-lg border border-border bg-secondary p-3 text-[13px]">
-          <span className="font-medium text-muted-foreground">Filtros activos:</span>
+          <span className="font-medium text-muted-foreground">{t('table.filters.active')}</span>
           {urlFilters.status && (
             <Badge variant="outline">
-              Estado: {t(`status.${urlFilters.status}`)}
+              {t('table.status')}: {t(`status.${urlFilters.status}`)}
             </Badge>
           )}
           {urlFilters.type && (
             <Badge variant="outline">
-              Tipo: {t(`expenses.type.${urlFilters.type}`)}
+              {t('table.type')}: {t(`expenses.type.${urlFilters.type}`)}
             </Badge>
           )}
           {urlFilters.categoryId && (
             <Badge variant="outline">
-              Categoría:{' '}
+              {t('table.category')}:{' '}
               {categories?.find((c) => c.id === urlFilters.categoryId)
                 ? translateCategoryName(
                     categories.find((c) => c.id === urlFilters.categoryId)!.name,
@@ -170,7 +170,7 @@ export function ExpensesPage() {
             onClick={() => setSearchParams({})}
           >
             <X className="h-3 w-3" />
-            Limpiar
+            {t('table.filters.clear')}
           </Button>
         </div>
       )}

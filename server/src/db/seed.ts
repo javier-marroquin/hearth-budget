@@ -21,7 +21,7 @@ async function seed() {
       email: DEMO_EMAIL,
       password: DEMO_PASSWORD,
       fullName: 'Usuario Demo',
-      locale: 'es',
+      locale: 'en',
     });
 
     console.log('[seed] created demo user');

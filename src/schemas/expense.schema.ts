@@ -6,13 +6,13 @@ export const splitMethodEnum = z.enum(['equal', 'percentage', 'income_based', 'c
 
 export const expenseSchema = z.object({
   amount: z
-    .number({ invalid_type_error: 'Debe ser un número' })
+    .number({ invalid_type_error: 'Must be a number' })
     .min(0, { message: 'Debe ser >= 0' }),
   currency: z.string().length(3).toUpperCase(),
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, { message: 'Fecha inválida' }),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, { message: 'Invalid date' }),
   due_date: z
     .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, { message: 'Fecha inválida' })
+    .regex(/^\d{4}-\d{2}-\d{2}$/, { message: 'Invalid date' })
     .nullable()
     .optional(),
   category_id: z.string().uuid().nullable().optional(),

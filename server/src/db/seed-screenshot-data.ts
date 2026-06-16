@@ -40,7 +40,7 @@ async function ensureUser(
     const existing = await findUserByEmail(client, email);
     if (existing) {
       await client.query(
-        `UPDATE public.profiles SET full_name = $1, locale = 'es' WHERE id = $2`,
+        `UPDATE public.profiles SET full_name = $1, locale = 'en' WHERE id = $2`,
         [fullName, existing.id],
       );
       return existing.id;
@@ -49,7 +49,7 @@ async function ensureUser(
       email,
       password,
       fullName,
-      locale: 'es',
+      locale: 'en',
     });
     return user.id;
   });
@@ -227,7 +227,7 @@ async function seed(): Promise<void> {
           currency,
           iso(m),
           cats['Salario']!,
-          'Salario principal',
+          'Main salary',
           null,
           adminId,
         ],
@@ -244,7 +244,7 @@ async function seed(): Promise<void> {
             currency,
             iso(addDays(m, 2)),
             cats['Freelance']!,
-            i === 0 ? 'Proyecto UX' : 'Consultoría',
+            i === 0 ? 'UX project' : 'Consulting',
             null,
             adminId,
           ],
@@ -252,8 +252,8 @@ async function seed(): Promise<void> {
       }
     }
     const incomeExtras: Array<[string, number, string, string, string]> = [
-      [javier, 800, iso(addDays(monthStart, 10)), cats['Inversiones']!, 'Dividendos'],
-      [maria, 350, iso(addDays(today, -3)), cats['Otros ingresos']!, 'Venta en línea'],
+      [javier, 800, iso(addDays(monthStart, 10)), cats['Inversiones']!, 'Dividends'],
+      [maria, 350, iso(addDays(today, -3)), cats['Otros ingresos']!, 'Online sale'],
     ];
     for (const [userId, amount, date, categoryId, source] of incomeExtras) {
       await client.query(
@@ -264,7 +264,7 @@ async function seed(): Promise<void> {
       );
     }
 
-    // --- Expenses: pagados vs pendientes vs vencidos (mes actual, visibles en UI) ---
+    // --- Expenses: paid vs pending vs overdue (current month, visible in UI) ---
     type ExpSeed = Parameters<typeof seedExpense>[1];
 
     const paidThisMonth: ExpSeed[] = [
@@ -280,8 +280,8 @@ async function seed(): Promise<void> {
         type: 'fixed',
         status: 'paid',
         split_method: 'equal',
-        description: 'Alquiler — pagado',
-        notes: 'Transferencia confirmada',
+        description: 'Rent — paid',
+        notes: 'Transfer confirmed',
         split: { method: 'equal', participants: allMembers.map((userId) => ({ userId })) },
       },
       {
@@ -296,7 +296,7 @@ async function seed(): Promise<void> {
         type: 'fixed',
         status: 'paid',
         split_method: 'equal',
-        description: 'Luz eléctrica — pagado',
+        description: 'Electric bill — paid',
         split: { method: 'equal', participants: allMembers.map((userId) => ({ userId })) },
       },
       {
@@ -311,7 +311,7 @@ async function seed(): Promise<void> {
         type: 'variable',
         status: 'paid',
         split_method: 'equal',
-        description: 'Supermercado — pagado',
+        description: 'Groceries — paid',
         split: { method: 'equal', participants: allMembers.map((userId) => ({ userId })) },
       },
       {
@@ -326,7 +326,7 @@ async function seed(): Promise<void> {
         type: 'variable',
         status: 'paid',
         split_method: 'equal',
-        description: 'Mercado local — pagado',
+        description: 'Local market — paid',
         split: { method: 'equal', participants: allMembers.map((userId) => ({ userId })) },
       },
       {
@@ -341,7 +341,7 @@ async function seed(): Promise<void> {
         type: 'variable',
         status: 'paid',
         split_method: 'equal',
-        description: 'Gasolina — pagado',
+        description: 'Gas — paid',
         split: { method: 'equal', participants: allMembers.map((userId) => ({ userId })) },
       },
       {
@@ -356,7 +356,7 @@ async function seed(): Promise<void> {
         type: 'variable',
         status: 'paid',
         split_method: 'equal',
-        description: 'Farmacia — pagado',
+        description: 'Pharmacy — paid',
         split: { method: 'equal', participants: allMembers.map((userId) => ({ userId })) },
       },
       {
@@ -371,7 +371,7 @@ async function seed(): Promise<void> {
         type: 'fixed',
         status: 'paid',
         split_method: 'equal',
-        description: 'Netflix + Spotify — pagado',
+        description: 'Netflix + Spotify — paid',
         split: { method: 'equal', participants: allMembers.map((userId) => ({ userId })) },
       },
       {
@@ -386,7 +386,7 @@ async function seed(): Promise<void> {
         type: 'debt',
         status: 'paid',
         split_method: 'equal',
-        description: 'Tarjeta de crédito — pagado',
+        description: 'Credit card — paid',
         split: { method: 'equal', participants: [{ userId: javier }] },
       },
       {
@@ -401,7 +401,7 @@ async function seed(): Promise<void> {
         type: 'one_time',
         status: 'paid',
         split_method: 'custom',
-        description: 'Reparación lavadora — pagado',
+        description: 'Washer repair — paid',
         notes: 'Split 50/30/20',
         split: {
           method: 'custom',
@@ -424,7 +424,7 @@ async function seed(): Promise<void> {
         type: 'fixed',
         status: 'paid',
         split_method: 'equal',
-        description: 'Internet (mes anterior) — pagado',
+        description: 'Internet (last month) — paid',
         split: { method: 'equal', participants: allMembers.map((userId) => ({ userId })) },
       },
     ];
@@ -433,7 +433,7 @@ async function seed(): Promise<void> {
       await seedExpense(client, exp);
     }
 
-    // Mes anterior — solo pagados (historial)
+    // Previous month — paid only (history)
     const paidLastMonth: ExpSeed[] = [
       {
         household_id: householdId,
@@ -447,7 +447,7 @@ async function seed(): Promise<void> {
         type: 'fixed',
         status: 'paid',
         split_method: 'equal',
-        description: 'Alquiler mayo — pagado',
+        description: 'May rent — paid',
         split: { method: 'equal', participants: allMembers.map((userId) => ({ userId })) },
       },
       {
@@ -462,7 +462,7 @@ async function seed(): Promise<void> {
         type: 'fixed',
         status: 'paid',
         split_method: 'equal',
-        description: 'Seguro vehículo mayo — pagado',
+        description: 'May car insurance — paid',
         split: { method: 'equal', participants: allMembers.map((userId) => ({ userId })) },
       },
     ];
@@ -482,7 +482,7 @@ async function seed(): Promise<void> {
         type: 'fixed',
         status: 'pending',
         split_method: 'equal',
-        description: 'Internet fibra — pendiente',
+        description: 'Fiber internet — pending',
         split: { method: 'equal', participants: allMembers.map((userId) => ({ userId })) },
       },
       {
@@ -496,7 +496,7 @@ async function seed(): Promise<void> {
         type: 'variable',
         status: 'pending',
         split_method: 'equal',
-        description: 'Restaurante — pendiente',
+        description: 'Restaurant — pending',
         split: { method: 'equal', participants: allMembers.map((userId) => ({ userId })) },
       },
       {
@@ -510,7 +510,7 @@ async function seed(): Promise<void> {
         type: 'fixed',
         status: 'pending',
         split_method: 'equal',
-        description: 'Seguro vehículo — pendiente',
+        description: 'Car insurance — pending',
         split: { method: 'equal', participants: allMembers.map((userId) => ({ userId })) },
       },
       {
@@ -524,7 +524,7 @@ async function seed(): Promise<void> {
         type: 'fixed',
         status: 'pending',
         split_method: 'equal',
-        description: 'Colegiatura — pendiente',
+        description: 'Tuition — pending',
         split: { method: 'equal', participants: allMembers.map((userId) => ({ userId })) },
       },
       {
@@ -538,7 +538,7 @@ async function seed(): Promise<void> {
         type: 'variable',
         status: 'pending',
         split_method: 'equal',
-        description: 'Consulta médica — pendiente',
+        description: 'Doctor visit — pending',
         split: { method: 'equal', participants: allMembers.map((userId) => ({ userId })) },
       },
       {
@@ -552,7 +552,7 @@ async function seed(): Promise<void> {
         type: 'debt',
         status: 'pending',
         split_method: 'equal',
-        description: 'Préstamo personal — pendiente',
+        description: 'Personal loan — pending',
         notes: 'Cuota mensual',
         split: { method: 'equal', participants: [{ userId: javier }] },
       },
@@ -573,7 +573,7 @@ async function seed(): Promise<void> {
         type: 'fixed',
         status: 'overdue',
         split_method: 'equal',
-        description: 'Agua — vencido',
+        description: 'Water — overdue',
         split: { method: 'equal', participants: allMembers.map((userId) => ({ userId })) },
       },
       {
@@ -587,7 +587,7 @@ async function seed(): Promise<void> {
         type: 'fixed',
         status: 'overdue',
         split_method: 'equal',
-        description: 'Condominio — vencido',
+        description: 'HOA fee — overdue',
         split: { method: 'equal', participants: allMembers.map((userId) => ({ userId })) },
       },
       {
@@ -601,7 +601,7 @@ async function seed(): Promise<void> {
         type: 'variable',
         status: 'overdue',
         split_method: 'equal',
-        description: 'Cine + snacks — vencido',
+        description: 'Movies + snacks — overdue',
         split: { method: 'equal', participants: [{ userId: carlos }] },
       },
     ];
@@ -609,15 +609,15 @@ async function seed(): Promise<void> {
       await seedExpense(client, exp);
     }
 
-    // --- Contributions: recibidos vs pendientes vs vencidos ---
+    // --- Contributions: received vs pending vs overdue ---
     const contributions: Array<[string, number, string, string, string | null, string | null]> = [
-      [maria, 400, iso(addDays(monthStart, 3)), 'received', iso(addDays(monthStart, 3)), 'Aporte marzo — recibido'],
-      [maria, 400, iso(addDays(monthStart, 18)), 'received', iso(addDays(monthStart, 18)), 'Aporte quincenal — recibido'],
-      [carlos, 350, iso(addDays(monthStart, 5)), 'received', iso(addDays(monthStart, 6)), 'Aporte inicial — recibido'],
-      [carlos, 350, iso(addDays(today, 2)), 'pending', null, 'Aporte quincenal — pendiente'],
-      [carlos, 350, iso(addDays(today, -10)), 'overdue', null, 'Aporte anterior — vencido'],
-      [maria, 400, iso(addDays(today, 8)), 'pending', null, 'Aporte fin de mes — pendiente'],
-      [javier, 500, iso(addDays(today, 4)), 'pending', null, 'Aporte administrador — pendiente'],
+      [maria, 400, iso(addDays(monthStart, 3)), 'received', iso(addDays(monthStart, 3)), 'March contribution — received'],
+      [maria, 400, iso(addDays(monthStart, 18)), 'received', iso(addDays(monthStart, 18)), 'Biweekly contribution — received'],
+      [carlos, 350, iso(addDays(monthStart, 5)), 'received', iso(addDays(monthStart, 6)), 'Initial contribution — received'],
+      [carlos, 350, iso(addDays(today, 2)), 'pending', null, 'Biweekly contribution — pending'],
+      [carlos, 350, iso(addDays(today, -10)), 'overdue', null, 'Past contribution — overdue'],
+      [maria, 400, iso(addDays(today, 8)), 'pending', null, 'End-of-month contribution — pending'],
+      [javier, 500, iso(addDays(today, 4)), 'pending', null, 'Admin contribution — pending'],
     ];
     for (const [userId, amount, expected, status, received, notes] of contributions) {
       await client.query(
@@ -640,10 +640,10 @@ async function seed(): Promise<void> {
 
     // --- Metas de ahorro ---
     const goals: Array<[string, number, number, string | null, string]> = [
-      ['Fondo de emergencia', 15000, 9750, iso(addMonths(today, 6)), 'active'],
-      ['Vacaciones Europa', 8000, 2400, iso(addMonths(today, 10)), 'active'],
+      ['Emergency fund', 15000, 9750, iso(addMonths(today, 6)), 'active'],
+      ['Europe vacation', 8000, 2400, iso(addMonths(today, 10)), 'active'],
       ['MacBook Pro', 2500, 2500, iso(addMonths(today, -2)), 'completed'],
-      ['Renovación cocina', 5000, 800, null, 'paused'],
+      ['Kitchen remodel', 5000, 800, null, 'paused'],
     ];
     for (const [name, target, current, targetDate, status] of goals) {
       await client.query(
@@ -658,7 +658,7 @@ async function seed(): Promise<void> {
           targetDate,
           cats['Ahorro general'] ?? cats['Emergencias'] ?? null,
           status,
-          'Meta demo para capturas',
+          'Demo goal for screenshots',
           adminId,
         ],
       );
@@ -669,14 +669,14 @@ async function seed(): Promise<void> {
       new Date(d.getFullYear(), d.getMonth(), d.getDate(), h, 0, 0).toISOString();
 
     const calendarEvents: Array<[string, string, string, string, number | null, string]> = [
-      ['Alquiler (pagado)', 'expense', 'paid', tz(addDays(monthStart, 1)), 1100, '#16a34a'],
-      ['Alquiler próximo (pendiente)', 'expense', 'pending', tz(addDays(today, 1)), 1100, '#0ea5e9'],
-      ['Salario Javier (recibido)', 'income', 'paid', tz(addDays(today, -2)), 4200, '#16a34a'],
-      ['Aporte Carlos (pendiente)', 'contribution', 'contribution', tz(addDays(today, 2)), 350, '#eab308'],
-      ['Agua (vencido)', 'expense', 'overdue', tz(addDays(today, -4)), 78, '#ef4444'],
-      ['Internet (pendiente)', 'expense', 'pending', tz(addDays(today, 3)), 55, '#f97316'],
-      ['Freelance María (próximo)', 'income', 'recurring', tz(addDays(today, 6)), 925, '#0d9488'],
-      ['Meta: Fondo emergencia', 'goal', 'savings', tz(addDays(today, 7)), 500, '#8b5cf6'],
+      ['Rent (paid)', 'expense', 'paid', tz(addDays(monthStart, 1)), 1100, '#16a34a'],
+      ['Upcoming rent (pending)', 'expense', 'pending', tz(addDays(today, 1)), 1100, '#0ea5e9'],
+      ['Javier salary (received)', 'income', 'paid', tz(addDays(today, -2)), 4200, '#16a34a'],
+      ['Carlos contribution (pending)', 'contribution', 'contribution', tz(addDays(today, 2)), 350, '#eab308'],
+      ['Agua (overdue)', 'expense', 'overdue', tz(addDays(today, -4)), 78, '#ef4444'],
+      ['Internet (pending)', 'expense', 'pending', tz(addDays(today, 3)), 55, '#f97316'],
+      ['Maria freelance (upcoming)', 'income', 'recurring', tz(addDays(today, 6)), 925, '#0d9488'],
+      ['Goal: Emergency fund', 'goal', 'savings', tz(addDays(today, 7)), 500, '#8b5cf6'],
     ];
     for (const [title, eventType, status, startAt, amount, color] of calendarEvents) {
       await client.query(
@@ -686,7 +686,7 @@ async function seed(): Promise<void> {
         [
           householdId,
           title,
-          'Evento demo — Casa Hearth',
+          'Demo event — Casa Hearth',
           eventType,
           startAt,
           status,
@@ -701,7 +701,7 @@ async function seed(): Promise<void> {
     const recurringStart = iso(addMonths(monthStart, -2));
     await createRecurringTemplate(client, householdId, adminId, {
       kind: 'income',
-      label: 'Salario Javier',
+      label: 'Javier salary',
       amount: 4200,
       frequency: 'monthly',
       start_date: recurringStart,
@@ -713,19 +713,19 @@ async function seed(): Promise<void> {
 
     await createRecurringTemplate(client, householdId, adminId, {
       kind: 'income',
-      label: 'Freelance María',
+      label: 'Maria freelance',
       amount: 925,
       frequency: 'biweekly',
       start_date: recurringStart,
       end_date: '',
       category_id: cats['Freelance'] ?? null,
       user_id: maria,
-      source: 'Clientes freelance',
+      source: 'Freelance clients',
     }, currency);
 
     await createRecurringTemplate(client, householdId, adminId, {
       kind: 'expense',
-      label: 'Alquiler',
+      label: 'Rent',
       amount: 1100,
       frequency: 'monthly',
       start_date: recurringStart,
@@ -749,7 +749,7 @@ async function seed(): Promise<void> {
 
     await createRecurringTemplate(client, householdId, adminId, {
       kind: 'expense',
-      label: 'Limpieza',
+      label: 'Cleaning',
       amount: 40,
       frequency: 'weekly',
       start_date: recurringStart,
@@ -763,18 +763,18 @@ async function seed(): Promise<void> {
       `DELETE FROM public.expense_splits
        WHERE expense_id IN (
          SELECT id FROM public.expenses
-         WHERE household_id = $1 AND notes = 'Generado automáticamente'
+         WHERE household_id = $1 AND notes = 'Auto-generated'
        )`,
       [householdId],
     );
     await client.query(
       `DELETE FROM public.expenses
-       WHERE household_id = $1 AND notes = 'Generado automáticamente'`,
+       WHERE household_id = $1 AND notes = 'Auto-generated'`,
       [householdId],
     );
     await client.query(
       `DELETE FROM public.incomes
-       WHERE household_id = $1 AND notes = 'Generado automáticamente'`,
+       WHERE household_id = $1 AND notes = 'Auto-generated'`,
       [householdId],
     );
 
@@ -785,12 +785,12 @@ async function seed(): Promise<void> {
   // Notifications: insert without RLS user context (service-style)
   await withUserContext(null, async (client) => {
     const notifs: Array<[string, string, string, string, boolean]> = [
-      [adminId, 'payment_reminder', 'Pago próximo: Internet', 'Vence en 3 días — $55.00', false],
-      [adminId, 'expense_overdue', 'Gasto vencido', 'Agua (vencida) — $78.00', false],
-      [memberIds.maria!, 'contribution_due', 'Aporte pendiente', 'Tu aporte de $400 vence pronto', false],
-      [memberIds.carlos!, 'contribution_overdue', 'Aporte atrasado', 'Tienes un aporte vencido de $350', true],
-      [adminId, 'goal_progress', 'Meta al 65%', 'Fondo de emergencia — sigue así', true],
-      [adminId, 'member_invite', 'Invitación enviada', `Invitaste a ${PENDING_INVITE.email}`, true],
+      [adminId, 'payment_reminder', 'Upcoming payment: Internet', 'Due in 3 days — $55.00', false],
+      [adminId, 'expense_overdue', 'Overdue expense', 'Water (overdue) — $78.00', false],
+      [memberIds.maria!, 'contribution_due', 'Pending contribution', 'Your $400 contribution is due soon', false],
+      [memberIds.carlos!, 'contribution_overdue', 'Overdue contribution', 'You have an overdue $350 contribution', true],
+      [adminId, 'goal_progress', 'Goal at 65%', 'Emergency fund — sigue así', true],
+      [adminId, 'member_invite', 'Invitation sent', `You invited ${PENDING_INVITE.email}`, true],
     ];
     for (const [userId, type, title, message, read] of notifs) {
       await client.query(
@@ -811,15 +811,15 @@ async function seed(): Promise<void> {
     console.log('[seed:demo] notifications inserted');
   });
 
-  console.log('\n[seed:demo] ✓ Dataset listo para capturas');
-  console.log('  Hogar: Casa Hearth (USD, sobres activos)');
+  console.log('\n[seed:demo] ✓ Screenshot-ready dataset loaded');
+  console.log('  Household: Casa Hearth (USD, envelope mode on)');
   console.log('  Login: demo@local.dev / demo1234');
-  console.log('  Miembros extra: maria@, carlos@, ana@ (demo1234)');
-  console.log('  Invitación pendiente:', PENDING_INVITE.email);
-  console.log('  Ingresos: salario 12 meses + freelance + extras (mes actual)');
-  console.log('  Gastos: ~10 pagados, ~6 pendientes, ~3 vencidos (mes actual)');
-  console.log('  Aportes: 3 recibidos, 3 pendientes, 1 vencido');
-  console.log('  Fijos: plantillas sin auto-generar (botón "Generar fechas" en Pagos programados)');
+  console.log('  Extra members: maria@, carlos@, ana@ (demo1234)');
+  console.log('  Pending invitation:', PENDING_INVITE.email);
+  console.log('  Income: 12-month salary + freelance + extras (current month)');
+  console.log('  Expenses: ~10 paid, ~6 pending, ~3 overdue (current month)');
+  console.log('  Contributions: 3 received, 3 pending, 1 overdue');
+  console.log('  Recurring: templates without auto-generate (use Generate dates in Schedules)');
 }
 
 seed()

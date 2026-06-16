@@ -12,7 +12,7 @@ const DEFAULT_CURRENCY = 'COP';
 const dateFnsLocales: Record<string, Locale> = { es, en: enUS };
 
 export function getDateFnsLocale(locale: string): Locale {
-  const base = locale.split('-')[0] ?? 'es';
+  const base = locale.split('-')[0] ?? 'en';
   return dateFnsLocales[base] ?? es;
 }
 
@@ -66,7 +66,7 @@ export function formatNumber(
 export function formatDate(
   value: string | Date | null | undefined,
   pattern = 'PP',
-  locale = 'es',
+  locale = 'en',
 ): string {
   if (!value) return '—';
   const date = typeof value === 'string' ? parseISO(value) : value;
@@ -74,10 +74,10 @@ export function formatDate(
   return format(date, pattern, { locale: getDateFnsLocale(locale) });
 }
 
-/** Format a date as relative ("hace 3 días"). */
+/** Format a date as relative ("3 days ago"). */
 export function formatRelative(
   value: string | Date | null | undefined,
-  locale = 'es',
+  locale = 'en',
 ): string {
   if (!value) return '—';
   const date = typeof value === 'string' ? parseISO(value) : value;

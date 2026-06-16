@@ -243,7 +243,7 @@ function buildByCategory(
   for (const e of expenses) {
     const cat = e.category_id ? byId.get(e.category_id) : null;
     const key = cat?.id ?? '__none__';
-    const name = cat?.name ?? 'Sin categoría';
+    const name = cat?.name ?? 'Uncategorized';
     const color = cat?.color ?? '#94a3b8';
     const prev = acc.get(key) ?? { category: name, color, amount: 0 };
     prev.amount += Number(e.amount);

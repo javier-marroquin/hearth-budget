@@ -24,7 +24,7 @@ export const env: PublicEnv = {
   API_URL: read('VITE_API_URL', 'http://localhost:3000'),
   APP_NAME: read('VITE_APP_NAME', 'Open Hearth Budget'),
   APP_URL: read('VITE_APP_URL', 'http://localhost:5173'),
-  DEFAULT_LOCALE: (read('VITE_DEFAULT_LOCALE', 'es') as 'es' | 'en') ?? 'es',
+  DEFAULT_LOCALE: (read('VITE_DEFAULT_LOCALE', 'en') as 'es' | 'en') ?? 'en',
   DEFAULT_CURRENCY: read('VITE_DEFAULT_CURRENCY', 'COP'),
   DEFAULT_TIMEZONE: read('VITE_DEFAULT_TIMEZONE', 'America/El_Salvador'),
   IS_PROD: import.meta.env.PROD,

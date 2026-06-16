@@ -117,12 +117,12 @@ export function ContributionsPage() {
 
       {hasUrlFilters && (
         <div className="mb-3 flex flex-wrap items-center gap-2 rounded-lg border border-border bg-secondary p-3 text-[13px]">
-          <span className="font-medium text-muted-foreground">Filtros activos:</span>
+          <span className="font-medium text-muted-foreground">{t('table.filters.active')}</span>
           {urlFilters.status && (
             <Badge variant="outline">{t('table.status')}: {t(`status.${urlFilters.status}`)}</Badge>
           )}
           {urlFilters.userId && (
-            <Badge variant="outline">Miembro: {memberName(urlFilters.userId)}</Badge>
+            <Badge variant="outline">{t('common.member')}: {memberName(urlFilters.userId)}</Badge>
           )}
           {(urlFilters.from || urlFilters.to) && (
             <Badge variant="outline">
@@ -136,7 +136,7 @@ export function ContributionsPage() {
             onClick={() => setSearchParams({})}
           >
             <X className="h-3 w-3" />
-            Limpiar
+            {t('table.filters.clear')}
           </Button>
         </div>
       )}

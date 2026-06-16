@@ -25,14 +25,14 @@ export default defineConfig(({ mode }) => {
           name: appName,
           short_name: 'Open Hearth',
           description:
-            'Aplicativo de presupuesto colaborativo para hogares: ingresos, gastos, aportes y metas en un solo lugar.',
+            'Self-hosted collaborative household budgeting: income, expenses, contributions, and savings goals.',
           theme_color: '#0f172a',
           background_color: '#0f172a',
           display: 'standalone',
           orientation: 'portrait',
           scope: '/',
           start_url: '/',
-          lang: env.VITE_DEFAULT_LOCALE ?? 'es',
+          lang: env.VITE_DEFAULT_LOCALE ?? 'en',
           icons: [
             {
               src: '/icons/icon-192.png',

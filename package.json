@@ -6,7 +6,7 @@
   "workspaces": [
     "server"
   ],
-  "description": "Open Hearth Budget — presupuesto colaborativo self-hosted para hogares.",
+  "description": "Open Hearth Budget — self-hosted collaborative household budgeting.",
   "scripts": {
     "dev": "vite",
     "dev:api": "npm run dev --workspace=server",

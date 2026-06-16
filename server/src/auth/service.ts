@@ -92,7 +92,7 @@ export async function createUserWithProfile(
     `INSERT INTO public.profiles (id, email, full_name, locale)
      VALUES ($1, $2, $3, $4)
      RETURNING id, email, full_name, avatar_url, locale`,
-    [user.id, user.email, fullName, input.locale ?? 'es'],
+    [user.id, user.email, fullName, input.locale ?? 'en'],
   );
 
   return { user, profile: profileRows[0]! };

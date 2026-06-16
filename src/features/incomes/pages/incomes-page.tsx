@@ -112,7 +112,7 @@ export function IncomesPage() {
 
       {hasUrlFilters && (
         <div className="mb-3 flex flex-wrap items-center gap-2 rounded-lg border border-border bg-secondary p-3 text-[13px]">
-          <span className="font-medium text-muted-foreground">Filtros activos:</span>
+          <span className="font-medium text-muted-foreground">{t('table.filters.active')}</span>
           {(urlFilters.from || urlFilters.to) && (
             <Badge variant="outline">
               {urlFilters.from ?? '…'} → {urlFilters.to ?? '…'}
@@ -120,12 +120,12 @@ export function IncomesPage() {
           )}
           {urlFilters.userId && (
             <Badge variant="outline">
-              Miembro: {memberName(urlFilters.userId)}
+              {t('common.member')}: {memberName(urlFilters.userId)}
             </Badge>
           )}
           {urlFilters.categoryId && (
             <Badge variant="outline">
-              Categoría: {categoryName(urlFilters.categoryId)}
+              {t('table.category')}: {categoryName(urlFilters.categoryId)}
             </Badge>
           )}
           <Button
@@ -135,7 +135,7 @@ export function IncomesPage() {
             onClick={() => setSearchParams({})}
           >
             <X className="h-3 w-3" />
-            Limpiar
+            {t('table.filters.clear')}
           </Button>
         </div>
       )}

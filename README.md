@@ -4,7 +4,7 @@
 
 Answer one question every month: **how much does your household need to earn to cover living costs, obligations, and at least 10% savings?**
 
-Bilingual UI (**English** + **Spanish**) via i18next.
+Bilingual UI (**English** default + **Spanish**) via i18next.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 

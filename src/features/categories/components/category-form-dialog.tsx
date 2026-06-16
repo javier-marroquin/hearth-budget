@@ -111,9 +111,7 @@ export function CategoryFormDialog({
           <DialogTitle>
             {category ? t('categories.edit_title') : t('categories.new_title')}
           </DialogTitle>
-          <DialogDescription>
-            Si activas el modo Envelope (en Configuración), el presupuesto mensual se usa para calcular cumplimiento.
-          </DialogDescription>
+          <DialogDescription>{t('categories.form_description')}</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
@@ -123,7 +121,7 @@ export function CategoryFormDialog({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nombre</FormLabel>
+                  <FormLabel>{t('categories.name')}</FormLabel>
                   <FormControl>
                     <Input placeholder={t('categories.name_placeholder')} autoFocus {...field} />
                   </FormControl>
@@ -138,7 +136,7 @@ export function CategoryFormDialog({
                 name="type"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Tipo</FormLabel>
+                    <FormLabel>{t('categories.type_label')}</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
@@ -163,7 +161,7 @@ export function CategoryFormDialog({
                 name="color"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Color</FormLabel>
+                    <FormLabel>{t('categories.color')}</FormLabel>
                     <FormControl>
                       <div className="flex flex-wrap gap-1.5">
                         {COLORS.map((c) => (
@@ -193,16 +191,14 @@ export function CategoryFormDialog({
               name="monthly_budget"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Presupuesto mensual (opcional)</FormLabel>
+                  <FormLabel>{t('categories.monthly_budget')}</FormLabel>
                   <FormControl>
                     <MoneyInput
                       value={field.value ?? undefined}
                       onChange={(v) => field.onChange(v || null)}
                     />
                   </FormControl>
-                  <FormDescription>
-                    Cuando se activa el modo Envelope, se compara con el gasto real.
-                  </FormDescription>
+                  <FormDescription>{t('categories.monthly_budget_hint')}</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -214,9 +210,9 @@ export function CategoryFormDialog({
               render={({ field }) => (
                 <FormItem className="flex items-center justify-between rounded-md border p-3">
                   <div className="space-y-0.5">
-                    <FormLabel>Arrastrar saldo (rollover)</FormLabel>
+                    <FormLabel>{t('categories.rollover')}</FormLabel>
                     <FormDescription className="text-xs">
-                      Si sobra o falta presupuesto, se arrastra al siguiente mes.
+                      {t('categories.rollover_hint')}
                     </FormDescription>
                   </div>
                   <FormControl>

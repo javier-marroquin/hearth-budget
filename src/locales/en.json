@@ -152,7 +152,16 @@
     "actual_savings": "Actual savings",
     "month_close": "Month-end",
     "no_contributions_this_month": "No contributions this month",
-    "no_income_expense_trend": "No income or expense data for the last 12 months"
+    "no_income_expense_trend": "No income or expense data for the last 12 months",
+    "no_expenses_this_month": "No expenses this month",
+    "kpi_upcoming_hint": "{{count}} upcoming",
+    "customize": "Customize",
+    "add_widget": "Add widget",
+    "restore": "Restore",
+    "done": "Done",
+    "restore_confirm": "Restore the dashboard to its default layout?",
+    "edit_mode_hint": "Edit mode: drag each widget by the ≡ handle, resize from the bottom-right corner, and use × to remove. Layout saves when you release.",
+    "edit_mode_title": "Edit mode"
   },
   "alerts": {
     "deficit_warning": "Your current income is below the required minimum. You're short {{amount}}.",
@@ -173,7 +182,42 @@
     "import_incomes_description": "Map CSV columns to app fields.",
     "import_expenses_title": "Import expenses",
     "import_expenses_description": "Map CSV columns to app fields.",
-    "backup_downloaded": "Backup downloaded"
+    "backup_downloaded": "Backup downloaded",
+    "appearance_title": "Appearance",
+    "appearance_description": "Language and visual theme.",
+    "language": "Language",
+    "language_en": "English",
+    "language_es": "Spanish",
+    "theme": "Theme",
+    "theme_light": "Light",
+    "theme_dark": "Dark",
+    "theme_system": "System",
+    "household_title": "Household",
+    "import_export_title": "Import / Export",
+    "import_export_description": "Full household backups and bulk CSV import.",
+    "backup_json_title": "Full backup (JSON)",
+    "backup_json_description": "Download a file with the entire household: income, expenses, contributions, goals, categories, and events.",
+    "download_backup": "Download backup",
+    "import_incomes_title": "Import income from CSV",
+    "import_incomes_hint": "Payee name or email must match an active member exactly.",
+    "import_expenses_title": "Import expenses from CSV",
+    "import_expenses_hint": "Splits are created equally among active members.",
+    "csv_template": "CSV template",
+    "import_incomes_button": "Import income",
+    "import_expenses_button": "Import expenses",
+    "import_fields": {
+      "date": "Date",
+      "amount": "Amount",
+      "currency": "Currency",
+      "payee": "Payee (name or email)",
+      "category": "Category",
+      "source": "Source",
+      "notes": "Notes",
+      "due_date": "Due date",
+      "description": "Description",
+      "type": "Type (fixed/variable/debt/one_time)"
+    },
+    "import_payee_unresolved": "Payee could not be resolved"
   },
   "toast": {
     "income_created": "Income recorded",
@@ -253,7 +297,19 @@
     "saving": "Saving…",
     "new_title": "New goal",
     "edit_title": "Edit goal",
-    "name_placeholder": "e.g. Emergency fund"
+    "name_placeholder": "e.g. Emergency fund",
+    "add_balance": "Add balance",
+    "add_balance_prompt": "How much to add to this goal?",
+    "new_description": "The app automatically calculates how much to save each month when you set a target date.",
+    "suggested_monthly": "Suggested: {{amount}} / month",
+    "target_date": "Target date",
+    "target_date_optional": "Target date (optional)",
+    "target_date_hint": "Leave blank to skip monthly savings suggestions.",
+    "target_amount": "Target amount",
+    "name_label": "Name",
+    "notes": "Notes",
+    "percent_complete": "{{percent}}% complete",
+    "target_date_label": "Target date: {{date}}"
   },
   "contributions": {
     "title": "Contributions",
@@ -271,6 +327,7 @@
     "edit_title": "Edit expense",
     "description_placeholder": "e.g. Rent, groceries, utilities…",
     "mark_paid": "Mark paid",
+    "split_preview": "Split preview",
     "due_date": "Due date",
     "type": {
       "fixed": "Fixed",
@@ -304,6 +361,14 @@
     "new_title": "New category",
     "edit_title": "Edit category",
     "name_placeholder": "e.g. Pets",
+    "form_description": "When envelope mode is enabled (Settings), the monthly budget is used for compliance.",
+    "name": "Name",
+    "type_label": "Type",
+    "color": "Color",
+    "monthly_budget": "Monthly budget (optional)",
+    "monthly_budget_hint": "When envelope mode is on, compared against actual spending.",
+    "rollover": "Carry balance (rollover)",
+    "rollover_hint": "Unused or overspent budget carries to the next month.",
     "system": {
       "housing": "Housing",
       "food": "Food",
@@ -332,6 +397,8 @@
   },
   "invite": {
     "accept": "Accept invitation",
+    "welcome": "Welcome!",
+    "joined_household": "You joined {{name}}. Redirecting…",
     "token_missing": "Invitation token missing",
     "unknown_error": "Unknown error"
   },
@@ -341,6 +408,17 @@
     "delete_event": "Delete event",
     "unnamed_event": "Event",
     "title_placeholder": "Rent, allowance, etc.",
+    "form_description": "Bill, income, contribution, reminder, or savings goal.",
+    "title": "Title",
+    "type_label": "Type",
+    "status_label": "Status",
+    "all_day": "All day",
+    "start": "Start",
+    "end_optional": "End (optional)",
+    "amount_optional": "Amount (optional)",
+    "assignee": "Assignee",
+    "description": "Description",
+    "saving": "Saving…",
     "unassigned": "(Unassigned)",
     "status": {
       "pending": "Pending",
@@ -522,7 +600,11 @@
     "member": "Member",
     "payee": "Payee",
     "contributor": "Contributor",
-    "source": "Source"
+    "source": "Source",
+    "filters": {
+      "active": "Active filters:",
+      "clear": "Clear"
+    }
   },
   "recurring": {
     "page_description": "Fixed income and expenses that repeat automatically until you pause them.",

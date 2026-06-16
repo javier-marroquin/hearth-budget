@@ -1,7 +1,7 @@
 import type { TFunction } from 'i18next';
 import type { UpcomingItem } from '@/features/dashboard/services/upcoming.service';
 
-/** Default seeded category names (Spanish) → i18n keys. */
+/** Seeded DB category names → i18n keys (system categories ship with Spanish names in SQL). */
 const SYSTEM_CATEGORY_KEYS: Record<string, string> = {
   Vivienda: 'categories.system.housing',
   Alimentación: 'categories.system.food',

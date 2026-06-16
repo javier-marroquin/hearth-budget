@@ -56,7 +56,7 @@ export function SidebarNavLink({
             e.stopPropagation();
             toggleFavorite(item.to);
           }}
-          aria-label={isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'}
+          aria-label={isFavorite ? t('aria.favorite_remove') : t('aria.favorite_add')}
         >
           <Star
             className={cn('h-3 w-3', isFavorite && 'fill-primary text-primary')}
