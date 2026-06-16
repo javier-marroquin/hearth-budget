@@ -2,6 +2,12 @@
 
 Open Hearth Budget sends **optional** transactional email for member invitations. Auth uses **email + password** (no magic links).
 
+## Settings UI
+
+Open **Settings → Outbound email** in the app to see the current mode (SMTP / Resend / console) and send a test message to your own address.
+
+Credentials always live in the **server** `.env` file (never in the browser). Restart `npm run dev:api` after changes.
+
 ## Development (default)
 
 With Docker dev profile, **Mailpit** catches all outbound mail:

@@ -16,6 +16,15 @@ const envSchema = z.object({
     .transform((v) => v === 'true' || v === '1'),
   SMTP_HOST: z.string().optional(),
   SMTP_PORT: z.coerce.number().optional(),
+  SMTP_USER: z.string().optional(),
+  SMTP_PASS: z.string().optional(),
+  SMTP_FROM: z.string().optional(),
+  SMTP_SECURE: z
+    .string()
+    .optional()
+    .transform((v) => v === 'true' || v === '1'),
+  RESEND_API_KEY: z.string().optional(),
+  RESEND_FROM_EMAIL: z.string().optional(),
   SEED_DEMO_USER: z
     .string()
     .optional()

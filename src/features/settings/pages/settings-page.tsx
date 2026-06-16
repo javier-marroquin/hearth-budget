@@ -16,6 +16,7 @@ import { useHouseholdStore } from '@/features/households/stores/household.store'
 import { apiFetch } from '@/lib/api/client';
 import { usePermissions } from '@/hooks/use-permissions';
 import { ImportExportSection } from '../components/import-export-section';
+import { EmailSettingsSection } from '../components/email-settings-section';
 
 export function SettingsPage() {
   const { t, i18n } = useTranslation();
@@ -162,6 +163,8 @@ export function SettingsPage() {
       <div className="mt-4">
         <ImportExportSection />
       </div>
+
+      <EmailSettingsSection />
     </>
   );
 }

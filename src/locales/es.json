@@ -217,7 +217,24 @@
       "description": "Descripción",
       "type": "Tipo (fixed/variable/debt/one_time)"
     },
-    "import_payee_unresolved": "No se pudo resolver el perceptor"
+    "import_payee_unresolved": "No se pudo resolver el perceptor",
+    "email": {
+      "title": "Correo saliente",
+      "description": "Se usa para invitaciones de miembros. Se configura en el servidor (no en el navegador).",
+      "status": "Estado",
+      "from": "Remitente",
+      "auth_configured": "autenticación configurada",
+      "inbound_note": "Esta app no recibe correo (sin bandeja/IMAP). El inicio de sesión es email + contraseña. Solo SMTP saliente o Resend.",
+      "env_title": "Administrador del servidor: configurar en .env y reiniciar la API",
+      "env_hint": "Ver docs/EMAIL_SETUP.md. En dev con Docker, Mailpit en localhost:1025 y UI en http://localhost:8025.",
+      "send_test": "Enviar prueba a mi email",
+      "test_sent": "Correo de prueba enviado vía {{mode}} (revisa bandeja o logs de la API)",
+      "mode": {
+        "console": "Solo consola (links en logs)",
+        "smtp": "SMTP",
+        "resend": "Resend API"
+      }
+    }
   },
   "toast": {
     "income_created": "Ingreso registrado",

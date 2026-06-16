@@ -217,7 +217,24 @@
       "description": "Description",
       "type": "Type (fixed/variable/debt/one_time)"
     },
-    "import_payee_unresolved": "Payee could not be resolved"
+    "import_payee_unresolved": "Payee could not be resolved",
+    "email": {
+      "title": "Outbound email",
+      "description": "Used for household member invitations. Configured on the server (not in the browser).",
+      "status": "Status",
+      "from": "From",
+      "auth_configured": "auth configured",
+      "inbound_note": "This app does not receive email (no inbox/IMAP). Sign-in uses email + password only. Only outbound SMTP or Resend is supported.",
+      "env_title": "Server administrator: set in .env and restart the API",
+      "env_hint": "See docs/EMAIL_SETUP.md. With Docker dev, use Mailpit at localhost:1025 and open http://localhost:8025.",
+      "send_test": "Send test to my email",
+      "test_sent": "Test email sent via {{mode}} (check inbox or API logs)",
+      "mode": {
+        "console": "Console only (links logged)",
+        "smtp": "SMTP",
+        "resend": "Resend API"
+      }
+    }
   },
   "toast": {
     "income_created": "Income recorded",

@@ -11,6 +11,7 @@ import { healthRoutes } from './routes/health.js';
 import { householdsRoutes, profileRoutes } from './routes/households.js';
 import { resourcesRoutes } from './routes/resources.js';
 import { invitesRoutes } from './routes/invites.js';
+import { emailRoutes } from './routes/email.js';
 import { recurringRoutes } from './routes/recurring.js';
 
 const app = new Hono<{ Variables: AppVariables }>();
@@ -34,6 +35,7 @@ app.route('/api/auth/profile', profileRoutes);
 app.route('/api/households', householdsRoutes);
 app.route('/api', resourcesRoutes);
 app.route('/api', invitesRoutes);
+app.route('/api', emailRoutes);
 app.route('/api', recurringRoutes);
 
 app.onError((err, c) => {

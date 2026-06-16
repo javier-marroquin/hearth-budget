@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { config } from '../config.js';
 import type { AppVariables } from '../middleware/session.js';
 import { signInvite, verifyInvite } from '../lib/invite-token.js';
+import { sendHouseholdInviteEmail } from '../services/email.service.js';
 import { parseJson, unauthorized, withAuth, withHouseholdAdmin } from './helpers.js';
 
 const inviteBody = z.object({
@@ -51,17 +52,39 @@ invitesRoutes.post('/invite-member', async (c) => {
     const appUrl = config.APP_URL.replace(/\/$/, '');
     const inviteUrl = `${appUrl}/invite?token=${encodeURIComponent(token)}`;
 
-    // Email optional in dev — log invite URL
-    if (config.NODE_ENV === 'development') {
+    const inviterName =
+      (profileRows[0]?.full_name as string | undefined) ??
+      (profileRows[0]?.email as string | undefined) ??
+      'A household admin';
+    const householdName = (householdRows[0]?.name as string | undefined) ?? 'your household';
+
+    let emailMode: 'resend' | 'smtp' | 'console' = 'console';
+    let emailSent = false;
+    try {
+      emailMode = await sendHouseholdInviteEmail({
+        to: body.email,
+        inviteUrl,
+        householdName,
+        inviterName,
+      });
+      emailSent = emailMode !== 'console';
+    } catch (err) {
+      console.error('[invite] email failed', err);
+      console.log(`[invite] ${body.email} → ${inviteUrl}`);
+    }
+
+    if (!emailSent) {
       console.log(`[invite] ${body.email} → ${inviteUrl}`);
     }
 
     return {
       ok: true,
       membership_id: row.id,
-      invite_url: config.NODE_ENV === 'development' ? inviteUrl : undefined,
-      inviter: profileRows[0]?.full_name ?? profileRows[0]?.email,
-      household_name: householdRows[0]?.name,
+      invite_url: inviteUrl,
+      email_sent: emailSent,
+      email_mode: emailMode,
+      inviter: inviterName,
+      household_name: householdName,
     };
   });
 
